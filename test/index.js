@@ -3,7 +3,7 @@ const { test, describe, it, almostEquals } = require('./testbed.js')
 
 const flex = require('../build/flex.common.js')
 
-test(() => {
+const main = ({ verbose = false } = {}) => test({ verbose }, () => {
 
     describe('Layout', () => {
 
@@ -80,3 +80,8 @@ test(() => {
         // it('lol', () => {throw new Error('failed')})
     })
 })
+
+module.exports = main
+
+if (require.main === module)
+    main({ verbose:true })

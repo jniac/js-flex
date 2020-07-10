@@ -1,11 +1,25 @@
 
 const chalk = require('chalk')
+const now = require('performance-now')
+
+const currentOptions = {
+    verbose: true,
+}
 
 let indentationLevel = 0
 let tab = '  '
 
 const newLine = () => console.log('')
-const log = (...args) => console.log(tab.repeat(indentationLevel), ...args)
+
+const log = (...args) => {
+
+    const message = args.join(' ')
+
+    if (currentOptions.verbose)
+        console.log(tab.repeat(indentationLevel), message)
+
+    return message
+}
 
 
 
@@ -40,9 +54,16 @@ const describe = (text, callback) => {
 
 
 const itMonitoring = {
+
     total: 0,
     success: 0,
     fail: 0,
+
+    reset() {
+        this.total = 0
+        this.success = 0
+        this.fail = 0
+    }
 }
 
 const success = text => {
@@ -101,20 +122,28 @@ const it = (name, callback) => {
     }
 }
 
-const test = callback => {
+const test = (options, callback) => {
+
+    if (typeof options === 'function')
+        return test({ verbose:true }, options)
+
+    Object.assign(currentOptions, options)
+
+    itMonitoring.reset()
+
+    const time = now()
 
     const end = () => {
 
         log('')
 
-        if (itMonitoring.fail === 0) {
+        const cnt = `(${itMonitoring.success}/${itMonitoring.total})`
+        const ms = `(${(now() - time).toFixed(2)}ms)`
 
-            log(chalk`{green PASSING (${itMonitoring.success}/${itMonitoring.total})}`)
+        if (itMonitoring.fail === 0)
+            return log(chalk`{green PASSING ${cnt}} {grey ${ms}}`)
 
-        } else {
-
-            log(chalk`{red FAILING (${itMonitoring.success}/${itMonitoring.total})}`)
-        }
+        return log(chalk`{red FAILING ${cnt}} {grey ${ms}}`)
     }
 
     const result = callback()
@@ -124,17 +153,12 @@ const test = callback => {
         return new Promise(resolve => {
 
             result
-            .then(() => {
-
-                resolve()
-                end()
-            })
+            .then(() => resolve(end()))
         })
 
-    } else {
-
-        end()
     }
+
+    return end()
 }
 
 
