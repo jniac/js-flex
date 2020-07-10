@@ -24,6 +24,8 @@ const defaultValues = {
 
 export default class Layout {
 
+    static get defaultValues() { return defaultValues }
+
     constructor(props) {
 
         this.assign(props)
