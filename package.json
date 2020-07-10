@@ -1,0 +1,26 @@
+{
+  "name": "js-flex",
+  "version": "1.0.0",
+  "description": "kind of flex model implementation",
+  "main": "build/flex.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/jniac/js-flex.git"
+  },
+  "keywords": [
+    "flex",
+    "stretch"
+  ],
+  "author": "Joseph Merdrignac",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jniac/js-flex/issues"
+  },
+  "homepage": "https://github.com/jniac/js-flex#readme"
+}
