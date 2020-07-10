@@ -28,7 +28,6 @@
     "chokidar": "^3.4.0",
     "filesize": "^6.1.0",
     "fs-extra": "^9.0.1",
-    "mocha": "^8.0.1",
     "performance-now": "^2.1.0",
     "rollup": "^2.21.0"
   }
