@@ -1,9 +1,10 @@
 // js-flex
-// ES2020 - Build with rollup - 2020/07/10 16:44:47
+// ES2020 - Build with rollup - 2020/07/13 15:32:45
 
 const defaultValues = {
 
     position: 'relative',
+    align: 0,
     offset: 0,
 
     // size: 'fit',
@@ -24,6 +25,29 @@ const defaultValues = {
     // justifyContent: 'space-around',
 };
 
+const stringToNumber = string => {
+
+    if (string.endsWith('%'))
+        return parseFloat(string) / 100
+
+    switch (string) {
+
+        case 'start':
+        case 'left':
+            return 0
+
+        case 'middle':
+        case 'center':
+            return .5
+
+        case 'end':
+        case 'right':
+            return 1
+    }
+
+    throw new Error(`oups, invalid value "${string}"`)
+};
+
 class Layout {
 
     static get defaultValues() { return defaultValues }
@@ -33,7 +57,13 @@ class Layout {
         this.assign(props);
     }
 
-    assign({ padding, ...props } = {}) {
+    assign({
+
+        padding,
+        offsetAlign,
+        ...props
+
+    } = {}) {
 
         if (padding !== undefined) {
 
@@ -41,42 +71,109 @@ class Layout {
             props.paddingEnd = padding;
         }
 
+        if (offsetAlign !== undefined) {
+
+            props.align =
+            props.offset = offsetAlign;
+        }
+
         Object.assign(this, props);
 
         return this
     }
 
+    resolveOffset(parentBoundsSize) {
+
+        const { offset } = this;
+
+        if (typeof offset === 'number')
+            return offset
+
+        return stringToNumber(offset) * parentBoundsSize
+    }
+
+    resolveAlign(selfBoundsSize) {
+
+        const { align } = this;
+
+        if (typeof align === 'number')
+            return align
+
+        return -stringToNumber(align) * selfBoundsSize
+    }
+
     /**
      * returns
-     * @return {Array} [align, extraGutter]
+     * @return {Array} [align, extraGutter, extraPaddingStart]
      */
-    getJustifyContentValues(freeSpace, gutterCount) {
+    getJustifyContentValues(freeSpace, gutterCount, extra) {
 
         const { justifyContent } = this;
 
         if (justifyContent.endsWith('%')) {
 
-            return [parseFloat(justifyContent) / 100, 0]
+            return [parseFloat(justifyContent) / 100, 0, 0]
         }
+
+        let align = 0;
+        let extraGutter = 0;
+        let extraPaddingStart = 0;
 
         switch (justifyContent) {
 
             case 'start':
-                return [0, 0]
+                align = 0;
+                break
 
             default:
             case 'center':
-                return [.5, 0]
+                align = .5;
+                break
 
             case 'end':
-                return [1, 0]
+                align = 1;
+                break
 
             case 'space-between':
-                return gutterCount === 0 ? [.5, 0] : [0, freeSpace / gutterCount]
+
+                if (gutterCount === 0) {
+
+                    align = .5;
+
+                } else {
+
+                    extraGutter = freeSpace / gutterCount;
+                }
+                break
+
+            case 'space-evenly':
+
+                if (gutterCount === 0) {
+
+                    align = .5;
+
+                } else {
+
+                    extraGutter = freeSpace / (gutterCount + 2);
+                    extraPaddingStart = extraGutter;
+                }
+                break
 
             case 'space-around':
-                throw new Error(`justifyContent "${justifyContent}" value not implemented!`)
+
+                if (gutterCount === 0) {
+
+                    align = .5;
+
+                } else {
+
+                    extraGutter = freeSpace / (gutterCount + 1);
+                    extraPaddingStart = extraGutter / 2;
+                }
+                break
         }
+
+        return [align, extraGutter, extraPaddingStart]
     }
 }
 
@@ -253,7 +350,11 @@ class ComputeNode extends Node {
 
         this.sizeReady = false;
 
+        this.absoluteNodes = null;
+        this.nonAbsoluteNodes = null;
+        this.relativeNodes = null;
         this.proportionalNodes = null;
+
         this.proportionalSizeReady = false;
         this.proportionalWeight = NaN;
     }
@@ -266,15 +367,22 @@ class ComputeNode extends Node {
 
     computeNodeByType() {
 
-        this.proportionalNodes = [];
+        this.absoluteNodes = [];
+        this.nonAbsoluteNodes = [];
         this.relativeNodes = [];
+        this.proportionalNodes = [];
 
         for (const child of this.children) {
 
             const { position, size } = child.layout;
 
-            if (position === 'absolute')
+            if (position === 'absolute') {
+
+                this.absoluteNodes.push(child);
                 continue
+            }
+
+            this.nonAbsoluteNodes.push(child);
 
             if (typeof size === 'string') {
 
@@ -367,28 +475,41 @@ class ComputeNode extends Node {
 
     computeChildrenPosition() {
 
-        const children = this.children
-        .filter(node => node.layout.position !== 'absolute')
-        .sort(orderSorter);
+        {
+            // positioning non-absolute nodes
 
-        const { paddingStart, paddingEnd, gutter } = this.layout;
+            this.nonAbsoluteNodes.sort(orderSorter);
 
-        const gutterCount = Math.max(0, children.length - 1);
-        const freeSpace = this.bounds.size
-            - paddingStart
-            - paddingEnd
-            - gutterCount * gutter
-            - children.reduce((total, node) => total + node.bounds.size, 0);
+            const { paddingStart, paddingEnd, gutter } = this.layout;
 
-        const [align, extraGutter] = this.layout.getJustifyContentValues(freeSpace, gutterCount);
+            const gutterCount = Math.max(0, this.nonAbsoluteNodes.length - 1);
+            const freeSpace = this.bounds.size
+                - paddingStart
+                - paddingEnd
+                - gutterCount * gutter
+                - this.nonAbsoluteNodes.reduce((total, node) => total + node.bounds.size, 0);
 
-        let position = this.bounds.position + paddingStart + freeSpace * align;
+            const [align, extraGutter, extraPaddingStart] = this.layout.getJustifyContentValues(freeSpace, gutterCount);
 
-        for (const child of children) {
+            let position = this.bounds.position + paddingStart + extraPaddingStart + align * freeSpace;
 
-            child.bounds.position = position;
+            for (const child of this.nonAbsoluteNodes) {
 
-            position += child.bounds.size + gutter + extraGutter;
+                child.bounds.position = position;
+
+                position += child.bounds.size + gutter + extraGutter;
+            }
+        }
+
+        {
+            // positioning absolute nodes
+
+            for (const child of this.absoluteNodes) {
+
+                child.bounds.position = this.bounds.position
+                    + child.layout.resolveOffset(this.bounds.size)
+                    + child.layout.resolveAlign(child.bounds.size);
+            }
         }
     }
 }
@@ -417,6 +538,7 @@ const compute = (root, {
 
     childrenAccessor = defaultParameters.childrenAccessor,
     layoutAccessor = defaultParameters.layoutAccessor,
+    boundsAssignator = defaultParameters.boundsAssignator,
     verbose = false,
 
 } = {}) => {
@@ -450,9 +572,11 @@ const compute = (root, {
     }
 
 
-    const MAX_ITERATION = 10;
 
     // resolving size
+
+    const MAX_ITERATION = 10;
+
     let sizeCount = 0;
 
     while (sizeCount < MAX_ITERATION && pendingNodes.length > 0) {
@@ -493,6 +617,22 @@ const compute = (root, {
 
         const dt = now() - time;
         console.info(`[${dt.toFixed(2)}ms] ${rootNode.totalNodeCount} nodes, size iteration: ${sizeCount}`);
+    }
+
+
+
+    // assigning bounds to originalNode
+
+    currentNodes.length = 0;
+    currentNodes.push(rootNode);
+
+    while (currentNodes.length) {
+
+        const node = currentNodes.shift();
+
+        boundsAssignator(node.bounds, node.originalNode);
+
+        currentNodes.push(...node.children);
     }
 
     return { nodeMap, rootNode }
