@@ -14,8 +14,8 @@ npm test
 ```
 
 ## visual test
-Need to serve ./test over http. Currently using super-quick-static:
-
+Need to serve the whole folder over http. Currently using super-quick-static:
 ```
 super-quick-static
 ```
+http://localhost:8000/test/html
