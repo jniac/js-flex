@@ -55,12 +55,24 @@ export default class Layout {
         this.assign(props)
     }
 
-    assign({ padding, ...props } = {}) {
+    assign({
+
+        padding,
+        offsetAlign,
+        ...props
+
+    } = {}) {
 
         if (padding !== undefined) {
 
             props.paddingStart =
             props.paddingEnd = padding
+        }
+
+        if (offsetAlign !== undefined) {
+
+            props.align =
+            props.offset = offsetAlign
         }
 
         Object.assign(this, props)
