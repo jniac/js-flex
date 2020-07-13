@@ -21,7 +21,11 @@ export default class ComputeNode extends Node {
 
         this.sizeReady = false
 
+        this.absoluteNodes = null
+        this.nonAbsoluteNodes = null
+        this.relativeNodes = null
         this.proportionalNodes = null
+
         this.proportionalSizeReady = false
         this.proportionalWeight = NaN
     }
@@ -34,15 +38,22 @@ export default class ComputeNode extends Node {
 
     computeNodeByType() {
 
-        this.proportionalNodes = []
+        this.absoluteNodes = []
+        this.nonAbsoluteNodes = []
         this.relativeNodes = []
+        this.proportionalNodes = []
 
         for (const child of this.children) {
 
             const { position, size } = child.layout
 
-            if (position === 'absolute')
+            if (position === 'absolute') {
+
+                this.absoluteNodes.push(child)
                 continue
+            }
+
+            this.nonAbsoluteNodes.push(child)
 
             if (typeof size === 'string') {
 
@@ -135,28 +146,41 @@ export default class ComputeNode extends Node {
 
     computeChildrenPosition() {
 
-        const children = this.children
-        .filter(node => node.layout.position !== 'absolute')
-        .sort(orderSorter)
+        {
+            // positioning non-absolute nodes
 
-        const { paddingStart, paddingEnd, gutter } = this.layout
+            this.nonAbsoluteNodes.sort(orderSorter)
 
-        const gutterCount = Math.max(0, children.length - 1)
-        const freeSpace = this.bounds.size
-            - paddingStart
-            - paddingEnd
-            - gutterCount * gutter
-            - children.reduce((total, node) => total + node.bounds.size, 0)
+            const { paddingStart, paddingEnd, gutter } = this.layout
 
-        const [align, extraGutter] = this.layout.getJustifyContentValues(freeSpace, gutterCount)
+            const gutterCount = Math.max(0, this.nonAbsoluteNodes.length - 1)
+            const freeSpace = this.bounds.size
+                - paddingStart
+                - paddingEnd
+                - gutterCount * gutter
+                - this.nonAbsoluteNodes.reduce((total, node) => total + node.bounds.size, 0)
 
-        let position = this.bounds.position + paddingStart + freeSpace * align
+            const [align, extraGutter, extraPaddingStart] = this.layout.getJustifyContentValues(freeSpace, gutterCount)
 
-        for (const child of children) {
+            let position = this.bounds.position + paddingStart + extraPaddingStart + align * freeSpace
 
-            child.bounds.position = position
+            for (const child of this.nonAbsoluteNodes) {
 
-            position += child.bounds.size + gutter + extraGutter
+                child.bounds.position = position
+
+                position += child.bounds.size + gutter + extraGutter
+            }
+        }
+
+        {
+            // positioning absolute nodes
+
+            for (const child of this.absoluteNodes) {
+
+                child.bounds.position = this.bounds.position
+                    + child.layout.resolveOffset(this.bounds.size)
+                    + child.layout.resolveAlign(child.bounds.size)
+            }
         }
     }
 }

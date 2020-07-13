@@ -2,6 +2,7 @@
 const defaultValues = {
 
     position: 'relative',
+    align: 0,
     offset: 0,
 
     // size: 'fit',
@@ -20,6 +21,29 @@ const defaultValues = {
     // justifyContent: 'end',
     // justifyContent: 'space-between',
     // justifyContent: 'space-around',
+}
+
+const stringToNumber = string => {
+
+    if (string.endsWith('%'))
+        return parseFloat(string) / 100
+
+    switch (string) {
+
+        case 'start':
+        case 'left':
+            return 0
+
+        case 'middle':
+        case 'center':
+            return .5
+
+        case 'end':
+        case 'right':
+            return 1
+    }
+
+    throw new Error(`oups, invalid value "${string}"`)
 }
 
 export default class Layout {
@@ -44,37 +68,98 @@ export default class Layout {
         return this
     }
 
+    resolveOffset(parentBoundsSize) {
+
+        const { offset } = this
+
+        if (typeof offset === 'number')
+            return offset
+
+        return stringToNumber(offset) * parentBoundsSize
+    }
+
+    resolveAlign(selfBoundsSize) {
+
+        const { align } = this
+
+        if (typeof align === 'number')
+            return align
+
+        return -stringToNumber(align) * selfBoundsSize
+    }
+
     /**
      * returns
-     * @return {Array} [align, extraGutter]
+     * @return {Array} [align, extraGutter, extraPaddingStart]
      */
-    getJustifyContentValues(freeSpace, gutterCount) {
+    getJustifyContentValues(freeSpace, gutterCount, extra) {
 
         const { justifyContent } = this
 
         if (justifyContent.endsWith('%')) {
 
-            return [parseFloat(justifyContent) / 100, 0]
+            return [parseFloat(justifyContent) / 100, 0, 0]
         }
+
+        let align = 0
+        let extraGutter = 0
+        let extraPaddingStart = 0
 
         switch (justifyContent) {
 
             case 'start':
-                return [0, 0]
+                align = 0
+                break
 
             default:
             case 'center':
-                return [.5, 0]
+                align = .5
+                break
 
             case 'end':
-                return [1, 0]
+                align = 1
+                break
 
             case 'space-between':
-                return gutterCount === 0 ? [.5, 0] : [0, freeSpace / gutterCount]
+
+                if (gutterCount === 0) {
+
+                    align = .5
+
+                } else {
+
+                    extraGutter = freeSpace / gutterCount
+                }
+                break
+
+            case 'space-evenly':
+
+                if (gutterCount === 0) {
+
+                    align = .5
+
+                } else {
+
+                    extraGutter = freeSpace / (gutterCount + 2)
+                    extraPaddingStart = extraGutter
+                }
+                break
 
             case 'space-around':
-                throw new Error(`justifyContent "${justifyContent}" value not implemented!`)
+
+                if (gutterCount === 0) {
+
+                    align = .5
+
+                } else {
+
+                    extraGutter = freeSpace / (gutterCount + 1)
+                    extraPaddingStart = extraGutter / 2
+                }
+                break
         }
+
+        return [align, extraGutter, extraPaddingStart]
     }
 }
 
