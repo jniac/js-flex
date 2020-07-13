@@ -28,6 +28,7 @@ const compute = (root, {
 
     childrenAccessor = defaultParameters.childrenAccessor,
     layoutAccessor = defaultParameters.layoutAccessor,
+    boundsAssignator = defaultParameters.boundsAssignator,
     verbose = false,
 
 } = {}) => {
@@ -61,9 +62,11 @@ const compute = (root, {
     }
 
 
-    const MAX_ITERATION = 10
 
     // resolving size
+
+    const MAX_ITERATION = 10
+
     let sizeCount = 0
 
     while (sizeCount < MAX_ITERATION && pendingNodes.length > 0) {
@@ -104,6 +107,22 @@ const compute = (root, {
 
         const dt = now() - time
         console.info(`[${dt.toFixed(2)}ms] ${rootNode.totalNodeCount} nodes, size iteration: ${sizeCount}`)
+    }
+
+
+
+    // assigning bounds to originalNode
+
+    currentNodes.length = 0
+    currentNodes.push(rootNode)
+
+    while (currentNodes.length) {
+
+        const node = currentNodes.shift()
+
+        boundsAssignator(node.bounds, node.originalNode)
+
+        currentNodes.push(...node.children)
     }
 
     return { nodeMap, rootNode }

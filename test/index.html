@@ -13,11 +13,21 @@
 
         class MyNode extends flex.Node {
 
+            static debug = true
+
             constructor(layout) {
 
                 super()
 
                 this.layout = layout
+            }
+
+            get bounds() { return this._bounds }
+            set bounds(value) {
+                this._bounds = value
+
+                if (MyNode.debug)
+                    console.log(`i'm receiving my bounds!`)
             }
         }
 
@@ -120,6 +130,7 @@
 
         {
             // perf test
+            MyNode.debug = false
 
             let t = -performance.now()
             let max = 10000

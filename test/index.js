@@ -16,7 +16,7 @@ const main = ({ verbose = false } = {}) => test({ verbose }, () => {
         })
     })
 
-    describe('flex.compute', async () => {
+    describe('flex.compute', () => {
 
         const someChildren = (n, props) => new Array(n).fill(null).map(() => new MyNode(props))
 
