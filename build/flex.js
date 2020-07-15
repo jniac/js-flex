@@ -1,5 +1,5 @@
 // js-flex 1.0.0
-// ES2020 - Build with rollup - 2020/07/15 14:26:25
+// ES2020 - Build with rollup - 2020/07/15 16:18:51
 
 const defaultValues = {
 
@@ -559,7 +559,7 @@ const defaultParameters = {
 
     childrenAccessor: rootSourceNode => rootSourceNode.children ?? [],
     layoutAccessor: node => node.layout,
-    boundsAssignator: (bounds, node) => node.bounds = bounds,
+    boundsAssignator: (node, bounds) => node.bounds = bounds,
 };
 
 
@@ -672,7 +672,7 @@ const compute = (rootSourceNode, {
 
         const node = currentNodes.shift();
 
-        boundsAssignator(node.bounds, node.sourceNode);
+        boundsAssignator(node.sourceNode, node.bounds);
 
         currentNodes.push(...node.children);
     }

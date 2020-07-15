@@ -8,7 +8,7 @@ const defaultParameters = {
 
     childrenAccessor: rootSourceNode => rootSourceNode.children ?? [],
     layoutAccessor: node => node.layout,
-    boundsAssignator: (bounds, node) => node.bounds = bounds,
+    boundsAssignator: (node, bounds) => node.bounds = bounds,
 }
 
 
@@ -121,7 +121,7 @@ const compute = (rootSourceNode, {
 
         const node = currentNodes.shift()
 
-        boundsAssignator(node.bounds, node.sourceNode)
+        boundsAssignator(node.sourceNode, node.bounds)
 
         currentNodes.push(...node.children)
     }
