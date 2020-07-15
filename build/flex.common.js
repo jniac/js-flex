@@ -1,5 +1,5 @@
-// js-flex
-// ES2020 - Build with rollup - 2020/07/13 15:32:45
+// js-flex 1.0.0
+// ES2020 - Build with rollup - 2020/07/15 11:03:05
 
 'use strict';
 
@@ -12,9 +12,9 @@ const defaultValues = {
     // size: 'fit',
     size: 10,
 
-    gutter: 10,
-    paddingStart: 20,
-    paddingEnd: 20,
+    gutter: 0,
+    paddingStart: 0,
+    paddingEnd: 0,
 
     order: 0,
 
@@ -339,7 +339,7 @@ const orderSorter = (A, B) => A.layout.order < B.layout.order ? -1 : 1;
 
 class ComputeNode extends Node {
 
-    constructor(originalNode, parent) {
+    constructor(sourceNode, parent) {
 
         super();
 
@@ -347,7 +347,7 @@ class ComputeNode extends Node {
         this.bounds = new Bounds();
         this.layout = new Layout();
 
-        this.originalNode = originalNode;
+        this.sourceNode = sourceNode;
         this.parent = parent;
 
         this.sizeReady = false;
@@ -518,7 +518,7 @@ class ComputeNode extends Node {
 
 const defaultParameters = {
 
-    childrenAccessor: root => root.children ?? [],
+    childrenAccessor: rootSourceNode => rootSourceNode.children ?? [],
     layoutAccessor: node => node.layout,
     boundsAssignator: (bounds, node) => node.bounds = bounds,
 };
@@ -536,7 +536,7 @@ const swap = () => {
     pendingNodes.length = 0;
 };
 
-const compute = (root, {
+const compute = (rootSourceNode, {
 
     childrenAccessor = defaultParameters.childrenAccessor,
     layoutAccessor = defaultParameters.layoutAccessor,
@@ -552,24 +552,24 @@ const compute = (root, {
 
     const nodeMap = new Map();
 
-    const wrap = (originalNode, parent) => {
+    const wrap = (sourceNode, parent) => {
 
-        const node = new ComputeNode(originalNode, parent);
+        const node = new ComputeNode(sourceNode, parent);
         currentNodes.push(node);
         pendingNodes.push(node);
-        nodeMap.set(originalNode, node);
+        nodeMap.set(sourceNode, node);
         return node
     };
 
-    const rootNode = wrap(root, null);
+    const rootNode = wrap(rootSourceNode, null);
 
     // rebuild tree
     while (currentNodes.length > 0) {
 
         const node = currentNodes.shift();
-        node.layout.assign(layoutAccessor(node.originalNode));
+        node.layout.assign(layoutAccessor(node.sourceNode));
 
-        for (const child of childrenAccessor(node.originalNode) ?? [])
+        for (const child of childrenAccessor(node.sourceNode) ?? [])
             node.children.push(wrap(child, node));
     }
 
@@ -618,12 +618,13 @@ const compute = (root, {
     if (verbose) {
 
         const dt = now() - time;
-        console.info(`[${dt.toFixed(2)}ms] ${rootNode.totalNodeCount} nodes, size iteration: ${sizeCount}`);
+        const message = `[${dt.toFixed(2)}ms] ${rootNode.totalNodeCount} nodes, size iteration: ${sizeCount}`;
+        typeof verbose === 'function' ? verbose(message) : console.info(message);
     }
 
 
 
-    // assigning bounds to originalNode
+    // assigning bounds to sourceNode
 
     currentNodes.length = 0;
     currentNodes.push(rootNode);
@@ -632,7 +633,7 @@ const compute = (root, {
 
         const node = currentNodes.shift();
 
-        boundsAssignator(node.bounds, node.originalNode);
+        boundsAssignator(node.bounds, node.sourceNode);
 
         currentNodes.push(...node.children);
     }
