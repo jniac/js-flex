@@ -6,7 +6,7 @@ import Bounds from './Bounds.js'
 
 const defaultParameters = {
 
-    childrenAccessor: root => root.children ?? [],
+    childrenAccessor: rootSourceNode => rootSourceNode.children ?? [],
     layoutAccessor: node => node.layout,
     boundsAssignator: (bounds, node) => node.bounds = bounds,
 }
@@ -24,7 +24,7 @@ const swap = () => {
     pendingNodes.length = 0
 }
 
-const compute = (root, {
+const compute = (rootSourceNode, {
 
     childrenAccessor = defaultParameters.childrenAccessor,
     layoutAccessor = defaultParameters.layoutAccessor,
@@ -40,24 +40,24 @@ const compute = (root, {
 
     const nodeMap = new Map()
 
-    const wrap = (originalNode, parent) => {
+    const wrap = (sourceNode, parent) => {
 
-        const node = new ComputeNode(originalNode, parent)
+        const node = new ComputeNode(sourceNode, parent)
         currentNodes.push(node)
         pendingNodes.push(node)
-        nodeMap.set(originalNode, node)
+        nodeMap.set(sourceNode, node)
         return node
     }
 
-    const rootNode = wrap(root, null)
+    const rootNode = wrap(rootSourceNode, null)
 
     // rebuild tree
     while (currentNodes.length > 0) {
 
         const node = currentNodes.shift()
-        node.layout.assign(layoutAccessor(node.originalNode))
+        node.layout.assign(layoutAccessor(node.sourceNode))
 
-        for (const child of childrenAccessor(node.originalNode) ?? [])
+        for (const child of childrenAccessor(node.sourceNode) ?? [])
             node.children.push(wrap(child, node))
     }
 
@@ -111,7 +111,7 @@ const compute = (root, {
 
 
 
-    // assigning bounds to originalNode
+    // assigning bounds to sourceNode
 
     currentNodes.length = 0
     currentNodes.push(rootNode)
@@ -120,7 +120,7 @@ const compute = (root, {
 
         const node = currentNodes.shift()
 
-        boundsAssignator(node.bounds, node.originalNode)
+        boundsAssignator(node.bounds, node.sourceNode)
 
         currentNodes.push(...node.children)
     }

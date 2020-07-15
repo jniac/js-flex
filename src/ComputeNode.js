@@ -8,7 +8,7 @@ const orderSorter = (A, B) => A.layout.order < B.layout.order ? -1 : 1
 
 export default class ComputeNode extends Node {
 
-    constructor(originalNode, parent) {
+    constructor(sourceNode, parent) {
 
         super()
 
@@ -16,7 +16,7 @@ export default class ComputeNode extends Node {
         this.bounds = new Bounds()
         this.layout = new Layout()
 
-        this.originalNode = originalNode
+        this.sourceNode = sourceNode
         this.parent = parent
 
         this.sizeReady = false
