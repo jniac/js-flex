@@ -1,5 +1,5 @@
 // js-flex 1.0.0
-// ES2020 - Build with rollup - 2020/07/15 16:46:23
+// ES2020 - Build with rollup - 2020/07/15 17:26:55
 
 const defaultValues = {
 
@@ -436,6 +436,10 @@ class ComputeNode extends Node {
 
                     this.relativeNodes.push(child);
                 }
+
+            } else {
+
+                this.relativeNodes.push(child);
             }
         }
 
