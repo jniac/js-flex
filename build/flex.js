@@ -1,5 +1,5 @@
 // js-flex 1.0.0
-// ES2020 - Build with rollup - 2020/07/15 11:03:05
+// ES2020 - Build with rollup - 2020/07/15 14:26:25
 
 const defaultValues = {
 
@@ -8,7 +8,7 @@ const defaultValues = {
     offset: 0,
 
     // size: 'fit',
-    size: 10,
+    size: '1w',
 
     gutter: 0,
     paddingStart: 0,
@@ -188,6 +188,10 @@ class Node {
         this.children = [];
     }
 
+    get isRoot() { return !this.parent }
+
+    get isTip() { return this.children.length === 0 }
+
     contains(child) {
 
         let node = child;
@@ -290,7 +294,7 @@ class Node {
         return this.parent?.children.indexOf(this) ?? 0
     }
 
-    * flat({ includeSelf = true, filter = null } = {}) {
+    * flat({ includeSelf = true, filter = null, progression = 'horizontal' } = {}) {
 
         const nodes = includeSelf ? [this] : [...this.children];
 
@@ -301,15 +305,52 @@ class Node {
             if (!filter || filter(node))
                 yield node;
 
-            nodes.push(...node.children);
-        }
+            if (progression === 'horizontal') {
 
-        return this
+                nodes.push(...node.children);
+
+            } else if (progression === 'vertical') {
+
+                nodes.unshift(...node.children);
+
+            } else {
+
+                throw new Error(`oups "progression" value should be "horizontal" or "vertical" (received ${progression})`)
+            }
+        }
     }
 
     query(filter) {
 
         return [...this.flat({ filter })]
+    }
+
+    find(test, { includeSelf = true } = {}) {
+
+        return rootNode.flat({ filter:test }).next().value
+    }
+
+    * deepestChildren() {
+
+        yield* this.flat({ includeSelf:false, progression:'vertical', filter:node => node.children.length === 0 });
+    }
+
+    get deepestChild() {
+
+        return this.deepestChildren().next().value
+    }
+
+    findUp(test, { includeSelf = true } = {}) {
+
+        let node = includeSelf ? this : this.parent;
+
+        while (node) {
+
+            if (test(node))
+                return node
+
+            node = node.parent;
+        }
     }
 }
 
