@@ -4,9 +4,11 @@ const chalk = require('chalk')
 const fs = require('fs-extra')
 const filesize = require('filesize')
 
+const packageJson = require('../package.json')
+
 const dateToString = (date = new Date) => `${date.getFullYear()}/${String(date.getMonth() + 1).padStart(2, '0')}/${String(date.getDate()).padStart(2, '0')} ${date.toTimeString().slice(0, 8)}`
 
-const banner = () => `// js-flex\n// ES2020 - Build with rollup - ${dateToString()}\n`
+const banner = () => `// js-flex ${packageJson.version}\n// ES2020 - Build with rollup - ${dateToString()}\n`
 
 const buildModule = async () => {
 
