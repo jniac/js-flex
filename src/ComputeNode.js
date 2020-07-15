@@ -66,6 +66,10 @@ export default class ComputeNode extends Node {
 
                     this.relativeNodes.push(child)
                 }
+
+            } else {
+
+                this.relativeNodes.push(child)
             }
         }
 
