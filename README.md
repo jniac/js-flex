@@ -14,8 +14,13 @@ npm test
 ```
 
 ## visual test
+
+### local:
 Need to serve the whole folder over http. Currently using super-quick-static:
 ```
 super-quick-static
 ```
 http://localhost:8000/test/html
+
+### online
+[here's the (github) page](https://jniac.github.io/js-flex/test/html/)
