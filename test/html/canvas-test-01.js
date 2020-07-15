@@ -1,8 +1,18 @@
 import flex from '../../src/index.js'
 
+const consoleLog = str => console.log(`%c#01 %c${str}`, 'color:#c0f', '')
+
 class MyNode extends flex.Node {
 
-    static debug = true
+    static repeat(n, layout) {
+
+        if (typeof layout === 'function')
+            return new Array(n).fill().map((v, index) => new MyNode(layout(index)))
+
+        return new Array(n).fill().map(() => new MyNode(layout))
+    }
+
+    static new(layout) { return new MyNode(layout) }
 
     constructor(layout) {
 
@@ -10,75 +20,35 @@ class MyNode extends flex.Node {
 
         this.layout = layout
     }
-
-    get bounds() { return this._bounds }
-    set bounds(value) {
-        this._bounds = value
-
-        if (MyNode.debug)
-            console.log(`i'm receiving my bounds!`)
-    }
 }
 
-const someChildren = (n, props) => new Array(n).fill(null).map(() => new MyNode(props))
-
-const root =
-new MyNode({
-    size: 'fit',
-    padding: 40,
-})
-.add(
-    // size: immediatly ready
-    // pos: computed by parent
-    new MyNode({
-        size: 100,
-    }),
-
-    // size: immediatly ready
-    // pos: computed by parent
-    new MyNode({
-        size: 200,
-        color: '#f00',
-    })
-    .add(
-        new MyNode({ size:'33.333%', color: '#f00' }),
-        new MyNode({ size:'1w', color: '#f009' }),
-        new MyNode({ size:'2w', color: '#f009' }),
+// mix of 'fit' mode
+const root = MyNode.new({ size:'fit', gutter:10, padding:10 }).add(
+    MyNode.new({ size:'fit', gutter:10, color:'#fc0' }).add(
+        MyNode.new({ size:30 }),
+        MyNode.new({ size:30 }).add(
+        ),
     ),
+    MyNode.new({ size:30 }),
+    MyNode.new({ size:30 }),
 
-    // size: wait for parent 'size' computing
-    // pos: computed by parent
-    new MyNode({
-        position: 'absolute',
-        size: '100%',
-        color: '#09f',
-    }),
-
-    // size: wait for parent 'size' computing
-    // pos: computed by parent
-    new MyNode({
-        position: 'absolute',
-        size: '50%',
-        offset: '50%',
-        align: 'center',
-    })
-    .add(
-        new MyNode({ size:'1w' }),
-        new MyNode({ size:'1w' }),
+    MyNode.new({ size:120, gutter:10, color:'#1e7' }).add(
+        MyNode.new({ size:20 }),
+        MyNode.new({ size:20 }),
+        MyNode.new({ size:'1w' }),
     ),
-
-    // size: wait for parent 'size' computing
-    // pos: computed by parent
-    new MyNode({
-        position: 'absolute',
-        size: '100%',
-        color:'#6c9',
-    })
-    // .add(...someChildren(3, { color:'#6c9', size:50 })),
-    .add(...someChildren(3, { color:'#6c9', size:"40%" })),
+    MyNode.new({ size:30 }),
+    MyNode.new({ size:120, gutter:10, color:'#39f' }).add(
+        MyNode.new({ size:20 }),
+        MyNode.new({ size:20 }),
+        MyNode.new({ size:'fit' }).add(
+            MyNode.new({ size:20 }),
+            MyNode.new({ size:20 }),
+        ),
+    ),
 )
 
-const { rootNode } = flex.compute(root, { verbose:true })
+const { rootNode } = flex.compute(root, { verbose:consoleLog })
 
 Object.assign(globalThis, { rootNode })
 
@@ -93,7 +63,8 @@ Object.assign(globalThis, { rootNode })
     document.body.append(canvas)
 
     const ctx = canvas.getContext('2d')
-    const start = { x:50, y:10 }
+    const start = { x:10, y:50 }
+    const defaultColor = '#0008'
 
     const ranges = new Set()
     const collidesWithAnExistingRange = (node, dy) => {
@@ -107,7 +78,7 @@ Object.assign(globalThis, { rootNode })
 
     for (const node of rootNode.flat()) {
 
-        ctx.fillStyle = node.layout.color ?? '#0008'
+        ctx.fillStyle = node.findUp(n => n.layout.color)?.layout.color ?? defaultColor
 
         let dy = node.depth * 50
         while (collidesWithAnExistingRange(node, dy))
@@ -118,19 +89,32 @@ Object.assign(globalThis, { rootNode })
         const x = start.x + node.bounds.position
         const y = start.y + dy
         ctx.fillRect(x, y, node.bounds.size, 2)
-    }
-}
 
-{
+        ctx.textBaseline = 'hanging'
+        ctx.font = '11px monospace'
+        ctx.textAlign = 'center'
+        const text = `#${node.id}`
+        ctx.fillText(text, x + node.bounds.size / 2, y + 5)
+    }
+
+
+
     // perf test
     MyNode.debug = false
 
     let t = -performance.now()
-    let max = 10000
+    let max = 1000
     for (let i = 0; i < max; i++)
         flex.compute(root)
     t += performance.now()
     t /= max
 
-    console.log(`[${t.toFixed(3)}ms] average time for ${max} loop`)
+    const message = `[${t.toFixed(3)}ms] average time for ${max} loop (${root.totalNodeCount} nodes)`
+    ctx.textBaseline = 'hanging'
+    ctx.textAlign = 'left'
+    ctx.font = '14px monospace'
+    ctx.fillStyle = defaultColor
+    ctx.fillText(message, 10, 10)
+
+    consoleLog(message)
 }

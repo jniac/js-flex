@@ -21,11 +21,20 @@
     <body>
         <script type="module">
             import flex from '../../src/index.js'
+            window.performanceBench = new Set()
+            window.addToPerformanceBench = callback => performanceBench.add(callback)
             Object.assign(window, { flex })
         </script>
         <script type="module" src="./canvas-test-00.js"></script>
         <script type="module" src="./canvas-test-01.js"></script>
         <script type="module" src="./canvas-test-02.js"></script>
         <script type="module" src="./canvas-test-03.js"></script>
+        <script type="module">
+            requestAnimationFrame(() => {
+
+                for (const cb of window.performanceBench)
+                    cb()
+            })
+        </script>
     </body>
 </html>

@@ -90,21 +90,24 @@ Object.assign(globalThis, { rootNode })
 
 
     // perf test
-    MyNode.debug = false
+    window.addToPerformanceBench(() => {
 
-    let t = -performance.now()
-    let max = 1000
-    for (let i = 0; i < max; i++)
-        flex.compute(root)
-    t += performance.now()
-    t /= max
+        MyNode.debug = false
 
-    const message = `[${t.toFixed(3)}ms] average time for ${max} loop (${root.totalNodeCount} nodes)`
-    ctx.textBaseline = 'hanging'
-    ctx.textAlign = 'left'
-    ctx.font = '14px monospace'
-    ctx.fillStyle = defaultColor
-    ctx.fillText(message, 10, 10)
+        let t = -performance.now()
+        let max = 1000
+        for (let i = 0; i < max; i++)
+            flex.compute(root)
+        t += performance.now()
+        t /= max
 
-    consoleLog(message)
+        const message = `[${t.toFixed(3)}ms] average time for ${max} loop (${root.totalNodeCount} nodes)`
+        ctx.textBaseline = 'hanging'
+        ctx.textAlign = 'left'
+        ctx.font = '14px monospace'
+        ctx.fillStyle = defaultColor
+        ctx.fillText(message, 10, 10)
+
+        consoleLog(message)
+    })
 }
