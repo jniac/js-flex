@@ -162,13 +162,14 @@ export default class ComputeNode extends Node {
 
             const [align, extraGutter, extraPaddingStart] = this.layout.getJustifyContentValues(freeSpace, gutterCount)
 
-            let position = this.bounds.position + paddingStart + extraPaddingStart + align * freeSpace
+            let localPosition = paddingStart + extraPaddingStart + align * freeSpace
 
             for (const child of this.nonAbsoluteNodes) {
 
-                child.bounds.position = position
+                child.bounds.localPosition = localPosition
+                child.bounds.position = this.bounds.position + localPosition
 
-                position += child.bounds.size + gutter + extraGutter
+                localPosition += child.bounds.size + gutter + extraGutter
             }
         }
 
@@ -177,9 +178,12 @@ export default class ComputeNode extends Node {
 
             for (const child of this.absoluteNodes) {
 
-                child.bounds.position = this.bounds.position
-                    + child.layout.resolveOffset(this.bounds.size)
-                    + child.layout.resolveAlign(child.bounds.size)
+                const localPosition =
+                    child.layout.resolveOffset(this.bounds.size) +
+                    child.layout.resolveAlign(child.bounds.size)
+
+                child.bounds.localPosition = localPosition
+                child.bounds.position = this.bounds.position + localPosition
             }
         }
     }
