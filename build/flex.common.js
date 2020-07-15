@@ -1,5 +1,5 @@
 // js-flex 1.0.0
-// ES2020 - Build with rollup - 2020/07/15 17:26:55
+// ES2020 - Build with rollup - 2020/07/15 22:04:58
 
 'use strict';
 
@@ -576,14 +576,51 @@ const defaultParameters = {
 
 const now = () => globalThis.performance?.now() ?? Date.now();
 
+
+
+// nodes array
+
 const currentNodes = [];
 const pendingNodes = [];
+
+const clearNodes = () => {
+
+    currentNodes.length = 0;
+    pendingNodes.length = 0;
+};
+
+const wrapNode = (sourceNode, parent) => {
+
+    const node = new ComputeNode(sourceNode, parent);
+    currentNodes.push(node);
+    pendingNodes.push(node);
+    return node
+};
+
+const buildTree = (rootSourceNode, childrenAccessor, layoutAccessor) => {
+
+    const rootNode = wrapNode(rootSourceNode, null);
+
+    // rebuild tree
+    while (currentNodes.length > 0) {
+
+        const node = currentNodes.shift();
+        node.layout.assign(layoutAccessor(node.sourceNode));
+
+        for (const child of childrenAccessor(node.sourceNode) ?? [])
+            node.children.push(wrapNode(child, node));
+    }
+
+    return rootNode
+};
 
 const swap = () => {
 
     currentNodes.push(...pendingNodes);
     pendingNodes.length = 0;
 };
+
+
 
 const compute = (rootSourceNode, {
 
@@ -594,33 +631,11 @@ const compute = (rootSourceNode, {
 
 } = {}) => {
 
-    currentNodes.length = 0;
-    pendingNodes.length = 0;
+    clearNodes();
 
     const time = now();
 
-    const nodeMap = new Map();
-
-    const wrap = (sourceNode, parent) => {
-
-        const node = new ComputeNode(sourceNode, parent);
-        currentNodes.push(node);
-        pendingNodes.push(node);
-        nodeMap.set(sourceNode, node);
-        return node
-    };
-
-    const rootNode = wrap(rootSourceNode, null);
-
-    // rebuild tree
-    while (currentNodes.length > 0) {
-
-        const node = currentNodes.shift();
-        node.layout.assign(layoutAccessor(node.sourceNode));
-
-        for (const child of childrenAccessor(node.sourceNode) ?? [])
-            node.children.push(wrap(child, node));
-    }
+    const rootNode = buildTree(rootSourceNode, childrenAccessor, layoutAccessor);
 
 
 
@@ -673,10 +688,13 @@ const compute = (rootSourceNode, {
 
 
 
-    // assigning bounds to sourceNode
+    // assigning 'bounds' to 'sourceNode'
+    // filling 'nodeMap'
 
     currentNodes.length = 0;
     currentNodes.push(rootNode);
+
+    const nodeMap = new Map();
 
     while (currentNodes.length) {
 
@@ -685,13 +703,28 @@ const compute = (rootSourceNode, {
         boundsAssignator(node.sourceNode, node.bounds);
 
         currentNodes.push(...node.children);
+        nodeMap.set(node.sourceNode, node);
     }
 
     return { nodeMap, rootNode }
 };
 
+
+
+const compute2D = (rootSourceNode, {
+
+    childrenAccessor = defaultParameters.childrenAccessor,
+    layoutAccessor = defaultParameters.layoutAccessor,
+    boundsAssignator = defaultParameters.boundsAssignator,
+    verbose = false,
+
+} = {}) => {
+};
+
+
 var index = {
     compute,
+    compute2D,
     Node,
     Layout,
     Bounds,

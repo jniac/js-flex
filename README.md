@@ -1,6 +1,6 @@
 # js-flex
 
-resolving flex model in js
+resolving "kind-of-flex" model in javascript
 
 ## start developing
 Watch changes on ./src (chokidar), build on changes (rollup), test build (mocha giveup, using custom lib).

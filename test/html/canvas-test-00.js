@@ -22,6 +22,7 @@ class MyNode extends flex.Node {
         this.layout = layout
     }
 }
+
 const root = MyNode.new({ size:600, gutter:10, padding:10 }).add(
     MyNode.new({ color:'#fc0' }).add(
         MyNode.new(),
