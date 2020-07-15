@@ -1,7 +1,7 @@
 const assert = require('assert')
 const { test, describe, it, almostEquals } = require('./testbed.js')
 
-const flex = require('../build/flex.common.js')
+const flex = require('../../build/flex.common.js')
 
 const main = ({ verbose = false } = {}) => test({ verbose }, () => {
 

@@ -8,7 +8,7 @@
   },
   "scripts": {
     "start": "node dev/index.js",
-    "test": "node test/index.js"
+    "test": "node test/cli/index.js"
   },
   "repository": {
     "type": "git",
