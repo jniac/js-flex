@@ -1,6 +1,7 @@
 import flex from '../../src/index.js'
+import testBed from './testBed.js'
 
-const consoleLog = str => console.log(`%c#00 %c${str}`, 'color:#fc0', '')
+const consoleLog = testBed.subscribe('#fc0')
 
 class MyNode extends flex.Node {
 
@@ -90,18 +91,14 @@ Object.assign(globalThis, { rootNode })
 
 
     // perf test
-    window.addToPerformanceBench(() => {
+    testBed.addToPerformanceBench(() => {
 
         MyNode.debug = false
 
-        let t = -performance.now()
-        let max = 1000
-        for (let i = 0; i < max; i++)
-            flex.compute(root)
-        t += performance.now()
-        t /= max
+        const { averageTime, totalTime, max } = testBed.bench(() => flex.compute(root), 1000)
 
-        const message = `[${t.toFixed(3)}ms] average time for ${max} loop (${root.totalNodeCount} nodes)`
+        const message = `[${averageTime.toFixed(3)}ms] average time for ${max} loop (${root.totalNodeCount} nodes, ${totalTime.toFixed(1)}ms)`
+
         ctx.textBaseline = 'hanging'
         ctx.textAlign = 'left'
         ctx.font = '14px monospace'
