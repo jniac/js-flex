@@ -1,6 +1,6 @@
 import flex from '../../src/index.js'
 
-const consoleLog = str => console.log(`%c#03 %c${str}`, 'color:#fc0', '')
+const consoleLog = str => console.log(`%c#00 %c${str}`, 'color:#fc0', '')
 
 class MyNode extends flex.Node {
 
@@ -21,46 +21,22 @@ class MyNode extends flex.Node {
         this.layout = layout
     }
 }
-
-const nextItem = (...items) => {
-
-    let index = -1
-    const nextIndex = () => index = (index + 1) % items.length
-
-    return () => items[nextIndex()]
-}
-
-const next = {
-    childrenCount: nextItem(3, 7, 4, 3, 6, 3, 11),
-    size: nextItem('1w', '3w', '10%', '1w', '3w', '1w', '50%'),
-}
-
-const addSomeChildren = (parent, recursiveLimit = 3) => {
-
-    if (recursiveLimit > 0) {
-
-        const count = next.childrenCount()
-        for (let i = 0; i < count; i++) {
-
-            const child = MyNode.new({ size:next.size() })
-            addSomeChildren(child, recursiveLimit - 1)
-            parent.add(child)
-        }
-    }
-}
-
-const root = MyNode.new({ size:600, gutter:10, padding:10 })
-
-addSomeChildren(root, 4)
-
-root.children[1].layout.color = '#36f'
-
-for (const [index, child] of root.children[1].children.entries()) {
-    if (index % 2)
-        child.layout.color = '#3f9'
-}
-
-
+const root = MyNode.new({ size:600, gutter:10, padding:10 }).add(
+    MyNode.new({ color:'#fc0' }).add(
+        MyNode.new(),
+        MyNode.new().add(
+            MyNode.new(),
+            MyNode.new(),
+        ),
+    ),
+    MyNode.new(),
+    MyNode.new(),
+    MyNode.new({ color:'#1e7' }).add(
+        MyNode.new(),
+        MyNode.new(),
+    ),
+    MyNode.new(),
+)
 
 const { rootNode } = flex.compute(root, { verbose:consoleLog })
 
@@ -103,6 +79,12 @@ Object.assign(globalThis, { rootNode })
         const x = start.x + node.bounds.position
         const y = start.y + dy
         ctx.fillRect(x, y, node.bounds.size, 2)
+
+        ctx.textBaseline = 'hanging'
+        ctx.font = '11px monospace'
+        ctx.textAlign = 'center'
+        const text = `#${node.id}`
+        ctx.fillText(text, x + node.bounds.size / 2, y + 5)
     }
 
 
@@ -119,6 +101,7 @@ Object.assign(globalThis, { rootNode })
 
     const message = `[${t.toFixed(3)}ms] average time for ${max} loop (${root.totalNodeCount} nodes)`
     ctx.textBaseline = 'hanging'
+    ctx.textAlign = 'left'
     ctx.font = '14px monospace'
     ctx.fillStyle = defaultColor
     ctx.fillText(message, 10, 10)

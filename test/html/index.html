@@ -7,13 +7,23 @@
             html {
                 background-color: #f6f6f6;
             }
+            body {
+                display: flex;
+                flex-wrap: wrap;
+            }
             canvas {
                 background-color: #fff;
                 border: solid 1px #0003;
+                margin: 0 8px 8px 0;
             }
         </style>
     </head>
     <body>
+        <script type="module">
+            import flex from '../../src/index.js'
+            Object.assign(window, { flex })
+        </script>
+        <script type="module" src="./canvas-test-00.js"></script>
         <script type="module" src="./canvas-test-01.js"></script>
         <script type="module" src="./canvas-test-02.js"></script>
         <script type="module" src="./canvas-test-03.js"></script>
