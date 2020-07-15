@@ -8,9 +8,9 @@ const defaultValues = {
     // size: 'fit',
     size: 10,
 
-    gutter: 10,
-    paddingStart: 20,
-    paddingEnd: 20,
+    gutter: 0,
+    paddingStart: 0,
+    paddingEnd: 0,
 
     order: 0,
 

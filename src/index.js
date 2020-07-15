@@ -106,7 +106,8 @@ const compute = (rootSourceNode, {
     if (verbose) {
 
         const dt = now() - time
-        console.info(`[${dt.toFixed(2)}ms] ${rootNode.totalNodeCount} nodes, size iteration: ${sizeCount}`)
+        const message = `[${dt.toFixed(2)}ms] ${rootNode.totalNodeCount} nodes, size iteration: ${sizeCount}`
+        typeof verbose === 'function' ? verbose(message) : console.info(message)
     }
 
 
