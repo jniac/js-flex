@@ -4,6 +4,10 @@ import ComputeNode from './ComputeNode.js'
 import Layout from './Layout.js'
 import Bounds from './Bounds.js'
 
+// size iteration is about waiting on nodes depending from other nodes to be computed first
+// 3 seems the max iteration real cases can require.
+const MAX_SIZE_ITERATION = 10
+
 const defaultParameters = {
 
     childrenAccessor: rootSourceNode => rootSourceNode.children ?? [],
@@ -53,7 +57,7 @@ const buildTree = (rootSourceNode, childrenAccessor, layoutAccessor) => {
     return rootNode
 }
 
-const swap = () => {
+const swapNodes = () => {
 
     currentNodes.push(...pendingNodes)
     pendingNodes.length = 0
@@ -80,13 +84,11 @@ const compute = (rootSourceNode, {
 
     // resolving size
 
-    const MAX_ITERATION = 10
-
     let sizeCount = 0
 
-    while (sizeCount < MAX_ITERATION && pendingNodes.length > 0) {
+    while (sizeCount < MAX_SIZE_ITERATION && pendingNodes.length > 0) {
 
-        swap()
+        swapNodes()
 
         for (const node of currentNodes) {
 
@@ -99,7 +101,7 @@ const compute = (rootSourceNode, {
         sizeCount++
     }
 
-    if (sizeCount > MAX_ITERATION)
+    if (sizeCount > MAX_SIZE_ITERATION)
         console.warn(`flex computation needs too much iterations! remaining pending nodes:`, pendingNodes)
 
 
@@ -158,6 +160,12 @@ const compute2D = (rootSourceNode, {
     verbose = false,
 
 } = {}) => {
+
+    clearNodes()
+
+    const time = now()
+
+    const rootNode = buildTree(rootSourceNode, childrenAccessor, layoutAccessor)
 
     const horizontalRootNodes = []
     const verticalRootNodes = []
