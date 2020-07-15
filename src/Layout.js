@@ -6,7 +6,7 @@ const defaultValues = {
     offset: 0,
 
     // size: 'fit',
-    size: 10,
+    size: '1w',
 
     gutter: 0,
     paddingStart: 0,
