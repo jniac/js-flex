@@ -23,6 +23,8 @@ export default class ComputeNode extends Node {
 
         this.absoluteNodes = null
         this.nonAbsoluteNodes = null
+
+        this.fixedNodes = null
         this.relativeNodes = null
         this.proportionalNodes = null
 
@@ -38,8 +40,12 @@ export default class ComputeNode extends Node {
 
     computeNodeByType() {
 
+        // position type
         this.absoluteNodes = []
         this.nonAbsoluteNodes = []
+
+        // size type
+        this.fixedNodes = []
         this.relativeNodes = []
         this.proportionalNodes = []
 
@@ -62,15 +68,28 @@ export default class ComputeNode extends Node {
                     child.proportionalWeight = parseFloat(size)
                     this.proportionalNodes.push(child)
 
-                } else if (size.endsWith('%')) {
+                } else if (size.endsWith('%') || size === 'fit') {
 
                     this.relativeNodes.push(child)
+
+                } else if (/^\d$/.test(size)) {
+
+                    this.fixedNodes.push(child)
+
+                } else {
+
+                    throw new Error(`Invalid size value: "${size}"`)
                 }
+
+            } else if (typeof size === 'number') {
+
+                this.fixedNodes.push(child)
 
             } else {
 
-                this.relativeNodes.push(child)
+                throw new Error(`Invalid size value: "${size}"`)
             }
+
         }
 
         this.proportionalSizeReady = this.proportionalNodes.length === 0
@@ -79,7 +98,8 @@ export default class ComputeNode extends Node {
     computeProportionalSize() {
 
         const relativeNodesSpace = this.relativeNodes.reduce((total, node) => total + node.bounds.size, 0)
-        const freeSpace = this.bounds.size - this.getWhiteSpaceSize() - relativeNodesSpace
+        const fixedNodesSpace = this.fixedNodes.reduce((total, node) => total + node.bounds.size, 0)
+        const freeSpace = this.bounds.size - this.getWhiteSpaceSize() - relativeNodesSpace - fixedNodesSpace
 
         const totalWeight = this.proportionalNodes.reduce((total, node) => total + node.proportionalWeight, 0)
 
