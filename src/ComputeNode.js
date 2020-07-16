@@ -19,7 +19,11 @@ export default class ComputeNode extends Node {
         this.sourceNode = sourceNode
         this.parent = parent
 
-        this.sizeReady = false
+        // 'selfSizeReady' vs 'proportionalSizeReady'
+        // 'selfSizeReady' is true when bounds.size has been computed
+        // 'proportionalSizeReady' can be computed only after that 'selfSizeReady' is true
+        this.selfSizeReady = false
+        this.proportionalSizeReady = false
 
         this.absoluteChildren = null
         this.nonAbsoluteChildren = null
@@ -28,7 +32,6 @@ export default class ComputeNode extends Node {
         this.relativeChildren = null
         this.proportionalChildren = null
 
-        this.proportionalSizeReady = false
         this.proportionalWeight = NaN
     }
 
@@ -106,7 +109,7 @@ export default class ComputeNode extends Node {
         for (const child of this.proportionalChildren) {
 
             child.bounds.size = freeSpace * child.proportionalWeight / totalWeight
-            child.sizeReady = true
+            child.selfSizeReady = true
         }
 
         this.proportionalSizeReady = true
@@ -114,7 +117,7 @@ export default class ComputeNode extends Node {
 
     computeSizeIsDone() {
 
-        return this.sizeReady && this.proportionalSizeReady
+        return this.selfSizeReady && this.proportionalSizeReady
     }
 
     computeSize() {
@@ -122,7 +125,7 @@ export default class ComputeNode extends Node {
         if (!this.absoluteChildren)
             this.computeNodeByType()
 
-        if (this.sizeReady) {
+        if (this.selfSizeReady) {
             // size has been computed, but proportional children are still waiting
             this.computeProportionalSize()
             return
@@ -133,7 +136,7 @@ export default class ComputeNode extends Node {
         if (typeof size === 'number') {
 
             this.bounds.size = size
-            this.sizeReady = true
+            this.selfSizeReady = true
 
         } else if (size === 'fit') {
 
@@ -141,7 +144,7 @@ export default class ComputeNode extends Node {
 
             for (const child of this.nonAbsoluteChildren) {
 
-                if (!child.sizeReady)
+                if (!child.selfSizeReady)
                     return
 
                 space += child.bounds.size
@@ -150,11 +153,11 @@ export default class ComputeNode extends Node {
             space += this.getWhiteSpaceSize()
 
             this.bounds.size = space
-            this.sizeReady = true
+            this.selfSizeReady = true
 
         } else if (size.endsWith('%')) {
 
-            if (!this.parent?.sizeReady)
+            if (!this.parent?.selfSizeReady)
                 return
 
             const x = parseFloat(size) / 100
@@ -162,7 +165,7 @@ export default class ComputeNode extends Node {
                 ? this.parent.bounds.size
                 : this.parent.bounds.size - this.parent.getWhiteSpaceSize()
             this.bounds.size = relativeSpace * x
-            this.sizeReady = true
+            this.selfSizeReady = true
         }
     }
 
