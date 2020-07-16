@@ -2,8 +2,6 @@ import Node from './Node.js'
 import Bounds from './Bounds.js'
 import Layout from './Layout.js'
 
-let count = 0
-
 const orderSorter = (A, B) => A.layout.order < B.layout.order ? -1 : 1
 
 export default class ComputeNode extends Node {
@@ -12,7 +10,6 @@ export default class ComputeNode extends Node {
 
         super()
 
-        this.id = count++
         this.bounds = new Bounds()
         this.layout = new Layout()
 

@@ -1,9 +1,12 @@
 import Layout from './Layout.js'
 
+let count = 0
+
 export default class Node {
 
     constructor() {
 
+        this.id = count++
         this.root = this
         this.parent = null
         this.children = []
