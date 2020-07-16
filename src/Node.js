@@ -252,4 +252,25 @@ export default class Node {
             node = node.parent
         }
     }
+
+    // toGraphString:
+
+	toGraphStringLine(nodeToString = node => `#${node.id}`) {
+
+		let intro = []
+
+		for (let parent of this.parents())
+			intro.unshift(parent.next ? '│ ' : '  ')
+
+		return intro.join('') +
+			(!this.parent ? (this.next ? '┌' : '─') : (this.next ? '├' : '└')) +
+			'─' + (this.firstChild ? '┬' : '─') + '─ ' + nodeToString(this)
+	}
+
+	toGraphString(nodeToString = node => `#${node.id}`) {
+
+		return this.flatArray({ progression:'vertical' })
+			.map(node => node.toGraphStringLine(nodeToString))
+			.join('\n')
+	}
 }
