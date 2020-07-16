@@ -21,12 +21,12 @@ export default class ComputeNode extends Node {
 
         this.sizeReady = false
 
-        this.absoluteNodes = null
-        this.nonAbsoluteNodes = null
+        this.absoluteChildren = null
+        this.nonAbsoluteChildren = null
 
-        this.fixedNodes = null
-        this.relativeNodes = null
-        this.proportionalNodes = null
+        this.fixedChildren = null
+        this.relativeChildren = null
+        this.proportionalChildren = null
 
         this.proportionalSizeReady = false
         this.proportionalWeight = NaN
@@ -41,13 +41,13 @@ export default class ComputeNode extends Node {
     computeNodeByType() {
 
         // position type
-        this.absoluteNodes = []
-        this.nonAbsoluteNodes = []
+        this.absoluteChildren = []
+        this.nonAbsoluteChildren = []
 
         // size type
-        this.fixedNodes = []
-        this.relativeNodes = []
-        this.proportionalNodes = []
+        this.fixedChildren = []
+        this.relativeChildren = []
+        this.proportionalChildren = []
 
         for (const child of this.children) {
 
@@ -55,26 +55,26 @@ export default class ComputeNode extends Node {
 
             if (position === 'absolute') {
 
-                this.absoluteNodes.push(child)
+                this.absoluteChildren.push(child)
                 continue
             }
 
-            this.nonAbsoluteNodes.push(child)
+            this.nonAbsoluteChildren.push(child)
 
             if (typeof size === 'string') {
 
                 if (size.endsWith('w')) {
 
                     child.proportionalWeight = parseFloat(size)
-                    this.proportionalNodes.push(child)
+                    this.proportionalChildren.push(child)
 
                 } else if (size.endsWith('%') || size === 'fit') {
 
-                    this.relativeNodes.push(child)
+                    this.relativeChildren.push(child)
 
                 } else if (/^\d$/.test(size)) {
 
-                    this.fixedNodes.push(child)
+                    this.fixedChildren.push(child)
 
                 } else {
 
@@ -83,7 +83,7 @@ export default class ComputeNode extends Node {
 
             } else if (typeof size === 'number') {
 
-                this.fixedNodes.push(child)
+                this.fixedChildren.push(child)
 
             } else {
 
@@ -92,21 +92,21 @@ export default class ComputeNode extends Node {
 
         }
 
-        this.proportionalSizeReady = this.proportionalNodes.length === 0
+        this.proportionalSizeReady = this.proportionalChildren.length === 0
     }
 
     computeProportionalSize() {
 
-        const relativeNodesSpace = this.relativeNodes.reduce((total, node) => total + node.bounds.size, 0)
-        const fixedNodesSpace = this.fixedNodes.reduce((total, node) => total + node.bounds.size, 0)
-        const freeSpace = this.bounds.size - this.getWhiteSpaceSize() - relativeNodesSpace - fixedNodesSpace
+        const relativeChildrenSpace = this.relativeChildren.reduce((total, child) => total + child.bounds.size, 0)
+        const fixedChildrenSpace = this.fixedChildren.reduce((total, child) => total + child.bounds.size, 0)
+        const freeSpace = this.bounds.size - this.getWhiteSpaceSize() - relativeChildrenSpace - fixedChildrenSpace
 
-        const totalWeight = this.proportionalNodes.reduce((total, node) => total + node.proportionalWeight, 0)
+        const totalWeight = this.proportionalChildren.reduce((total, child) => total + child.proportionalWeight, 0)
 
-        for (const node of this.proportionalNodes) {
+        for (const child of this.proportionalChildren) {
 
-            node.bounds.size = freeSpace * node.proportionalWeight / totalWeight
-            node.sizeReady = true
+            child.bounds.size = freeSpace * child.proportionalWeight / totalWeight
+            child.sizeReady = true
         }
 
         this.proportionalSizeReady = true
@@ -119,7 +119,7 @@ export default class ComputeNode extends Node {
 
     computeSize() {
 
-        if (!this.proportionalNodes)
+        if (!this.absoluteChildren)
             this.computeNodeByType()
 
         if (this.sizeReady) {
@@ -139,12 +139,12 @@ export default class ComputeNode extends Node {
 
             let space = 0
 
-            for (const node of this.nonAbsoluteNodes) {
+            for (const child of this.nonAbsoluteChildren) {
 
-                if (!node.sizeReady)
+                if (!child.sizeReady)
                     return
 
-                space += node.bounds.size
+                space += child.bounds.size
             }
 
             space += this.getWhiteSpaceSize()
@@ -169,24 +169,24 @@ export default class ComputeNode extends Node {
     computeChildrenPosition() {
 
         {
-            // positioning non-absolute nodes
+            // positioning non-absolute children
 
-            this.nonAbsoluteNodes.sort(orderSorter)
+            this.nonAbsoluteChildren.sort(orderSorter)
 
             const { paddingStart, paddingEnd, gutter } = this.layout
 
-            const gutterCount = Math.max(0, this.nonAbsoluteNodes.length - 1)
+            const gutterCount = Math.max(0, this.nonAbsoluteChildren.length - 1)
             const freeSpace = this.bounds.size
                 - paddingStart
                 - paddingEnd
                 - gutterCount * gutter
-                - this.nonAbsoluteNodes.reduce((total, node) => total + node.bounds.size, 0)
+                - this.nonAbsoluteChildren.reduce((total, child) => total + child.bounds.size, 0)
 
             const [align, extraGutter, extraPaddingStart] = this.layout.getJustifyContentValues(freeSpace, gutterCount)
 
             let localPosition = paddingStart + extraPaddingStart + align * freeSpace
 
-            for (const child of this.nonAbsoluteNodes) {
+            for (const child of this.nonAbsoluteChildren) {
 
                 child.bounds.localPosition = localPosition
                 child.bounds.position = this.bounds.position + localPosition
@@ -196,9 +196,9 @@ export default class ComputeNode extends Node {
         }
 
         {
-            // positioning absolute nodes
+            // positioning absolute children
 
-            for (const child of this.absoluteNodes) {
+            for (const child of this.absoluteChildren) {
 
                 const localPosition =
                     child.layout.resolveOffset(this.bounds.size) +
