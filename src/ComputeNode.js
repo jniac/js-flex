@@ -137,11 +137,9 @@ export default class ComputeNode extends Node {
 
         } else if (size === 'fit') {
 
-            const nodes = this.children.filter(c => c.layout.position !== 'absolute')
-
             let space = 0
 
-            for (const node of nodes) {
+            for (const node of this.nonAbsoluteNodes) {
 
                 if (!node.sizeReady)
                     return
