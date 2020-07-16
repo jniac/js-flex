@@ -162,7 +162,12 @@ export default class Node {
         }
     }
 
-    * flat({ includeSelf = true, filter = null, progression = 'horizontal' } = {}) {
+    parentsArray() {
+
+        return [...this.parents()]
+    }
+
+    * flat({ includeSelf = true, filter = null, progression = 'vertical' } = {}) {
 
         if ((progression === 'horizontal' || progression === 'vertical') === false)
             throw new Error(`oups "progression" value should be "horizontal" or "vertical" (received ${progression})`)
@@ -192,7 +197,7 @@ export default class Node {
         return [...this.flat(options)]
     }
 
-    * flatPrune(keepChildrenDelegate, { includeSelf = true, filter = null, progression = 'horizontal' } = {}) {
+    * flatPrune(keepChildrenDelegate, { includeSelf = true, filter = null, progression = 'vertical' } = {}) {
 
         if ((progression === 'horizontal' || progression === 'vertical') === false)
             throw new Error(`oups "progression" value should be "horizontal" or "vertical" (received ${progression})`)
@@ -253,23 +258,32 @@ export default class Node {
         }
     }
 
+
+
     // toGraphString:
+    // ──┬─ "root"
+    //   ├─┬─ node
+    //   │ └─┬─ node
+    //   │   ├─── node
+    //   │   └─┬─ node
+    //   │     └─── node
+    //   ├─── node
+    //   ├─┬─ node
+    //   │ ├─┬─ node
+    //   │ │ └─── node
+    //   | └─── node
+    //   └─── node
 
 	toGraphStringLine(nodeToString = node => `#${node.id}`) {
 
-		let intro = []
-
-		for (let parent of this.parents())
-			intro.unshift(parent.next ? '│ ' : '  ')
-
-		return intro.join('') +
+		return this.parentsArray().reverse().map(parent => parent.next ? '│ ' : '  ').join('') +
 			(!this.parent ? (this.next ? '┌' : '─') : (this.next ? '├' : '└')) +
 			'─' + (this.firstChild ? '┬' : '─') + '─ ' + nodeToString(this)
 	}
 
 	toGraphString(nodeToString = node => `#${node.id}`) {
 
-		return this.flatArray({ progression:'vertical' })
+		return this.flatArray()
 			.map(node => node.toGraphStringLine(nodeToString))
 			.join('\n')
 	}
