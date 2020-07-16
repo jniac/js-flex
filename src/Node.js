@@ -9,12 +9,18 @@ export default class Node {
         this.id = count++
         this.root = this
         this.parent = null
+        this.previous = null
+        this.next = null
         this.children = []
     }
 
     get isRoot() { return !this.parent }
 
     get isTip() { return this.children.length === 0 }
+
+    get firstChild() { return this.children[0] }
+
+    get lastChild() { return this.children[this.children.length - 1] }
 
     contains(child) {
 
@@ -43,6 +49,11 @@ export default class Node {
             if (node.parent)
                 node.parent.remove(node)
 
+            if (this.children.length > 0) {
+                node.previous = this.children[this.children.length - 1]
+                this.children[this.children.length - 1].next = node
+            }
+
             this.children.push(node)
             node.root = this.root
             node.parent = this
@@ -60,6 +71,8 @@ export default class Node {
                 if (this.children[i] === node) {
 
                     node.parent = null
+                    node.previous = null
+                    node.next = null
                     node.root = node
                     this.children.splice(i, 1)
                 }
@@ -120,6 +133,9 @@ export default class Node {
 
     * flat({ includeSelf = true, filter = null, progression = 'horizontal' } = {}) {
 
+        if ((progression === 'horizontal' || progression === 'vertical') === false)
+            throw new Error(`oups "progression" value should be "horizontal" or "vertical" (received ${progression})`)
+
         const nodes = includeSelf ? [this] : [...this.children]
 
         while (nodes.length) {
@@ -136,12 +152,46 @@ export default class Node {
             } else if (progression === 'vertical') {
 
                 nodes.unshift(...node.children)
-
-            } else {
-
-                throw new Error(`oups "progression" value should be "horizontal" or "vertical" (received ${progression})`)
             }
         }
+    }
+
+    flatArray(options) {
+
+        return [...this.flat(options)]
+    }
+
+    * flatPrune(keepChildrenDelegate, { includeSelf = true, filter = null, progression = 'horizontal' } = {}) {
+
+        if ((progression === 'horizontal' || progression === 'vertical') === false)
+            throw new Error(`oups "progression" value should be "horizontal" or "vertical" (received ${progression})`)
+
+        const nodes = includeSelf ? [this] : [...this.children]
+
+        while (nodes.length) {
+
+            const node = nodes.shift()
+
+            if (!filter || filter(node))
+                yield node
+
+            if (!keepChildrenDelegate(node))
+                continue
+
+            if (progression === 'horizontal') {
+
+                nodes.push(...node.children)
+
+            } else if (progression === 'vertical') {
+
+                nodes.unshift(...node.children)
+            }
+        }
+    }
+
+    flatPruneArray(keepChildrenDelegate, options) {
+
+        return [...this.flatPrune(keepChildrenDelegate, options)]
     }
 
     query(filter) {
