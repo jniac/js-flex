@@ -22,6 +22,26 @@ export default class Node {
 
     get lastChild() { return this.children[this.children.length - 1] }
 
+    get firstTip() {
+
+        let node = this.firstChild
+
+        while(node.firstChild)
+            node = node.firstChild
+
+        return node
+    }
+
+    get lastTip() {
+
+        let node = this.lastChild
+
+        while(node.lastChild)
+            node = node.lastChild
+
+        return node
+    }
+
     contains(child) {
 
         let node = child
@@ -131,6 +151,17 @@ export default class Node {
         return this.parent?.children.indexOf(this) ?? 0
     }
 
+    * parents() {
+
+        let node = this.parent
+
+        while (node) {
+
+            yield node
+            node = node.parent
+        }
+    }
+
     * flat({ includeSelf = true, filter = null, progression = 'horizontal' } = {}) {
 
         if ((progression === 'horizontal' || progression === 'vertical') === false)
@@ -204,14 +235,9 @@ export default class Node {
         return rootNode.flat({ filter:test }).next().value
     }
 
-    * deepestChildren() {
+    * tips() {
 
         yield* this.flat({ includeSelf:false, progression:'vertical', filter:node => node.children.length === 0 })
-    }
-
-    get deepestChild() {
-
-        return this.deepestChildren().next().value
     }
 
     findUp(test, { includeSelf = true } = {}) {
