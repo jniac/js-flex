@@ -1,5 +1,5 @@
 // js-flex 1.0.0
-// ES2020 - Build with rollup - 2020/07/15 22:04:58
+// ES2020 - Build with rollup - 2020/07/17 08:41:39
 
 const defaultValues = {
 
@@ -67,14 +67,14 @@ class Layout {
 
         if (padding !== undefined) {
 
-            props.paddingStart =
-            props.paddingEnd = padding;
+            this.paddingStart =
+            this.paddingEnd = padding;
         }
 
         if (offsetAlign !== undefined) {
 
-            props.align =
-            props.offset = offsetAlign;
+            this.align =
+            this.offset = offsetAlign;
         }
 
         Object.assign(this, props);
@@ -179,18 +179,47 @@ class Layout {
 
 Object.assign(Layout.prototype, defaultValues);
 
+let count = 0;
+
 class Node {
 
     constructor() {
 
+        this.id = count++;
         this.root = this;
         this.parent = null;
+        this.previous = null;
+        this.next = null;
         this.children = [];
     }
 
     get isRoot() { return !this.parent }
 
     get isTip() { return this.children.length === 0 }
+
+    get firstChild() { return this.children[0] }
+
+    get lastChild() { return this.children[this.children.length - 1] }
+
+    get firstTip() {
+
+        let node = this.firstChild;
+
+        while(node.firstChild)
+            node = node.firstChild;
+
+        return node
+    }
+
+    get lastTip() {
+
+        let node = this.lastChild;
+
+        while(node.lastChild)
+            node = node.lastChild;
+
+        return node
+    }
 
     contains(child) {
 
@@ -219,6 +248,11 @@ class Node {
             if (node.parent)
                 node.parent.remove(node);
 
+            if (this.children.length > 0) {
+                node.previous = this.children[this.children.length - 1];
+                this.children[this.children.length - 1].next = node;
+            }
+
             this.children.push(node);
             node.root = this.root;
             node.parent = this;
@@ -236,6 +270,8 @@ class Node {
                 if (this.children[i] === node) {
 
                     node.parent = null;
+                    node.previous = null;
+                    node.next = null;
                     node.root = node;
                     this.children.splice(i, 1);
                 }
@@ -294,7 +330,26 @@ class Node {
         return this.parent?.children.indexOf(this) ?? 0
     }
 
-    * flat({ includeSelf = true, filter = null, progression = 'horizontal' } = {}) {
+    * parents() {
+
+        let node = this.parent;
+
+        while (node) {
+
+            yield node;
+            node = node.parent;
+        }
+    }
+
+    parentsArray() {
+
+        return [...this.parents()]
+    }
+
+    * flat({ includeSelf = true, filter = null, progression = 'vertical' } = {}) {
+
+        if ((progression === 'horizontal' || progression === 'vertical') === false)
+            throw new Error(`oups "progression" value should be "horizontal" or "vertical" (received ${progression})`)
 
         const nodes = includeSelf ? [this] : [...this.children];
 
@@ -312,12 +367,46 @@ class Node {
             } else if (progression === 'vertical') {
 
                 nodes.unshift(...node.children);
-
-            } else {
-
-                throw new Error(`oups "progression" value should be "horizontal" or "vertical" (received ${progression})`)
             }
         }
+    }
+
+    flatArray(options) {
+
+        return [...this.flat(options)]
+    }
+
+    * flatPrune(keepChildrenDelegate, { includeSelf = true, filter = null, progression = 'vertical' } = {}) {
+
+        if ((progression === 'horizontal' || progression === 'vertical') === false)
+            throw new Error(`oups "progression" value should be "horizontal" or "vertical" (received ${progression})`)
+
+        const nodes = includeSelf ? [this] : [...this.children];
+
+        while (nodes.length) {
+
+            const node = nodes.shift();
+
+            if (!filter || filter(node))
+                yield node;
+
+            if (!keepChildrenDelegate(node))
+                continue
+
+            if (progression === 'horizontal') {
+
+                nodes.push(...node.children);
+
+            } else if (progression === 'vertical') {
+
+                nodes.unshift(...node.children);
+            }
+        }
+    }
+
+    flatPruneArray(keepChildrenDelegate, options) {
+
+        return [...this.flatPrune(keepChildrenDelegate, options)]
     }
 
     query(filter) {
@@ -330,14 +419,9 @@ class Node {
         return rootNode.flat({ filter:test }).next().value
     }
 
-    * deepestChildren() {
+    * tips() {
 
         yield* this.flat({ includeSelf:false, progression:'vertical', filter:node => node.children.length === 0 });
-    }
-
-    get deepestChild() {
-
-        return this.deepestChildren().next().value
     }
 
     findUp(test, { includeSelf = true } = {}) {
@@ -352,6 +436,36 @@ class Node {
             node = node.parent;
         }
     }
+
+
+
+    // toGraphString:
+    // ──┬─ "root"
+    //   ├─┬─ node
+    //   │ └─┬─ node
+    //   │   ├─── node
+    //   │   └─┬─ node
+    //   │     └─── node
+    //   ├─── node
+    //   ├─┬─ node
+    //   │ ├─┬─ node
+    //   │ │ └─── node
+    //   | └─── node
+    //   └─── node
+
+	toGraphStringLine(nodeToString = node => `#${node.id}`) {
+
+		return this.parentsArray().reverse().map(parent => parent.next ? '│ ' : '  ').join('') +
+			(!this.parent ? (this.next ? '┌' : '─') : (this.next ? '├' : '└')) +
+			'─' + (this.firstChild ? '┬' : '─') + '─ ' + nodeToString(this)
+	}
+
+	toGraphString(nodeToString = node => `#${node.id}`) {
+
+		return this.flatArray()
+			.map(node => node.toGraphStringLine(nodeToString))
+			.join('\n')
+	}
 }
 
 class Bounds {
@@ -372,8 +486,6 @@ class Bounds {
     }
 }
 
-let count = 0;
-
 const orderSorter = (A, B) => A.layout.order < B.layout.order ? -1 : 1;
 
 class ComputeNode extends Node {
@@ -382,21 +494,25 @@ class ComputeNode extends Node {
 
         super();
 
-        this.id = count++;
         this.bounds = new Bounds();
         this.layout = new Layout();
 
         this.sourceNode = sourceNode;
         this.parent = parent;
 
-        this.sizeReady = false;
-
-        this.absoluteNodes = null;
-        this.nonAbsoluteNodes = null;
-        this.relativeNodes = null;
-        this.proportionalNodes = null;
-
+        // 'selfSizeReady' vs 'proportionalSizeReady'
+        // 'selfSizeReady' is true when bounds.size has been computed
+        // 'proportionalSizeReady' can be computed only after that 'selfSizeReady' is true
+        this.selfSizeReady = false;
         this.proportionalSizeReady = false;
+
+        this.absoluteChildren = null;
+        this.nonAbsoluteChildren = null;
+
+        this.fixedChildren = null;
+        this.relativeChildren = null;
+        this.proportionalChildren = null;
+
         this.proportionalWeight = NaN;
     }
 
@@ -408,10 +524,14 @@ class ComputeNode extends Node {
 
     computeNodeByType() {
 
-        this.absoluteNodes = [];
-        this.nonAbsoluteNodes = [];
-        this.relativeNodes = [];
-        this.proportionalNodes = [];
+        // position type
+        this.absoluteChildren = [];
+        this.nonAbsoluteChildren = [];
+
+        // size type
+        this.fixedChildren = [];
+        this.relativeChildren = [];
+        this.proportionalChildren = [];
 
         for (const child of this.children) {
 
@@ -419,44 +539,58 @@ class ComputeNode extends Node {
 
             if (position === 'absolute') {
 
-                this.absoluteNodes.push(child);
+                this.absoluteChildren.push(child);
                 continue
             }
 
-            this.nonAbsoluteNodes.push(child);
+            this.nonAbsoluteChildren.push(child);
 
             if (typeof size === 'string') {
 
                 if (size.endsWith('w')) {
 
                     child.proportionalWeight = parseFloat(size);
-                    this.proportionalNodes.push(child);
+                    this.proportionalChildren.push(child);
 
-                } else if (size.endsWith('%')) {
+                } else if (size.endsWith('%') || size === 'fit') {
 
-                    this.relativeNodes.push(child);
+                    this.relativeChildren.push(child);
+
+                } else if (/^\d$/.test(size)) {
+
+                    this.fixedChildren.push(child);
+
+                } else {
+
+                    throw new Error(`Invalid size value: "${size}"`)
                 }
+
+            } else if (typeof size === 'number') {
+
+                this.fixedChildren.push(child);
 
             } else {
 
-                this.relativeNodes.push(child);
+                throw new Error(`Invalid size value: "${size}"`)
             }
+
         }
 
-        this.proportionalSizeReady = this.proportionalNodes.length === 0;
+        this.proportionalSizeReady = this.proportionalChildren.length === 0;
     }
 
     computeProportionalSize() {
 
-        const relativeNodesSpace = this.relativeNodes.reduce((total, node) => total + node.bounds.size, 0);
-        const freeSpace = this.bounds.size - this.getWhiteSpaceSize() - relativeNodesSpace;
+        const relativeChildrenSpace = this.relativeChildren.reduce((total, child) => total + child.bounds.size, 0);
+        const fixedChildrenSpace = this.fixedChildren.reduce((total, child) => total + child.bounds.size, 0);
+        const freeSpace = this.bounds.size - this.getWhiteSpaceSize() - relativeChildrenSpace - fixedChildrenSpace;
 
-        const totalWeight = this.proportionalNodes.reduce((total, node) => total + node.proportionalWeight, 0);
+        const totalWeight = this.proportionalChildren.reduce((total, child) => total + child.proportionalWeight, 0);
 
-        for (const node of this.proportionalNodes) {
+        for (const child of this.proportionalChildren) {
 
-            node.bounds.size = freeSpace * node.proportionalWeight / totalWeight;
-            node.sizeReady = true;
+            child.bounds.size = freeSpace * child.proportionalWeight / totalWeight;
+            child.selfSizeReady = true;
         }
 
         this.proportionalSizeReady = true;
@@ -464,15 +598,15 @@ class ComputeNode extends Node {
 
     computeSizeIsDone() {
 
-        return this.sizeReady && this.proportionalSizeReady
+        return this.selfSizeReady && this.proportionalSizeReady
     }
 
     computeSize() {
 
-        if (!this.proportionalNodes)
+        if (!this.absoluteChildren)
             this.computeNodeByType();
 
-        if (this.sizeReady) {
+        if (this.selfSizeReady) {
             // size has been computed, but proportional children are still waiting
             this.computeProportionalSize();
             return
@@ -483,30 +617,28 @@ class ComputeNode extends Node {
         if (typeof size === 'number') {
 
             this.bounds.size = size;
-            this.sizeReady = true;
+            this.selfSizeReady = true;
 
         } else if (size === 'fit') {
 
-            const nodes = this.children.filter(c => c.layout.position !== 'absolute');
-
             let space = 0;
 
-            for (const node of nodes) {
+            for (const child of this.nonAbsoluteChildren) {
 
-                if (!node.sizeReady)
+                if (!child.selfSizeReady)
                     return
 
-                space += node.bounds.size;
+                space += child.bounds.size;
             }
 
             space += this.getWhiteSpaceSize();
 
             this.bounds.size = space;
-            this.sizeReady = true;
+            this.selfSizeReady = true;
 
         } else if (size.endsWith('%')) {
 
-            if (!this.parent?.sizeReady)
+            if (!this.parent?.selfSizeReady)
                 return
 
             const x = parseFloat(size) / 100;
@@ -514,31 +646,31 @@ class ComputeNode extends Node {
                 ? this.parent.bounds.size
                 : this.parent.bounds.size - this.parent.getWhiteSpaceSize();
             this.bounds.size = relativeSpace * x;
-            this.sizeReady = true;
+            this.selfSizeReady = true;
         }
     }
 
     computeChildrenPosition() {
 
         {
-            // positioning non-absolute nodes
+            // positioning non-absolute children
 
-            this.nonAbsoluteNodes.sort(orderSorter);
+            this.nonAbsoluteChildren.sort(orderSorter);
 
             const { paddingStart, paddingEnd, gutter } = this.layout;
 
-            const gutterCount = Math.max(0, this.nonAbsoluteNodes.length - 1);
+            const gutterCount = Math.max(0, this.nonAbsoluteChildren.length - 1);
             const freeSpace = this.bounds.size
                 - paddingStart
                 - paddingEnd
                 - gutterCount * gutter
-                - this.nonAbsoluteNodes.reduce((total, node) => total + node.bounds.size, 0);
+                - this.nonAbsoluteChildren.reduce((total, child) => total + child.bounds.size, 0);
 
             const [align, extraGutter, extraPaddingStart] = this.layout.getJustifyContentValues(freeSpace, gutterCount);
 
             let localPosition = paddingStart + extraPaddingStart + align * freeSpace;
 
-            for (const child of this.nonAbsoluteNodes) {
+            for (const child of this.nonAbsoluteChildren) {
 
                 child.bounds.localPosition = localPosition;
                 child.bounds.position = this.bounds.position + localPosition;
@@ -548,9 +680,9 @@ class ComputeNode extends Node {
         }
 
         {
-            // positioning absolute nodes
+            // positioning absolute children
 
-            for (const child of this.absoluteNodes) {
+            for (const child of this.absoluteChildren) {
 
                 const localPosition =
                     child.layout.resolveOffset(this.bounds.size) +
@@ -562,6 +694,10 @@ class ComputeNode extends Node {
         }
     }
 }
+
+// size iteration is about waiting on nodes depending from other nodes to be computed first
+// 3 seems the max iteration real cases can require.
+const MAX_SIZE_ITERATION = 10;
 
 const defaultParameters = {
 
@@ -612,7 +748,7 @@ const buildTree = (rootSourceNode, childrenAccessor, layoutAccessor) => {
     return rootNode
 };
 
-const swap = () => {
+const swapNodes = () => {
 
     currentNodes.push(...pendingNodes);
     pendingNodes.length = 0;
@@ -639,13 +775,11 @@ const compute = (rootSourceNode, {
 
     // resolving size
 
-    const MAX_ITERATION = 10;
-
     let sizeCount = 0;
 
-    while (sizeCount < MAX_ITERATION && pendingNodes.length > 0) {
+    while (sizeCount < MAX_SIZE_ITERATION && pendingNodes.length > 0) {
 
-        swap();
+        swapNodes();
 
         for (const node of currentNodes) {
 
@@ -658,7 +792,7 @@ const compute = (rootSourceNode, {
         sizeCount++;
     }
 
-    if (sizeCount > MAX_ITERATION)
+    if (sizeCount > MAX_SIZE_ITERATION)
         console.warn(`flex computation needs too much iterations! remaining pending nodes:`, pendingNodes);
 
 
@@ -717,7 +851,27 @@ const compute2D = (rootSourceNode, {
     verbose = false,
 
 } = {}) => {
+
+    clearNodes();
+
+    const time = now();
+
+    const rootNode = buildTree(rootSourceNode, childrenAccessor, layoutAccessor);
+
+    clearNodes();
+    currentNodes.push(rootNode);
+
+    while (currentNodes.length) {
+
+        const node = currentNodes.shift();
+
+        currentNodes.push(...node.children);
+    }
+
+    // TODO: hey! do the job plz!
+    throw new Error(`compute2D() is not implemented!`)
 };
+
 
 
 var index = {
