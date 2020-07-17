@@ -182,7 +182,7 @@ export default class ComputeNode extends Node {
                 - gutterCount * gutter
                 - this.nonAbsoluteChildren.reduce((total, child) => total + child.bounds.size, 0)
 
-            const [align, extraGutter, extraPaddingStart] = this.layout.getJustifyContentValues(freeSpace, gutterCount)
+            const [align, extraGutter, extraPaddingStart] = this.layout.getJustifyValues(freeSpace, gutterCount)
 
             let localPosition = paddingStart + extraPaddingStart + align * freeSpace
 

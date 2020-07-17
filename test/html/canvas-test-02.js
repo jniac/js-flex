@@ -25,7 +25,7 @@ class MyNode extends flex.Node {
     }
 }
 
-const tree = new MyNode({ padding:0, size:400, gutter:0, justifyContent:'space-between' })
+const tree = new MyNode({ padding:0, size:400, gutter:0, justify:'space-between' })
 .add(
     ...MyNode.repeat(1, { size:60 }),
     MyNode.new({ size:60 }).add(

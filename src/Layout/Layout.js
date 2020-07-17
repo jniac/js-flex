@@ -21,11 +21,11 @@ const defaultValues = {
 
     // almost identical to https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content
     // difference ? "flex-start|end" simplified to "start|end"
-    justifyContent: 'center',
-    // justifyContent: 'start',
-    // justifyContent: 'end',
-    // justifyContent: 'space-between',
-    // justifyContent: 'space-around',
+    justify: 'center',
+    // justify: 'start',
+    // justify: 'end',
+    // justify: 'space-between',
+    // justify: 'space-around',
 }
 
 const stringToNumber = string => {
@@ -92,20 +92,20 @@ export default class Layout {
      * returns
      * @return {Array} [align, extraGutter, extraPaddingStart]
      */
-    getJustifyContentValues(freeSpace, gutterCount, extra) {
+    getJustifyValues(freeSpace, gutterCount, extra) {
 
-        const { justifyContent } = this
+        const { justify } = this
 
-        if (justifyContent.endsWith('%')) {
+        if (justify.endsWith('%')) {
 
-            return [parseFloat(justifyContent) / 100, 0, 0]
+            return [parseFloat(justify) / 100, 0, 0]
         }
 
         let align = 0
         let extraGutter = 0
         let extraPaddingStart = 0
 
-        switch (justifyContent) {
+        switch (justify) {
 
             case 'start':
                 align = 0
