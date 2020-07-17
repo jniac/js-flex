@@ -1,5 +1,3 @@
-import Layout from './Layout.js'
-
 let count = 0
 
 export default class Node {
@@ -112,13 +110,6 @@ export default class Node {
     removeFromParent() {
 
         parent?.remove(this)
-
-        return this
-    }
-
-    setLayout(layoutProps) {
-
-        this.layout.assign({ layoutProps })
 
         return this
     }
