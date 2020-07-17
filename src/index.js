@@ -1,7 +1,7 @@
 
 import Node from './Node.js'
 import ComputeNode from './ComputeNode.js'
-import Layout from './Layout.js'
+import Layout from './Layout/Layout.js'
 import Bounds from './Bounds.js'
 
 // size iteration is about waiting on nodes depending from other nodes to be computed first

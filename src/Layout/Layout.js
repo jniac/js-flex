@@ -1,7 +1,12 @@
 
+import Extension2D from './Extension2D.js'
+import ExtensionShortHand from './ExtensionShortHand.js'
+
 const defaultValues = {
 
     position: 'relative',
+    direction: 'horizontal',
+
     align: 0,
     offset: 0,
 
@@ -50,30 +55,13 @@ export default class Layout {
 
     static get defaultValues() { return defaultValues }
 
-    constructor(props) {
+    constructor(props = undefined) {
 
-        this.assign(props)
+        if (props)
+            this.assign(props)
     }
 
-    assign({
-
-        padding,
-        offsetAlign,
-        ...props
-
-    } = {}) {
-
-        if (padding !== undefined) {
-
-            this.paddingStart =
-            this.paddingEnd = padding
-        }
-
-        if (offsetAlign !== undefined) {
-
-            this.align =
-            this.offset = offsetAlign
-        }
+    assign(props) {
 
         Object.assign(this, props)
 
@@ -176,3 +164,6 @@ export default class Layout {
 }
 
 Object.assign(Layout.prototype, defaultValues)
+
+Extension2D(Layout)
+ExtensionShortHand(Layout)

@@ -1,6 +1,6 @@
 import Node from './Node.js'
 import Bounds from './Bounds.js'
-import Layout from './Layout.js'
+import Layout from './Layout/Layout.js'
 
 const orderSorter = (A, B) => A.layout.order < B.layout.order ? -1 : 1
 
