@@ -167,9 +167,25 @@ const compute2D = (rootSourceNode, {
 
     const rootNode = buildTree(rootSourceNode, childrenAccessor, layoutAccessor)
 
+
+
     const horizontalRootNodes = []
     const verticalRootNodes = []
+
+    clearNodes()
+    currentNodes.push(rootNode)
+
+    while (currentNodes.length) {
+
+        const node = currentNodes.shift()
+
+        currentNodes.push(...node.children)
+    }
+
+    // TODO: hey! do the job plz!
+    throw new Error(`compute2D() is not implemented!`)
 }
+
 
 
 export default {
