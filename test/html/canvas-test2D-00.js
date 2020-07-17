@@ -1,5 +1,6 @@
 import flex from '../../src/index.js'
 import testBed from './testBed.js'
+import getDisplay from './getDisplay.js'
 
 const consoleLog = testBed.subscribe('#f09')
 
@@ -66,3 +67,5 @@ Object.assign(globalThis, { root })
 
 for (const node of root.flat({ includeSelf:false }))
     node.parent.layout.flexDirection === 'vertical' ? node.fillVertical() : node.fillHorizontal()
+
+const { canvas } = getDisplay('2D')
