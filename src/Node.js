@@ -1,10 +1,14 @@
 let count = 0
 
+const ID = Symbol('ID')
+
 export default class Node {
+
+    static get ID() { return ID }
 
     constructor() {
 
-        this.id = count++
+        this[ID] = count++
         this.root = this
         this.parent = null
         this.previous = null
@@ -265,14 +269,16 @@ export default class Node {
     //   | └─── node
     //   └─── node
 
-	toGraphStringLine(nodeToString = node => `#${node.id}`) {
+	toGraphStringLine(nodeToString = node => `#${node[ID]}`) {
 
-		return this.parentsArray().reverse().map(parent => parent.next ? '│ ' : '  ').join('') +
-			(!this.parent ? (this.next ? '┌' : '─') : (this.next ? '├' : '└')) +
-			'─' + (this.firstChild ? '┬' : '─') + '─ ' + nodeToString(this)
+        const parentString = this.parentsArray().reverse().map(parent => parent.next ? '│ ' : '  ').join('')
+        const selfString = (!this.parent ? (this.next ? '┌' : '─') : (this.next ? '├' : '└')) + '─'
+        const childrenString = (this.firstChild ? '┬' : '─') + '─'
+
+		return parentString + selfString + childrenString + ' ' + nodeToString(this)
 	}
 
-	toGraphString(nodeToString = node => `#${node.id}`) {
+	toGraphString(nodeToString = node => `#${node[ID]}`) {
 
 		return this.flatArray()
 			.map(node => node.toGraphStringLine(nodeToString))
