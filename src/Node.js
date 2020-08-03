@@ -269,7 +269,7 @@ export default class Node {
     //   | └─── node
     //   └─── node
 
-	toGraphStringLine(nodeToString = node => `#${node[ID]}`) {
+	toGraphStringLine(nodeToString = node => node.toString()) {
 
         const parentString = this.parentsArray().reverse().map(parent => parent.next ? '│ ' : '  ').join('')
         const selfString = (!this.parent ? (this.next ? '┌' : '─') : (this.next ? '├' : '└')) + '─'
@@ -278,10 +278,15 @@ export default class Node {
 		return parentString + selfString + childrenString + ' ' + nodeToString(this)
 	}
 
-	toGraphString(nodeToString = node => `#${node[ID]}`) {
+	toGraphString(nodeToString = node => node.toString()) {
 
 		return this.flatArray()
 			.map(node => node.toGraphStringLine(nodeToString))
 			.join('\n')
 	}
+
+    toString() {
+
+        return `#${this[ID]}`
+    }
 }
