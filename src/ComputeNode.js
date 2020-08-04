@@ -124,6 +124,7 @@ export default class ComputeNode extends Node {
 
         if (this.selfSizeReady) {
             // size has been computed, but proportional children are still waiting
+            // (this.proportionalSizeReady is false)
             this.computeProportionalSize()
             return
         }
