@@ -6,7 +6,7 @@ import Bounds from './Bounds.js'
 
 // size iteration is about waiting on nodes depending from other nodes to be computed first
 // 3 seems the max iteration real cases can require.
-const MAX_SIZE_ITERATION = 10
+const MAX_SIZE_ITERATION = 8
 
 const defaultParameters = {
 
@@ -102,7 +102,7 @@ const compute = (rootSourceNode, {
         sizeIteration++
     }
 
-    if (sizeIteration > MAX_SIZE_ITERATION)
+    if (sizeIteration >= MAX_SIZE_ITERATION)
         console.warn(`flex computation needs too much iterations! remaining pending nodes:`, pendingNodes)
 
 
@@ -184,7 +184,7 @@ const solution1 = ({ rootNode }) => {
         sizeIteration++
     }
 
-    if (sizeIteration > MAX_SIZE_ITERATION)
+    if (sizeIteration >= MAX_SIZE_ITERATION)
         console.warn(`flex computation needs too much iterations! remaining pending nodes:`, pendingNodes)
 
 
