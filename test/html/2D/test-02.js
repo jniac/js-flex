@@ -36,7 +36,7 @@ scope.blue = root.query(c => c.layout.color === 'blue')[0]
 
 const draw = () => {
 
-    const { rootNode } = flex.compute2D(root, { verbose:consoleLog })
+    const { rootNode } = flex.compute2D(root)
     Object.assign(scope, { rootNode })
     // console.log(rootNode.toGraphString(n => `${n.toString()} ${n.layout.direction}`))
 
@@ -84,3 +84,16 @@ const loop = () => {
 }
 
 loop()
+
+testBed.addToPerformanceBench(() => {
+
+    MyNode.debug = false
+
+    const { averageTime, totalTime, max } = testBed.bench(() => flex.compute(root), 1000)
+
+    const message = `[${averageTime.toFixed(3)}ms] average time for ${max} loop (${root.totalNodeCount} nodes, ${totalTime.toFixed(1)}ms)`
+
+    const defaultColor = '#0008'
+
+    consoleLog(message)
+})
