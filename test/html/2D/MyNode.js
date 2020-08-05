@@ -21,8 +21,7 @@ export default class MyNode extends flex.Node {
 
         this.layout = {}
 
-        if (layout)
-            this.setLayout(layout)
+        this.setLayout({ width:'fill', height:'fill', ...layout})
     }
 
     setLayout(layout) {
