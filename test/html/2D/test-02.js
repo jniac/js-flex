@@ -15,16 +15,21 @@ const root = MyNode.vertical({ width:500, height:200, gutter:4, padding:10, alig
         MyNode.horizontal({ width:'2w', height:'100%', color:'blue', order:-1, gutter:4, padding:10 }).add(
             MyNode.vertical({ width:'fill', height:'fill' }),
             MyNode.vertical({ width:'fill', height:'fill' }),
-            MyNode.vertical({ width:'fill', height:'fill' }),
+            MyNode.vertical({ width:'fill', height:'fill', color:'transparent', gutter:4 }).add(
+                MyNode.new({ color:'blue' }),
+                MyNode.new({ color:'blue' }),
+                MyNode.new({ color:'blue' }),
+                MyNode.new({ color:'blue' }),
+            ),
         ),
     ),
 )
 
-console.log(root.toGraphString(n => `${n.toString()} ${n.layout.direction}`))
+console.log(root.toGraphString(n => `${n.toString()} ${n.layout.direction ?? '(horizontal)'}`))
 
 Object.assign(globalThis, { root })
 
-const { canvas, scope } = getDisplay('alignSelf|items')
+const { canvas, scope } = getDisplay('nested, alignSelf|Items, "fill"')
 const ctx = canvas.getContext('2d')
 
 scope.blue = root.query(c => c.layout.color === 'blue')[0]
@@ -33,7 +38,7 @@ const draw = () => {
 
     const { rootNode } = flex.compute2D(root, { verbose:consoleLog })
     Object.assign(scope, { rootNode })
-    console.log(rootNode.toGraphString(n => `${n.toString()} ${n.layout.direction}`))
+    // console.log(rootNode.toGraphString(n => `${n.toString()} ${n.layout.direction}`))
 
 
     const start = { x:50, y:50 }
@@ -63,7 +68,14 @@ const loop = () => {
         node.layout.alignSelf = `${((Math.cos(time * .8) * .5 + .5) * 100).toFixed(1)}%`
     }
 
-    // requestAnimationFrame(loop)
+    {
+        // blue animation for fun
+        const [node] = root.query(n => n.layout.color === 'blue')
+        node.layout.width = `${((-Math.cos(time * .8 * 4) * .5 + .5) * 2 + 2).toFixed(3)}w`
+
+    }
+
+    requestAnimationFrame(loop)
 
     draw()
 

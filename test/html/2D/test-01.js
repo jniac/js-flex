@@ -18,7 +18,7 @@ const { rootNode } = flex.compute2D(root, { verbose:consoleLog })
 Object.assign(globalThis, { rootNode })
 
 {
-    const { canvas } = getDisplay('2D')
+    const { canvas } = getDisplay('simple')
     const ctx = canvas.getContext('2d')
 
     const start = { x:50, y:50 }
