@@ -59,6 +59,7 @@ const buildTree = (rootSourceNode, childrenAccessor, layoutAccessor) => {
 
 const swapNodes = () => {
 
+    currentNodes.length = 0
     currentNodes.push(...pendingNodes)
     pendingNodes.length = 0
 }
