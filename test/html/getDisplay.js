@@ -1,5 +1,7 @@
 import html from './html.js'
 
+let count = 0
+
 export default (name, { width = 600, height = 300 } = {}) => {
 
     const element = html`
@@ -11,8 +13,12 @@ export default (name, { width = 600, height = 300 } = {}) => {
 
     document.body.append(element)
 
+    const id = count++
     const canvas = element.querySelector('canvas')
     const ctx = canvas.getContext('2d')
+    const scope = {}
 
-    return { canvas, ctx }
+    Object.assign(globalThis, { [`test${id}`]:scope })
+
+    return { canvas, ctx, scope }
 }
