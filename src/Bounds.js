@@ -11,7 +11,7 @@ export default class Bounds {
         this.normal = null
     }
 
-    ensure2D() {
+    ensureNormal() {
 
         if (!this.normal)
             this.normal = new Bounds()

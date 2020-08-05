@@ -9,7 +9,7 @@ const setOneSize = (node, horizontal, value) => {
 
     } else {
 
-        node.bounds.ensure2D().normal.size = value
+        node.bounds.ensureNormal().normal.size = value
         node.selfVerticalSizeReady = true
     }
 }
