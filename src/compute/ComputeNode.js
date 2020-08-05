@@ -2,12 +2,8 @@ import Node from '../Node.js'
 import Bounds from '../Bounds.js'
 import Layout from '../Layout/Layout.js'
 
-import {
-    getWhiteSpaceSize,
-    getWhiteSpaceSize2D,
-    computeSize2D,
-} from './functions.js'
-
+import size from './size.js'
+import size2D from './size2D.js'
 import childrenPosition from './childrenPosition.js'
 import childrenPosition2D from './childrenPosition2D.js'
 
@@ -98,23 +94,6 @@ export default class ComputeNode extends Node {
         this.proportionalSizeReady = this.proportionalChildren.length === 0
     }
 
-    computeProportionalSize() {
-
-        const relativeChildrenSpace = this.relativeChildren.reduce((total, child) => total + child.bounds.size, 0)
-        const fixedChildrenSpace = this.fixedChildren.reduce((total, child) => total + child.bounds.size, 0)
-        const freeSpace = this.bounds.size - getWhiteSpaceSize(this) - relativeChildrenSpace - fixedChildrenSpace
-
-        const totalWeight = this.proportionalChildren.reduce((total, child) => total + child.proportionalWeight, 0)
-
-        for (const child of this.proportionalChildren) {
-
-            child.bounds.size = freeSpace * child.proportionalWeight / totalWeight
-            child.selfSizeReady = true
-        }
-
-        this.proportionalSizeReady = true
-    }
-
     computeSizeIsDone() {
 
         return this.selfSizeReady && this.proportionalSizeReady
@@ -122,52 +101,7 @@ export default class ComputeNode extends Node {
 
     computeSize() {
 
-        if (!this.absoluteChildren)
-            this.computeNodeByType()
-
-        if (this.selfSizeReady) {
-            // size has been computed, but proportional children are still waiting
-            // (this.proportionalSizeReady is false)
-            this.computeProportionalSize()
-            return
-        }
-
-        const { size } = this.layout
-
-        if (typeof size === 'number') {
-
-            this.bounds.size = size
-            this.selfSizeReady = true
-
-        } else if (size === 'fit') {
-
-            let space = 0
-
-            for (const child of this.nonAbsoluteChildren) {
-
-                if (!child.selfSizeReady)
-                    return
-
-                space += child.bounds.size
-            }
-
-            space += getWhiteSpaceSize(this)
-
-            this.bounds.size = space
-            this.selfSizeReady = true
-
-        } else if (size.endsWith('%')) {
-
-            if (!this.parent?.selfSizeReady)
-                return
-
-            const x = parseFloat(size) / 100
-            const relativeSpace = this.layout.position === 'absolute'
-                ? this.parent.bounds.size
-                : this.parent.bounds.size - getWhiteSpaceSize(this.parent)
-            this.bounds.size = relativeSpace * x
-            this.selfSizeReady = true
-        }
+        size(this)
     }
 
     computeChildrenPosition() {
@@ -177,7 +111,7 @@ export default class ComputeNode extends Node {
 
     computeSize2D() {
 
-        computeSize2D(this)
+        size2D(this)
     }
 
     computeChildrenPosition2D() {
