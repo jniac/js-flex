@@ -12,10 +12,10 @@ const root = MyNode.vertical({ width:500, height:200, gutter:4, padding:10, alig
     MyNode.horizontal({ width:'70%', height:'3w', color:'red', alignSelf:'100%', gutter:4, padding:10 }).add(
         MyNode.vertical({ width:'1w', height:'100%' }),
         MyNode.vertical({ width:'1w', height:'100%' }),
-        MyNode.horizontal({ width:'2w', height:'100%', color:'blue', order:-1 }).add(
-            // MyNode.vertical(),
-            // MyNode.vertical(),
-            // MyNode.vertical(),
+        MyNode.horizontal({ width:'2w', height:'100%', color:'blue', order:-1, gutter:4, padding:10 }).add(
+            MyNode.vertical({ width:'fill', height:'fill' }),
+            MyNode.vertical({ width:'fill', height:'fill' }),
+            MyNode.vertical({ width:'fill', height:'fill' }),
         ),
     ),
 )

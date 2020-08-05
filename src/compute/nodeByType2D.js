@@ -1,3 +1,5 @@
+import getNodeLayoutSize2D from './getNodeLayoutSize2D.js'
+
 export default node => {
 
     const { isHorizontal:horizontal } = node.layout
@@ -14,7 +16,7 @@ export default node => {
     for (const child of node.children) {
 
         const { position } = child.layout
-        const { size } = horizontal ? child.layout : child.layout.normal
+        const size = getNodeLayoutSize2D(child, horizontal)
 
         if (position === 'absolute') {
 

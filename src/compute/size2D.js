@@ -1,5 +1,6 @@
 import { getWhiteSpaceSize2D } from './functions.js'
 import nodeByType2D from './nodeByType2D.js'
+import getNodeLayoutSize2D from './getNodeLayoutSize2D.js'
 
 const getBounds = (node, horizontal) => horizontal ? node.bounds : node.bounds.normal
 
@@ -44,7 +45,7 @@ const computeProportionalSize2D = node => {
 
 const computeOneSize2D = (node, horizontal) => {
 
-    const size = horizontal ? node.layout.size : node.layout.normal.size
+    const size = getNodeLayoutSize2D(node, horizontal)
 
     if (typeof size === 'number') {
 
