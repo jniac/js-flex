@@ -11,9 +11,9 @@ const computeNonAbsoluteChildren = node => {
         - gutterCount * gutter
         - node.nonAbsoluteChildren.reduce((total, child) => total + child.bounds.size, 0)
 
-    const [align, extraGutter, extraPaddingStart] = node.layout.getJustifyValues(freeSpace, gutterCount)
+    const [freeOffset, extraGutter, extraPaddingStart] = node.layout.getJustifyValues(freeSpace, gutterCount)
 
-    let localPosition = paddingStart + extraPaddingStart + align * freeSpace
+    let localPosition = paddingStart + extraPaddingStart + freeOffset * freeSpace
 
     for (const child of node.nonAbsoluteChildren) {
 

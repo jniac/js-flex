@@ -92,7 +92,7 @@ export default class Layout {
 
     /**
      * returns
-     * @return {Array} [align, extraGutter, extraPaddingStart]
+     * @return {Array} [freeOffset, extraGutter, extraPaddingStart]
      */
     getJustifyValues(freeSpace, gutterCount, extra) {
 
@@ -103,30 +103,30 @@ export default class Layout {
             return [parseFloat(justify) / 100, 0, 0]
         }
 
-        let align = 0
+        let freeOffset = 0
         let extraGutter = 0
         let extraPaddingStart = 0
 
         switch (justify) {
 
             case 'start':
-                align = 0
+                freeOffset = 0
                 break
 
             default:
             case 'center':
-                align = .5
+                freeOffset = .5
                 break
 
             case 'end':
-                align = 1
+                freeOffset = 1
                 break
 
             case 'space-between':
 
                 if (gutterCount === 0) {
 
-                    align = .5
+                    freeOffset = .5
 
                 } else {
 
@@ -138,7 +138,7 @@ export default class Layout {
 
                 if (gutterCount === 0) {
 
-                    align = .5
+                    freeOffset = .5
 
                 } else {
 
@@ -151,7 +151,7 @@ export default class Layout {
 
                 if (gutterCount === 0) {
 
-                    align = .5
+                    freeOffset = .5
 
                 } else {
 
@@ -161,7 +161,7 @@ export default class Layout {
                 break
         }
 
-        return [align, extraGutter, extraPaddingStart]
+        return [freeOffset, extraGutter, extraPaddingStart]
     }
 }
 

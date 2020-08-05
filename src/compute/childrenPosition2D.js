@@ -17,9 +17,9 @@ const computeNonAbsoluteRegularPosition = node => {
         - gutterCount * gutter
         - node.nonAbsoluteChildren.reduce((total, child) => total + getBounds(child, horizontal).size, 0)
 
-    const [offset, extraGutter, extraPaddingStart] = getJustifyValues(justify, freeSpace, gutterCount)
+    const [freeOffset, extraGutter, extraPaddingStart] = getJustifyValues(justify, freeSpace, gutterCount)
 
-    let localPosition = paddingStart + extraPaddingStart + offset * freeSpace
+    let localPosition = paddingStart + extraPaddingStart + freeOffset * freeSpace
 
     for (const child of node.nonAbsoluteChildren) {
 
@@ -44,9 +44,9 @@ const computeNonAbsoluteOppositePosition = node => {
             - paddingEnd
             - getBounds(child, !horizontal).size
 
-        const [offset, , extraPaddingStart] = getJustifyValues(justifyNormal, freeSpace, 0)
+        const [freeOffset, , extraPaddingStart] = getJustifyValues(justifyNormal, freeSpace, 0)
 
-        const localPosition = paddingStart + extraPaddingStart + offset * freeSpace
+        const localPosition = paddingStart + extraPaddingStart + freeOffset * freeSpace
 
         const childBounds = getBounds(child, !horizontal)
         childBounds.localPosition = localPosition
