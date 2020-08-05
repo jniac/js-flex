@@ -163,7 +163,21 @@ const compute = (rootSourceNode, {
 
 
 
-const solution1 = ({ rootNode }) => {
+
+const compute2D = (rootSourceNode, {
+
+    childrenAccessor = defaultParameters.childrenAccessor,
+    layoutAccessor = defaultParameters.layoutAccessor,
+    boundsAssignator = defaultParameters.boundsAssignator,
+    verbose = false,
+
+} = {}) => {
+
+    clearNodes()
+
+    const time = now()
+
+    const rootNode = buildTree(rootSourceNode, childrenAccessor, layoutAccessor)
 
     // resolving size
 
@@ -203,69 +217,27 @@ const solution1 = ({ rootNode }) => {
         currentNodes.push(...node.children)
     }
 
-    return { rootNode }
-}
-
-const compute2D = (rootSourceNode, {
-
-    childrenAccessor = defaultParameters.childrenAccessor,
-    layoutAccessor = defaultParameters.layoutAccessor,
-    boundsAssignator = defaultParameters.boundsAssignator,
-    verbose = false,
-
-} = {}) => {
-
-    clearNodes()
-
-    const time = now()
-
-    const rootNode = buildTree(rootSourceNode, childrenAccessor, layoutAccessor)
-
-    return solution1({ rootNode })
 
 
+    // assigning 'bounds' to 'sourceNode'
+    // filling 'nodeMap'
 
-    const rootNodes = {
-        horizontal: [],
-        vertical: [],
-    }
-
-    clearNodes()
-
-    let currentDirection = rootNode.layout.direction
-    rootNodes[currentDirection].push(rootNode)
-
+    currentNodes.length = 0
     currentNodes.push(rootNode)
 
-    while (currentNodes.length > 0) {
+    const nodeMap = new Map()
 
-        while (currentNodes.length > 0) {
+    while (currentNodes.length) {
 
-            const node = currentNodes.shift()
+        const node = currentNodes.shift()
 
-            if (node.layout.direction === currentDirection) {
+        boundsAssignator(node.sourceNode, node.bounds)
 
-                currentNodes.push(...node.children)
-
-            } else {
-
-                rootNodes[node.layout.direction].push(node)
-                pendingNodes.push(node)
-            }
-        }
-
-        currentDirection = currentDirection === 'horizontal' ? 'vertical' : 'horizontal'
-
-        swapNodes()
+        currentNodes.push(...node.children)
+        nodeMap.set(node.sourceNode, node)
     }
 
-    console.log(rootNodes.horizontal.join(' '))
-    console.log(rootNodes.vertical.join(' '))
-
-    Object.assign(globalThis, { rootNode })
-
-    // TODO: hey! do the job plz!
-    throw new Error(`compute2D() is not implemented!`)
+    return { nodeMap, rootNode }
 }
 
 
