@@ -121,6 +121,8 @@ const compute = (rootSourceNode, {
         currentNodes.push(...node.children)
     }
 
+
+
     if (verbose) {
 
         const dt = now() - time
@@ -216,6 +218,15 @@ const compute2D = (rootSourceNode, {
         node.computeChildrenPosition2D()
 
         currentNodes.push(...node.children)
+    }
+
+
+
+    if (verbose) {
+
+        const dt = now() - time
+        const message = `[${dt.toFixed(2)}ms] ${rootNode.totalNodeCount} nodes, size iteration: ${sizeIteration}`
+        typeof verbose === 'function' ? verbose(message) : console.info(message)
     }
 
 
