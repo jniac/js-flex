@@ -1,6 +1,7 @@
 import { getWhiteSpaceSize } from './functions.js'
+import nodeByType from './nodeByType.js'
 
-const computeProportionalSize = node => {
+const proportionalSize = node => {
 
     const relativeChildrenSpace = node.relativeChildren.reduce((total, child) => total + child.bounds.size, 0)
     const fixedChildrenSpace = node.fixedChildren.reduce((total, child) => total + child.bounds.size, 0)
@@ -17,17 +18,15 @@ const computeProportionalSize = node => {
     node.proportionalSizeReady = true
 }
 
-
-
 export default node => {
 
     if (!node.absoluteChildren)
-        node.computeNodeByType()
+        nodeByType(node)
 
     if (node.selfSizeReady) {
         // size has been computed, but proportional children are still waiting
         // (node.proportionalSizeReady is false)
-        computeProportionalSize(node)
+        proportionalSize(node)
         return
     }
 

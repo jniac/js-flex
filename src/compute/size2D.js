@@ -1,6 +1,14 @@
 import { getWhiteSpaceSize2D } from './functions.js'
+import nodeByType2D from './nodeByType2D.js'
 
-const setOneSize = (node, horizontal, value) => {
+const getBounds = (node, horizontal) => horizontal ? node.bounds : node.bounds.normal
+
+const isDirectionSizeReady = (node, horizontal) => !!node && (horizontal
+    ? node.selfHorizontalSizeReady
+    : node.selfVerticalSizeReady
+)
+
+const setBoundsSize = (node, horizontal, value) => {
 
     if (horizontal) {
 
@@ -14,13 +22,34 @@ const setOneSize = (node, horizontal, value) => {
     }
 }
 
-const computeOneSize2D = (node, horizontal) => {
+const computeProportionalSize2D = node => {
+
+    const { isHorizontal:horizontal } = node.layout
+
+    const relativeChildrenSpace = node.relativeChildren.reduce((total, child) => total + child.bounds.size, 0)
+    const fixedChildrenSpace = node.fixedChildren.reduce((total, child) => total + child.bounds.size, 0)
+    const freeSpace = getBounds(node, horizontal).size - getWhiteSpaceSize2D(node, horizontal) - relativeChildrenSpace - fixedChildrenSpace
+
+    const totalWeight = node.proportionalChildren.reduce((total, child) => total + child.proportionalWeight, 0)
+
+    for (const child of node.proportionalChildren) {
+
+        setBoundsSize(child, horizontal, freeSpace * child.proportionalWeight / totalWeight)
+    }
+
+    node.proportionalSizeReady = true
+}
+
+const computeOneSize2D = (node, horizontal, debug) => {
 
     const size = horizontal ? node.layout.size : node.layout.normal.size
 
+    if (debug)
+        console.log({ size, horizontal })
+
     if (typeof size === 'number') {
 
-        setOneSize(node, horizontal, size)
+        setBoundsSize(node, horizontal, size)
 
     } else if (size === 'fit') {
 
@@ -28,7 +57,7 @@ const computeOneSize2D = (node, horizontal) => {
 
         for (const child of node.nonAbsoluteChildren) {
 
-            if (!child.selfHorizontalSizeReady)
+            if (!isDirectionSizeReady(child, horizontal))
                 return
 
             space += child.bounds.getSize2D(horizontal)
@@ -36,11 +65,11 @@ const computeOneSize2D = (node, horizontal) => {
 
         space += getWhiteSpaceSize2D(node, horizontal)
 
-        setOneSize(node, horizontal, space)
+        setBoundsSize(node, horizontal, space)
 
     } else if (size.endsWith('%')) {
 
-        if (!node.parent?.selfHorizontalSizeReady)
+        if (!isDirectionSizeReady(node.parent, horizontal))
             return
 
         const x = parseFloat(size) / 100
@@ -48,19 +77,21 @@ const computeOneSize2D = (node, horizontal) => {
             ? node.parent.bounds.getSize2D(horizontal)
             : node.parent.bounds.getSize2D(horizontal) - getWhiteSpaceSize2D(node.parent, horizontal)
 
-        setOneSize(node, horizontal, relativeSpace * x)
+        setBoundsSize(node, horizontal, relativeSpace * x)
     }
 }
 
 export default node => {
 
-    if (!node.absoluteChildren)
-        node.computeNodeByType()
+    node.bounds.ensureNormal()
 
-    if (node.selfSizeReady) {
+    if (!node.absoluteChildren)
+        nodeByType2D(node)
+
+    if (isDirectionSizeReady(node, node.layout.isHorizontal)) {
         // size has been computed, but proportional children are still waiting
         // (node.proportionalSizeReady is false)
-        // node.computeProportionalSize()
+        computeProportionalSize2D(node)
         return
     }
 

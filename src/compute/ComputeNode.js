@@ -37,63 +37,6 @@ export default class ComputeNode extends Node {
         this.proportionalWeight = NaN
     }
 
-    computeNodeByType() {
-
-        // position type
-        this.absoluteChildren = []
-        this.nonAbsoluteChildren = []
-
-        // size type
-        this.fixedChildren = []
-        this.relativeChildren = []
-        this.proportionalChildren = []
-
-        for (const child of this.children) {
-
-            const { position, size } = child.layout
-
-            if (position === 'absolute') {
-
-                this.absoluteChildren.push(child)
-                continue
-            }
-
-            this.nonAbsoluteChildren.push(child)
-
-            if (typeof size === 'string') {
-
-                if (size.endsWith('w')) {
-
-                    child.proportionalWeight = parseFloat(size)
-                    this.proportionalChildren.push(child)
-
-                } else if (size.endsWith('%') || size === 'fit' || size === 'fill') {
-
-                    this.relativeChildren.push(child)
-
-                } else if (/^\d$/.test(size)) {
-
-                    this.fixedChildren.push(child)
-
-                } else {
-
-                    throw new Error(`Invalid size value: "${size}"`)
-                }
-
-            } else if (typeof size === 'number') {
-
-                this.fixedChildren.push(child)
-
-            } else {
-
-                throw new Error(`Invalid size value: "${size}"`)
-            }
-
-        }
-
-        this.proportionalSizeReady = this.proportionalChildren.length === 0
-    }
-
     computeSizeIsDone() {
 
         return this.selfSizeReady && this.proportionalSizeReady
