@@ -9,10 +9,14 @@ const root = MyNode.vertical({ width:500, height:200, gutter:4, padding:10, alig
     MyNode.vertical({ width:'40%', height:'1w' }),
     MyNode.vertical({ width:'50%', height:'1w' }),
     MyNode.vertical({ width:'60%', height:'1w' }),
-    MyNode.vertical({ width:'70%', height:'3w', color:'red', alignSelf:'100%', padding:10 }).add(
-        MyNode.vertical({ width:'1w', height:'100%', color:'blue' }),
+    MyNode.horizontal({ width:'70%', height:'3w', color:'red', alignSelf:'100%', gutter:4, padding:10 }).add(
         MyNode.vertical({ width:'1w', height:'100%' }),
         MyNode.vertical({ width:'1w', height:'100%' }),
+        MyNode.horizontal({ width:'2w', height:'100%', color:'blue', order:-1 }).add(
+            // MyNode.vertical(),
+            // MyNode.vertical(),
+            // MyNode.vertical(),
+        ),
     ),
 )
 
@@ -29,6 +33,8 @@ const draw = () => {
 
     const { rootNode } = flex.compute2D(root, { verbose:consoleLog })
     Object.assign(scope, { rootNode })
+    console.log(rootNode.toGraphString(n => `${n.toString()} ${n.layout.direction}`))
+
 
     const start = { x:50, y:50 }
     const defaultColor = '#0008'
@@ -56,7 +62,6 @@ const loop = () => {
         const [node] = root.query(n => n.layout.color === 'red')
         node.layout.alignSelf = `${((Math.cos(time * .8) * .5 + .5) * 100).toFixed(1)}%`
     }
-
 
     // requestAnimationFrame(loop)
 
