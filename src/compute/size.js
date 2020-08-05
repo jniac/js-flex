@@ -1,5 +1,6 @@
 import { getWhiteSpaceSize } from './functions.js'
 import nodeByType from './nodeByType.js'
+import getNodeLayoutSize from './getNodeLayoutSize.js'
 
 const proportionalSize = node => {
 
@@ -30,7 +31,7 @@ export default node => {
         return
     }
 
-    const { size } = node.layout
+    const size = getNodeLayoutSize(node)
 
     if (typeof size === 'number') {
 
