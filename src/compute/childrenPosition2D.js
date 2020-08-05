@@ -33,7 +33,7 @@ const computeNonAbsoluteRegularPosition = node => {
 
 const computeNonAbsoluteOppositePosition = node => {
 
-    const { justifyNormal, isHorizontal:horizontal } = node.layout
+    const { alignItems, isHorizontal:horizontal } = node.layout
     const { paddingStart, paddingEnd } = !horizontal ? node.layout : node.layout.normal
     const nodeBounds = getBounds(node, !horizontal)
 
@@ -44,7 +44,9 @@ const computeNonAbsoluteOppositePosition = node => {
             - paddingEnd
             - getBounds(child, !horizontal).size
 
-        const [freeOffset, , extraPaddingStart] = getJustifyValues(justifyNormal, freeSpace, 0)
+        const { alignSelf } = child.layout
+
+        const [freeOffset, , extraPaddingStart] = getJustifyValues(alignSelf ?? alignItems, freeSpace, 0)
 
         const localPosition = paddingStart + extraPaddingStart + freeOffset * freeSpace
 

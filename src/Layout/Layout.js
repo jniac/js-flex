@@ -27,7 +27,7 @@ const defaultValues = {
     // justify: 'space-between',
     // justify: 'space-around',
 
-    justifyNormal: 'center',
+    alignItems: 'center',
 }
 
 const stringToNumber = string => {

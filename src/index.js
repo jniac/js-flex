@@ -221,8 +221,6 @@ const compute2D = (rootSourceNode, {
 
     const rootNode = buildTree(rootSourceNode, childrenAccessor, layoutAccessor)
 
-    console.log(rootNode.toGraphString(n => `${n.toString()} ${n.layout.direction}`))
-
     return solution1({ rootNode })
 
 
