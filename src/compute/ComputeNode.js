@@ -1,15 +1,15 @@
-import Node from './Node.js'
-import Bounds from './Bounds.js'
-import Layout from './Layout/Layout.js'
+import Node from '../Node.js'
+import Bounds from '../Bounds.js'
+import Layout from '../Layout/Layout.js'
 
 import {
     getWhiteSpaceSize,
     getWhiteSpaceSize2D,
     computeSize2D,
-} from './computeFunctions.js'
+} from './functions.js'
 
-import computeChildrenPosition from './computeChildrenPosition.js'
-import computeChildrenPosition2D from './computeChildrenPosition2D.js'
+import childrenPosition from './childrenPosition.js'
+import childrenPosition2D from './childrenPosition2D.js'
 
 const orderSorter = (A, B) => A.layout.order < B.layout.order ? -1 : 1
 
@@ -71,7 +71,7 @@ export default class ComputeNode extends Node {
                     child.proportionalWeight = parseFloat(size)
                     this.proportionalChildren.push(child)
 
-                } else if (size.endsWith('%') || size === 'fit') {
+                } else if (size.endsWith('%') || size === 'fit' || size === 'fill') {
 
                     this.relativeChildren.push(child)
 
@@ -169,10 +169,10 @@ export default class ComputeNode extends Node {
             this.selfSizeReady = true
         }
     }
-    
+
     computeChildrenPosition() {
 
-        computeChildrenPosition(this)
+        childrenPosition(this)
     }
 
     computeSize2D() {
@@ -182,6 +182,6 @@ export default class ComputeNode extends Node {
 
     computeChildrenPosition2D() {
 
-        computeChildrenPosition2D(this)
+        childrenPosition2D(this)
     }
 }

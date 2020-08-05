@@ -1,4 +1,4 @@
-import getJustifyValues from './Layout/getJustifyValues.js'
+import getJustifyValues from '../Layout/getJustifyValues.js'
 
 const orderSorter = (A, B) => A.layout.order < B.layout.order ? -1 : 1
 

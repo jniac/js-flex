@@ -1,6 +1,6 @@
 
 import Node from './Node.js'
-import ComputeNode from './ComputeNode.js'
+import ComputeNode from './compute/ComputeNode.js'
 import Layout from './Layout/Layout.js'
 import Bounds from './Bounds.js'
 
