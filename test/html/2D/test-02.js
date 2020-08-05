@@ -29,7 +29,7 @@ console.log(root.toGraphString(n => `${n.toString()} ${n.layout.direction ?? '(h
 
 Object.assign(globalThis, { root })
 
-const { canvas, scope } = getDisplay('nested, alignSelf|Items, "fill"')
+const { canvas, scope } = getDisplay('nested, alignItems|Self, "fill"')
 const ctx = canvas.getContext('2d')
 
 scope.blue = root.query(c => c.layout.color === 'blue')[0]
