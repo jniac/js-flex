@@ -7,8 +7,8 @@ const defaultValues = {
     position: 'relative',
     direction: 'horizontal',
 
-    align: 0,
-    offset: 0,
+    absoluteAlign: 0,
+    absoluteOffset: 0,
 
     // size: 'fit',
     size: '1w',
@@ -70,24 +70,24 @@ export default class Layout {
         return this
     }
 
-    resolveOffset(parentBoundsSize) {
+    resolveAbsoluteOffset(parentBoundsSize) {
 
-        const { offset } = this
+        const { absoluteOffset } = this
 
-        if (typeof offset === 'number')
-            return offset
+        if (typeof absoluteOffset === 'number')
+            return absoluteOffset
 
-        return stringToNumber(offset) * parentBoundsSize
+        return stringToNumber(absoluteOffset) * parentBoundsSize
     }
 
-    resolveAlign(selfBoundsSize) {
+    resolveAbsoluteAlign(selfBoundsSize) {
 
-        const { align } = this
+        const { absoluteAlign } = this
 
-        if (typeof align === 'number')
-            return align
+        if (typeof absoluteAlign === 'number')
+            return absoluteAlign
 
-        return -stringToNumber(align) * selfBoundsSize
+        return -stringToNumber(absoluteAlign) * selfBoundsSize
     }
 
     /**

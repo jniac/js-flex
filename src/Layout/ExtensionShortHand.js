@@ -17,12 +17,12 @@ export default Layout => {
             },
         },
 
-        offsetAlign: {
+        absoluteOffsetAlign: {
 
             set(value) {
 
-                this.align =
-                this.offset = value
+                this.absoluteAlign =
+                this.absoluteOffset = value
             },
         },
     })

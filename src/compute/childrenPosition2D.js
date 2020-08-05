@@ -59,8 +59,8 @@ const computeAbsoluteChildren2D = node => {
     for (const child of node.absoluteChildren) {
 
         const localPosition =
-            child.layout.resolveOffset(node.bounds.size) +
-            child.layout.resolveAlign(child.bounds.size)
+            child.layout.resolveAbsoluteOffset(node.bounds.size) +
+            child.layout.resolveAbsoluteAlign(child.bounds.size)
 
         child.bounds.localPosition = localPosition
         child.bounds.position = node.bounds.position + localPosition

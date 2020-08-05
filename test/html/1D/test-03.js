@@ -8,7 +8,7 @@ const tree = new MyNode({ padding:0, size:400, gutter:0, justify:'space-between'
         MyNode.new({ size:10 }).add(
             MyNode.new({ size:10 }).add(
                 MyNode.new({ size:10 }).add(
-                    MyNode.new({ position:'absolute', size:200, gutter:4, padding:4 / 2, align:'center' }).add(
+                    MyNode.new({ position:'absolute', size:200, gutter:4, padding:4 / 2, absoluteAlign:'center' }).add(
                         ...MyNode.repeat(5, { size:'1w' }),
                         MyNode.new({ position:'absolute', size:200, gutter:4 }).add(
                             ...MyNode.repeat(13, i => ({ size:i % 2 ? '3w' : '1w' })),
@@ -20,8 +20,8 @@ const tree = new MyNode({ padding:0, size:400, gutter:0, justify:'space-between'
     ),
     ...MyNode.repeat(3, { size:60 }),
     MyNode.new({ color:'red', size:60 }).add(
-        MyNode.new({ color:'red', position:'absolute', size:'50%', offset:'center', align:'center' }).add(
-            MyNode.new({ color:'red', position:'absolute', size:'50%', offset:'center', align:'center' }).add(
+        MyNode.new({ color:'red', position:'absolute', size:'50%', absoluteOffset:'center', absoluteAlign:'center' }).add(
+            MyNode.new({ color:'red', position:'absolute', size:'50%', absoluteOffset:'center', absoluteAlign:'center' }).add(
                 MyNode.new({ name:'red-grand-child', color:'red', size:200, padding:0 }).add(
                     ...MyNode.repeat(9, { color:'red', size:'1w' }),
                 )
@@ -29,8 +29,8 @@ const tree = new MyNode({ padding:0, size:400, gutter:0, justify:'space-between'
         ),
     ),
     MyNode.new({ color:'#f90', size:60 }).add(
-        MyNode.new({ name:'the-yellow-one', color:'#f90', position:'absolute', size:'20%', align:'center' }),
-        MyNode.new({ name:'the-yellow-two', color:'#f90', position:'absolute', size:'50%', offsetAlign:'100%' }),
+        MyNode.new({ name:'the-yellow-one', color:'#f90', position:'absolute', size:'20%', absoluteAlign:'center' }),
+        MyNode.new({ name:'the-yellow-two', color:'#f90', position:'absolute', size:'50%', absoluteOffsetAlign:'100%' }),
     ),
 )
 
@@ -82,12 +82,12 @@ const loop = () => {
 
     {
         const [node] = tree.query(n => n.layout.name === 'the-yellow-one')
-        node.layout.offset = `${((Math.sin(time * 2) * .5 + .5) * 100).toFixed(1)}%`
+        node.layout.absoluteOffset = `${((Math.sin(time * 2) * .5 + .5) * 100).toFixed(1)}%`
     }
 
     {
         const [node] = tree.query(n => n.layout.name === 'the-yellow-two')
-        node.layout.offsetAlign = `${((Math.sin(time * 4) * .5 + .5) * 100).toFixed(1)}%`
+        node.layout.absoluteOffsetAlign = `${((Math.sin(time * 4) * .5 + .5) * 100).toFixed(1)}%`
     }
 
     {
