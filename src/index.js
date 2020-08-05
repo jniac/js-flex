@@ -112,7 +112,7 @@ const compute = (rootSourceNode, {
     currentNodes.length = 0
     currentNodes.push(rootNode)
 
-    while (currentNodes.length) {
+    while (currentNodes.length > 0) {
 
         const node = currentNodes.shift()
 
@@ -138,7 +138,7 @@ const compute = (rootSourceNode, {
 
     const nodeMap = new Map()
 
-    while (currentNodes.length) {
+    while (currentNodes.length > 0) {
 
         const node = currentNodes.shift()
 
@@ -208,7 +208,7 @@ const compute2D = (rootSourceNode, {
     currentNodes.length = 0
     currentNodes.push(rootNode)
 
-    while (currentNodes.length) {
+    while (currentNodes.length > 0) {
 
         const node = currentNodes.shift()
 
@@ -227,7 +227,7 @@ const compute2D = (rootSourceNode, {
 
     const nodeMap = new Map()
 
-    while (currentNodes.length) {
+    while (currentNodes.length > 0) {
 
         const node = currentNodes.shift()
 
