@@ -102,8 +102,8 @@ const compute = (rootSourceNode, {
         sizeIteration++
     }
 
-    if (sizeIteration >= MAX_SIZE_ITERATION)
-        console.warn(`flex computation needs too much iterations! remaining pending nodes:`, pendingNodes)
+    if (sizeIteration === MAX_SIZE_ITERATION)
+        console.warn(`flex computation needs too much iterations! remaining pending nodes: ${pendingNodes.join(', ')}`)
 
 
 
@@ -191,15 +191,16 @@ const compute2D = (rootSourceNode, {
 
             node.computeSize2D()
 
-            if (node.computeSizeIsDone() === false)
+            if (node.computeSizeIsDone() === false) {
                 pendingNodes.push(node)
+            }
         }
 
         sizeIteration++
     }
 
-    if (sizeIteration >= MAX_SIZE_ITERATION)
-        console.warn(`flex computation needs too much iterations! remaining pending nodes:`, pendingNodes)
+    if (sizeIteration === MAX_SIZE_ITERATION)
+        console.warn(`flex computation needs too much iterations! remaining pending nodes: ${pendingNodes.join(', ')}`)
 
 
 
