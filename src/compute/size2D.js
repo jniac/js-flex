@@ -20,6 +20,8 @@ const setBoundsSize = (node, horizontal, value) => {
         node.bounds.ensureNormal().normal.size = value
         node.selfVerticalSizeReady = true
     }
+
+    node.selfSizeReady = node.selfHorizontalSizeReady && node.selfVerticalSizeReady
 }
 
 const computeProportionalSize2D = node => {
@@ -40,12 +42,9 @@ const computeProportionalSize2D = node => {
     node.proportionalSizeReady = true
 }
 
-const computeOneSize2D = (node, horizontal, debug) => {
+const computeOneSize2D = (node, horizontal) => {
 
     const size = horizontal ? node.layout.size : node.layout.normal.size
-
-    if (debug)
-        console.log({ size, horizontal })
 
     if (typeof size === 'number') {
 
@@ -92,7 +91,6 @@ export default node => {
         // size has been computed, but proportional children are still waiting
         // (node.proportionalSizeReady is false)
         computeProportionalSize2D(node)
-        return
     }
 
     if (!node.selfHorizontalSizeReady)
@@ -100,6 +98,4 @@ export default node => {
 
     if (!node.selfVerticalSizeReady)
         computeOneSize2D(node, false)
-
-    node.selfSizeReady = node.selfHorizontalSizeReady && node.selfVerticalSizeReady
 }
