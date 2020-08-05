@@ -1,67 +1,34 @@
-import flex from '../../src/index.js'
-import testBed from './testBed.js'
+import flex from '../../../src/index.js'
+import testBed from '../testBed.js'
+import MyNode from './MyNode.js'
 
-const consoleLog = testBed.subscribe('#f06')
+const consoleLog = testBed.subscribe('#0cf')
 
-class MyNode extends flex.Node {
+// mix of 'fit' mode
+const root = MyNode.new({ size:'fit', gutter:10, padding:10 }).add(
+    MyNode.new({ size:'fit', gutter:10, color:'#fc0' }).add(
+        MyNode.new({ size:30 }),
+        MyNode.new({ size:30 }).add(
+        ),
+    ),
+    MyNode.new({ size:30 }),
+    MyNode.new({ size:30 }),
 
-    static repeat(n, layout) {
-
-        if (typeof layout === 'function')
-            return new Array(n).fill().map((v, index) => new MyNode(layout(index)))
-
-        return new Array(n).fill().map(() => new MyNode(layout))
-    }
-
-    static new(layout) { return new MyNode(layout) }
-
-    constructor(layout) {
-
-        super()
-
-        this.layout = layout
-    }
-}
-
-const nextItem = (...items) => {
-
-    let index = -1
-    const nextIndex = () => index = (index + 1) % items.length
-
-    return () => items[nextIndex()]
-}
-
-const next = {
-    childrenCount: nextItem(3, 7, 4, 3, 6, 3, 11),
-    size: nextItem('1w', '3w', '10%', '1w', '3w', '1w', '50%'),
-}
-
-const addSomeChildren = (parent, recursiveLimit = 3) => {
-
-    if (recursiveLimit > 0) {
-
-        const count = next.childrenCount()
-        for (let i = 0; i < count; i++) {
-
-            const child = MyNode.new({ size:next.size() })
-            addSomeChildren(child, recursiveLimit - 1)
-            parent.add(child)
-        }
-    }
-}
-
-const root = MyNode.new({ size:600, gutter:10, padding:10 })
-
-addSomeChildren(root, 4)
-
-root.children[1].layout.color = '#36f'
-
-for (const [index, child] of root.children[1].children.entries()) {
-    if (index % 2)
-        child.layout.color = '#3f9'
-}
-
-
+    MyNode.new({ size:120, gutter:10, color:'#1e7' }).add(
+        MyNode.new({ size:20 }),
+        MyNode.new({ size:20 }),
+        MyNode.new({ size:'1w' }),
+    ),
+    MyNode.new({ size:30 }),
+    MyNode.new({ size:120, gutter:10, color:'#39f' }).add(
+        MyNode.new({ size:20 }),
+        MyNode.new({ size:20 }),
+        MyNode.new({ size:'fit' }).add(
+            MyNode.new({ size:20 }),
+            MyNode.new({ size:20 }),
+        ),
+    ),
+)
 
 const { rootNode } = flex.compute(root, { verbose:consoleLog })
 
@@ -78,7 +45,7 @@ Object.assign(globalThis, { rootNode })
     document.body.append(canvas)
 
     const ctx = canvas.getContext('2d')
-    const start = { x:0, y:50 }
+    const start = { x:10, y:50 }
     const defaultColor = '#0008'
 
     const ranges = new Set()
@@ -104,6 +71,12 @@ Object.assign(globalThis, { rootNode })
         const x = start.x + node.bounds.position
         const y = start.y + dy
         ctx.fillRect(x, y, node.bounds.size, 2)
+
+        ctx.textBaseline = 'hanging'
+        ctx.font = '11px monospace'
+        ctx.textAlign = 'center'
+        const text = `#${node.id}`
+        ctx.fillText(text, x + node.bounds.size / 2, y + 5)
     }
 
 

@@ -51,7 +51,7 @@ const buildTree = (rootSourceNode, childrenAccessor, layoutAccessor) => {
         node.layout.assign(layoutAccessor(node.sourceNode))
 
         for (const child of childrenAccessor(node.sourceNode) ?? [])
-            node.children.push(wrapNode(child, node))
+            node.add(wrapNode(child, node))
     }
 
     return rootNode
@@ -84,9 +84,9 @@ const compute = (rootSourceNode, {
 
     // resolving size
 
-    let sizeCount = 0
+    let sizeIteration = 0
 
-    while (sizeCount < MAX_SIZE_ITERATION && pendingNodes.length > 0) {
+    while (sizeIteration < MAX_SIZE_ITERATION && pendingNodes.length > 0) {
 
         swapNodes()
 
@@ -98,10 +98,10 @@ const compute = (rootSourceNode, {
                 pendingNodes.push(node)
         }
 
-        sizeCount++
+        sizeIteration++
     }
 
-    if (sizeCount > MAX_SIZE_ITERATION)
+    if (sizeIteration > MAX_SIZE_ITERATION)
         console.warn(`flex computation needs too much iterations! remaining pending nodes:`, pendingNodes)
 
 
@@ -123,7 +123,7 @@ const compute = (rootSourceNode, {
     if (verbose) {
 
         const dt = now() - time
-        const message = `[${dt.toFixed(2)}ms] ${rootNode.totalNodeCount} nodes, size iteration: ${sizeCount}`
+        const message = `[${dt.toFixed(2)}ms] ${rootNode.totalNodeCount} nodes, size iteration: ${sizeIteration}`
         typeof verbose === 'function' ? verbose(message) : console.info(message)
     }
 
@@ -152,6 +152,59 @@ const compute = (rootSourceNode, {
 
 
 
+
+
+
+
+
+
+
+
+
+
+const solution1 = ({ rootNode }) => {
+
+    // resolving size
+
+    let sizeIteration = 0
+
+    while (sizeIteration < MAX_SIZE_ITERATION && pendingNodes.length > 0) {
+
+        swapNodes()
+
+        for (const node of currentNodes) {
+
+            node.computeSize2D()
+
+            if (node.computeSizeIsDone() === false)
+                pendingNodes.push(node)
+        }
+
+        sizeIteration++
+    }
+
+    if (sizeIteration > MAX_SIZE_ITERATION)
+        console.warn(`flex computation needs too much iterations! remaining pending nodes:`, pendingNodes)
+
+
+
+    // resolving position
+
+    currentNodes.length = 0
+    currentNodes.push(rootNode)
+
+    while (currentNodes.length) {
+
+        const node = currentNodes.shift()
+
+        node.computeChildrenPosition2D()
+
+        currentNodes.push(...node.children)
+    }
+
+    return { rootNode }
+}
+
 const compute2D = (rootSourceNode, {
 
     childrenAccessor = defaultParameters.childrenAccessor,
@@ -167,20 +220,50 @@ const compute2D = (rootSourceNode, {
 
     const rootNode = buildTree(rootSourceNode, childrenAccessor, layoutAccessor)
 
+    console.log(rootNode.toGraphString(n => `${n.toString()} ${n.layout.direction}`))
+
+    return solution1({ rootNode })
 
 
-    const horizontalRootNodes = []
-    const verticalRootNodes = []
+
+    const rootNodes = {
+        horizontal: [],
+        vertical: [],
+    }
 
     clearNodes()
+
+    let currentDirection = rootNode.layout.direction
+    rootNodes[currentDirection].push(rootNode)
+
     currentNodes.push(rootNode)
 
-    while (currentNodes.length) {
+    while (currentNodes.length > 0) {
 
-        const node = currentNodes.shift()
+        while (currentNodes.length > 0) {
 
-        currentNodes.push(...node.children)
+            const node = currentNodes.shift()
+
+            if (node.layout.direction === currentDirection) {
+
+                currentNodes.push(...node.children)
+
+            } else {
+
+                rootNodes[node.layout.direction].push(node)
+                pendingNodes.push(node)
+            }
+        }
+
+        currentDirection = currentDirection === 'horizontal' ? 'vertical' : 'horizontal'
+
+        swapNodes()
     }
+
+    console.log(rootNodes.horizontal.join(' '))
+    console.log(rootNodes.vertical.join(' '))
+
+    Object.assign(globalThis, { rootNode })
 
     // TODO: hey! do the job plz!
     throw new Error(`compute2D() is not implemented!`)

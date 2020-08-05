@@ -1,44 +1,48 @@
-import flex from '../../src/index.js'
-import testBed from './testBed.js'
+import flex from '../../../src/index.js'
+import testBed from '../testBed.js'
+import MyNode from './MyNode.js'
 
-const consoleLog = testBed.subscribe('#fc0')
+const consoleLog = testBed.subscribe('#f06')
 
-class MyNode extends flex.Node {
+const nextItem = (...items) => {
 
-    static repeat(n, layout) {
+    let index = -1
+    const nextIndex = () => index = (index + 1) % items.length
 
-        if (typeof layout === 'function')
-            return new Array(n).fill().map((v, index) => new MyNode(layout(index)))
+    return () => items[nextIndex()]
+}
 
-        return new Array(n).fill().map(() => new MyNode(layout))
-    }
+const next = {
+    childrenCount: nextItem(3, 7, 4, 3, 6, 3, 11),
+    size: nextItem('1w', '3w', '10%', '1w', '3w', '1w', '50%'),
+}
 
-    static new(layout) { return new MyNode(layout) }
+const addSomeChildren = (parent, recursiveLimit = 3) => {
 
-    constructor(layout) {
+    if (recursiveLimit > 0) {
 
-        super()
+        const count = next.childrenCount()
+        for (let i = 0; i < count; i++) {
 
-        this.layout = layout
+            const child = MyNode.new({ size:next.size() })
+            addSomeChildren(child, recursiveLimit - 1)
+            parent.add(child)
+        }
     }
 }
 
-const root = MyNode.new({ size:600, gutter:10, padding:10 }).add(
-    MyNode.new({ color:'#fc0' }).add(
-        MyNode.new(),
-        MyNode.new().add(
-            MyNode.new(),
-            MyNode.new(),
-        ),
-    ),
-    MyNode.new(),
-    MyNode.new(),
-    MyNode.new({ color:'#1e7' }).add(
-        MyNode.new(),
-        MyNode.new(),
-    ),
-    MyNode.new(),
-)
+const root = MyNode.new({ size:600, gutter:10, padding:10 })
+
+addSomeChildren(root, 4)
+
+root.children[1].layout.color = '#36f'
+
+for (const [index, child] of root.children[1].children.entries()) {
+    if (index % 2)
+        child.layout.color = '#3f9'
+}
+
+
 
 const { rootNode } = flex.compute(root, { verbose:consoleLog })
 
@@ -81,12 +85,6 @@ Object.assign(globalThis, { rootNode })
         const x = start.x + node.bounds.position
         const y = start.y + dy
         ctx.fillRect(x, y, node.bounds.size, 2)
-
-        ctx.textBaseline = 'hanging'
-        ctx.font = '11px monospace'
-        ctx.textAlign = 'center'
-        const text = `#${node.id}`
-        ctx.fillText(text, x + node.bounds.size / 2, y + 5)
     }
 
 

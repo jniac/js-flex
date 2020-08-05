@@ -1,52 +1,24 @@
-import flex from '../../src/index.js'
-import testBed from './testBed.js'
+import flex from '../../../src/index.js'
+import testBed from '../testBed.js'
+import MyNode from './MyNode.js'
 
-const consoleLog = testBed.subscribe('#0cf')
+const consoleLog = testBed.subscribe('#fc0')
 
-class MyNode extends flex.Node {
-
-    static repeat(n, layout) {
-
-        if (typeof layout === 'function')
-            return new Array(n).fill().map((v, index) => new MyNode(layout(index)))
-
-        return new Array(n).fill().map(() => new MyNode(layout))
-    }
-
-    static new(layout) { return new MyNode(layout) }
-
-    constructor(layout) {
-
-        super()
-
-        this.layout = layout
-    }
-}
-
-// mix of 'fit' mode
-const root = MyNode.new({ size:'fit', gutter:10, padding:10 }).add(
-    MyNode.new({ size:'fit', gutter:10, color:'#fc0' }).add(
-        MyNode.new({ size:30 }),
-        MyNode.new({ size:30 }).add(
+const root = MyNode.new({ size:600, gutter:10, padding:10 }).add(
+    MyNode.new({ color:'#fc0' }).add(
+        MyNode.new(),
+        MyNode.new().add(
+            MyNode.new(),
+            MyNode.new(),
         ),
     ),
-    MyNode.new({ size:30 }),
-    MyNode.new({ size:30 }),
-
-    MyNode.new({ size:120, gutter:10, color:'#1e7' }).add(
-        MyNode.new({ size:20 }),
-        MyNode.new({ size:20 }),
-        MyNode.new({ size:'1w' }),
+    MyNode.new(),
+    MyNode.new(),
+    MyNode.new({ color:'#1e7' }).add(
+        MyNode.new(),
+        MyNode.new(),
     ),
-    MyNode.new({ size:30 }),
-    MyNode.new({ size:120, gutter:10, color:'#39f' }).add(
-        MyNode.new({ size:20 }),
-        MyNode.new({ size:20 }),
-        MyNode.new({ size:'fit' }).add(
-            MyNode.new({ size:20 }),
-            MyNode.new({ size:20 }),
-        ),
-    ),
+    MyNode.new(),
 )
 
 const { rootNode } = flex.compute(root, { verbose:consoleLog })
@@ -64,7 +36,7 @@ Object.assign(globalThis, { rootNode })
     document.body.append(canvas)
 
     const ctx = canvas.getContext('2d')
-    const start = { x:10, y:50 }
+    const start = { x:0, y:50 }
     const defaultColor = '#0008'
 
     const ranges = new Set()

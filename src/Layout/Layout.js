@@ -26,6 +26,8 @@ const defaultValues = {
     // justify: 'end',
     // justify: 'space-between',
     // justify: 'space-around',
+
+    justifyNormal: 'center',
 }
 
 const stringToNumber = string => {

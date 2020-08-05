@@ -2,6 +2,15 @@ import Node from './Node.js'
 import Bounds from './Bounds.js'
 import Layout from './Layout/Layout.js'
 
+import {
+    getWhiteSpaceSize,
+    getWhiteSpaceSize2D,
+    computeSize2D,
+} from './computeFunctions.js'
+
+import computeChildrenPosition from './computeChildrenPosition.js'
+import computeChildrenPosition2D from './computeChildrenPosition2D.js'
+
 const orderSorter = (A, B) => A.layout.order < B.layout.order ? -1 : 1
 
 export default class ComputeNode extends Node {
@@ -30,12 +39,6 @@ export default class ComputeNode extends Node {
         this.proportionalChildren = null
 
         this.proportionalWeight = NaN
-    }
-
-    getWhiteSpaceSize() {
-
-        const { paddingStart, paddingEnd, gutter } = this.layout
-        return paddingStart + paddingEnd + Math.max(this.children.length - 1, 0) * gutter
     }
 
     computeNodeByType() {
@@ -99,7 +102,7 @@ export default class ComputeNode extends Node {
 
         const relativeChildrenSpace = this.relativeChildren.reduce((total, child) => total + child.bounds.size, 0)
         const fixedChildrenSpace = this.fixedChildren.reduce((total, child) => total + child.bounds.size, 0)
-        const freeSpace = this.bounds.size - this.getWhiteSpaceSize() - relativeChildrenSpace - fixedChildrenSpace
+        const freeSpace = this.bounds.size - getWhiteSpaceSize(this) - relativeChildrenSpace - fixedChildrenSpace
 
         const totalWeight = this.proportionalChildren.reduce((total, child) => total + child.proportionalWeight, 0)
 
@@ -148,7 +151,7 @@ export default class ComputeNode extends Node {
                 space += child.bounds.size
             }
 
-            space += this.getWhiteSpaceSize()
+            space += getWhiteSpaceSize(this)
 
             this.bounds.size = space
             this.selfSizeReady = true
@@ -161,53 +164,24 @@ export default class ComputeNode extends Node {
             const x = parseFloat(size) / 100
             const relativeSpace = this.layout.position === 'absolute'
                 ? this.parent.bounds.size
-                : this.parent.bounds.size - this.parent.getWhiteSpaceSize()
+                : this.parent.bounds.size - getWhiteSpaceSize(this.parent)
             this.bounds.size = relativeSpace * x
             this.selfSizeReady = true
         }
     }
-
+    
     computeChildrenPosition() {
 
-        {
-            // positioning non-absolute children
+        computeChildrenPosition(this)
+    }
 
-            this.nonAbsoluteChildren.sort(orderSorter)
+    computeSize2D() {
 
-            const { paddingStart, paddingEnd, gutter } = this.layout
+        computeSize2D(this)
+    }
 
-            const gutterCount = Math.max(0, this.nonAbsoluteChildren.length - 1)
-            const freeSpace = this.bounds.size
-                - paddingStart
-                - paddingEnd
-                - gutterCount * gutter
-                - this.nonAbsoluteChildren.reduce((total, child) => total + child.bounds.size, 0)
+    computeChildrenPosition2D() {
 
-            const [align, extraGutter, extraPaddingStart] = this.layout.getJustifyValues(freeSpace, gutterCount)
-
-            let localPosition = paddingStart + extraPaddingStart + align * freeSpace
-
-            for (const child of this.nonAbsoluteChildren) {
-
-                child.bounds.localPosition = localPosition
-                child.bounds.position = this.bounds.position + localPosition
-
-                localPosition += child.bounds.size + gutter + extraGutter
-            }
-        }
-
-        {
-            // positioning absolute children
-
-            for (const child of this.absoluteChildren) {
-
-                const localPosition =
-                    child.layout.resolveOffset(this.bounds.size) +
-                    child.layout.resolveAlign(child.bounds.size)
-
-                child.bounds.localPosition = localPosition
-                child.bounds.position = this.bounds.position + localPosition
-            }
-        }
+        computeChildrenPosition2D(this)
     }
 }

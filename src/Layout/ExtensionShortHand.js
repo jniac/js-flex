@@ -9,10 +9,10 @@ export default Layout => {
                 this.paddingStart =
                 this.paddingEnd = value
 
-                if (this.normalLayout) {
+                if (this.normal) {
 
-                    this.normalLayout.paddingStart =
-                    this.normalLayout.paddingEnd = value
+                    this.normal.paddingStart =
+                    this.normal.paddingEnd = value
                 }
             },
         },

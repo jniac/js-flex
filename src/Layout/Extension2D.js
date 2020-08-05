@@ -2,12 +2,12 @@ export default Layout => {
 
     Object.assign(Layout.prototype, {
 
-        ensureNormalLayout() {
+        ensureNormal() {
 
-            if (!this.normalLayout)
-                this.normalLayout = new Layout()
+            if (!this.normal)
+                this.normal = new Layout()
 
-            return this.normalLayout
+            return this.normal
         },
     })
 
@@ -17,7 +17,7 @@ export default Layout => {
 
             get() {
 
-                return !!this.normalLayout
+                return !!this.normal
             },
         },
 
@@ -41,7 +41,7 @@ export default Layout => {
 
             get() {
 
-                return this.isHorizontal ? this.size : this.normalLayout?.size
+                return this.isHorizontal ? this.size : this.normal?.size
             },
 
             set(value) {
@@ -52,7 +52,7 @@ export default Layout => {
 
                 } else {
 
-                    this.ensureNormalLayout().size = value
+                    this.ensureNormal().size = value
                 }
             },
         },
@@ -61,14 +61,14 @@ export default Layout => {
 
             get() {
 
-                return this.isHorizontal ? this.normalLayout?.size : this.size
+                return this.isHorizontal ? this.normal?.size : this.size
             },
 
             set(value) {
 
                 if (this.isHorizontal) {
 
-                    this.ensureNormalLayout().size = value
+                    this.ensureNormal().size = value
 
                 } else {
 
@@ -107,12 +107,12 @@ export default Layout => {
 
             get() {
 
-                return this.normalLayout?.paddingStart
+                return this.normal?.paddingStart
             },
 
             set(value) {
 
-                this.ensureNormalLayout().paddingStart = value
+                this.ensureNormal().paddingStart = value
             },
         },
 
@@ -120,12 +120,12 @@ export default Layout => {
 
             get() {
 
-                return this.normalLayout?.paddingEnd
+                return this.normal?.paddingEnd
             },
 
             set(value) {
 
-                this.ensureNormalLayout().paddingEnd = value
+                this.ensureNormal().paddingEnd = value
             },
         },
     })

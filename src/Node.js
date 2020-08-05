@@ -1,6 +1,6 @@
 let count = 0
 
-const ID = Symbol('ID')
+const ID = Symbol('Node.ID')
 
 export default class Node {
 
@@ -15,6 +15,8 @@ export default class Node {
         this.next = null
         this.children = []
     }
+
+    get id() { return this[ID] }
 
     get isRoot() { return !this.parent }
 
