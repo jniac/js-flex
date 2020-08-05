@@ -37,6 +37,19 @@ export default Layout => {
             },
         },
 
+        normalSize: {
+
+            get() {
+
+                return this.normal?.size ?? 0
+            },
+
+            set(value) {
+
+                this.ensureNormal().size = value
+            },
+        },
+
         width: {
 
             get() {
