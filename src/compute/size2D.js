@@ -29,8 +29,8 @@ const computeProportionalSize2D = node => {
 
     const { isHorizontal:horizontal } = node.layout
 
-    const relativeChildrenSpace = node.relativeChildren.reduce((total, child) => total + child.bounds.size, 0)
-    const fixedChildrenSpace = node.fixedChildren.reduce((total, child) => total + child.bounds.size, 0)
+    const relativeChildrenSpace = node.relativeChildren.reduce((total, child) => total + getBounds(child, horizontal).size, 0)
+    const fixedChildrenSpace = node.fixedChildren.reduce((total, child) => total + getBounds(child, horizontal).size, 0)
     const freeSpace = getBounds(node, horizontal).size - getWhiteSpaceSize2D(node, horizontal) - relativeChildrenSpace - fixedChildrenSpace
 
     const totalWeight = node.proportionalChildren.reduce((total, child) => total + child.proportionalWeight, 0)
