@@ -29,35 +29,27 @@ console.log(root.toGraphString(n => `${n.toString()} ${n.layout.direction ?? '(h
 
 Object.assign(globalThis, { root })
 
-const { canvas, scope } = getDisplay('nested, alignItems|Self, "fill"')
-const ctx = canvas.getContext('2d')
+const display = getDisplay('nested, alignItems|Self, "fill"')
 
-scope.blue = root.query(c => c.layout.color === 'blue')[0]
+display.scope.blue = root.query(c => c.layout.color === 'blue')[0]
 
 const draw = () => {
 
     const { rootNode } = flex.compute2D(root)
-    Object.assign(scope, { rootNode })
+    Object.assign(display.scope, { rootNode })
     // console.log(rootNode.toGraphString(n => `${n.toString()} ${n.layout.direction}`))
 
-
-    const start = { x:50, y:50 }
-    const defaultColor = '#0008'
-
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    display.clear()
 
     for (const node of rootNode.flat()) {
 
-        ctx.strokeStyle = node.findUp(n => n.layout.color)?.layout.color ?? defaultColor
-
-        const x = start.x + node.bounds.x
-        const y = start.y + node.bounds.y
-        ctx.strokeRect(x, y, node.bounds.width, node.bounds.height)
+        const strokeColor = node.findUp(n => n.layout.color)?.layout.color ?? display.defaultColor
+        const { x, y, width, height } = node.bounds
+        display.drawRect(x, y, width, height, { strokeColor })
     }
 }
 
 
-let frame = 0, time = 0
 const loop = () => {
 
     {
@@ -83,7 +75,28 @@ const loop = () => {
     frame++
 }
 
-loop()
+const update = ({ frame, time }) => {
+
+    {
+        // alignItems animation
+        root.layout.alignItems = `${((-Math.cos(time * .2) * .5 + .5) * 100).toFixed(1)}%`
+
+        const [node] = root.query(n => n.layout.color === 'red')
+        node.layout.alignSelf = `${((Math.cos(time * .8) * .5 + .5) * 100).toFixed(1)}%`
+    }
+
+    {
+        // blue animation for fun
+        const [node] = root.query(n => n.layout.color === 'blue')
+        node.layout.width = `${((-Math.cos(time * .8 * 4) * .5 + .5) * 2 + 2).toFixed(3)}w`
+
+    }
+
+    draw()
+}
+
+display.onStart(draw)
+display.onUpdate(update)
 
 testBed.addToPerformanceBench(() => {
 

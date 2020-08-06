@@ -23,8 +23,18 @@ div {
     box-sizing: border-box;
 }
 
-div.test-display h2 {
+div.test-display header {
     position: absolute;
     top: 0;
     padding: 8px;
+    color: #335;
+}
+div.test-display header h3 {
+    font-size: 8px;
+    line-height: 1.2em;
+    opacity: .3;
+}
+div.test-display header h2 {
+    font-size: 14px;
+    line-height: 1.2em;
 }
