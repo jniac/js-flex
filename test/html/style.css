@@ -12,7 +12,6 @@ body {
 canvas {
     background-color: #fff;
     border: solid 1px #0003;
-    margin: 0 8px 8px 0;
 }
 
 * {
@@ -23,7 +22,11 @@ div {
     box-sizing: border-box;
 }
 
-div.test-display header {
+div.display {
+    margin: 0 8px 8px 0;
+}
+
+div.display header {
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -32,7 +35,7 @@ div.test-display header {
     padding: 8px;
     color: #335;
 }
-div.test-display header h3 {
+div.display header h3 {
     font-size: 8px;
     line-height: 1.2em;
     padding: 2px 4px;
@@ -41,7 +44,19 @@ div.test-display header h3 {
     opacity: .85;
     color: black;
 }
-div.test-display header h2 {
+div.display header h2 {
     font-size: 14px;
     line-height: 1.2em;
+}
+
+div.display footer {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    bottom: 0;
+    padding: 8px;
+    color: #335;
+    font-size: 10px;
+    opacity: .5;
 }

@@ -11,12 +11,13 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
     const fullHeight = height * pixelRatio
 
     const element = html`
-        <div class="test-display">
+        <div class="display">
             <canvas width="${fullWidth}" height="${fullHeight}" style="width:${width}px; height:${height}px;"></canvas>
             <header>
                 <h3 style="background-color: ${color};">${name}</h3>
                 <h2>${description}</h2>
             </header>
+            <footer></footer>
         </div>
     `
 
@@ -96,6 +97,13 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
 
     const log = message => console.log(`%c${name}%c ${message}`, `color: ${color}`, '')
 
+    const addMessageToFooter = message => {
+
+        element.querySelector('footer').append(html`
+            <h4>${message}</h4>
+        `)
+    }
+
     return {
         canvas,
         ctx,
@@ -107,5 +115,6 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
         onUpdate,
         clearOnUpdate,
         log,
+        addMessageToFooter,
     }
 }

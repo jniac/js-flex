@@ -40,9 +40,8 @@ const root = MyNode.new({ width:500, height:200, spacing:10 })
     ),
 )
 
-Object.assign(globalThis, { root })
-
 const display = getDisplay('"fit"', { color:'#0cc' })
+Object.assign(display.scope, { root })
 
 const draw = (verbose = true) => {
 
@@ -76,4 +75,5 @@ testBed.addToPerformanceBench(() => {
     const message = `[${averageTime.toFixed(3)}ms] average time for ${max} loop (${root.totalNodeCount} nodes, ${totalTime.toFixed(1)}ms)`
 
     display.log(message)
+    display.addMessageToFooter(message)
 })

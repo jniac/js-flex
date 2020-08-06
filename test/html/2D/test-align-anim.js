@@ -103,4 +103,5 @@ testBed.addToPerformanceBench(() => {
     const message = `[${averageTime.toFixed(3)}ms] average time for ${max} loop (${root.totalNodeCount} nodes, ${totalTime.toFixed(1)}ms)`
 
     display.log(message)
+    display.addMessageToFooter(message)
 })
