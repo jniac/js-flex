@@ -34,7 +34,7 @@ display.scope.blue = root.query(c => c.layout.color === 'blue')[0]
 const draw = () => {
 
     const { rootNode } = flex.compute2D(root)
-    Object.assign(display.scope, { rootNode })
+    display.addToScope({ rootNode })
     // console.log(rootNode.toGraphString(n => `${n.toString()} ${n.layout.direction}`))
 
     display.clear()

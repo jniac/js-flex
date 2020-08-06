@@ -33,7 +33,7 @@ const display = getDisplay('order')
 const draw = () => {
 
     const { rootNode } = flex.compute2D(root)
-    Object.assign(display.scope, { rootNode })
+    display.addToScope({ rootNode })
     // console.log(rootNode.toGraphString(n => `${n.toString()} ${n.layout.direction}`))
 
 

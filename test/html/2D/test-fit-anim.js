@@ -41,12 +41,12 @@ const root = MyNode.new({ width:500, height:200, spacing:10 })
 )
 
 const display = getDisplay('"fit"', { color:'#0cc' })
-Object.assign(display.scope, { root })
+display.addToScope({ root })
 
 const draw = (verbose = true) => {
 
     const { rootNode } = flex.compute2D(root, { verbose:verbose && display.log })
-    Object.assign(display.scope, { rootNode })
+    display.addToScope({ rootNode })
 
     display.clear()
 

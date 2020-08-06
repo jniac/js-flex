@@ -23,7 +23,7 @@ Object.assign(globalThis, { root })
 const display = getDisplay('simple, "fill"')
 
 const { rootNode } = flex.compute2D(root, { verbose:display.log })
-Object.assign(display.scope, { rootNode })
+display.addToScope({ rootNode })
 
 // draw
 for (const node of rootNode.flat()) {

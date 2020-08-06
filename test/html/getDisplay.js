@@ -26,6 +26,7 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
     const canvas = element.querySelector('canvas')
     const ctx = canvas.getContext('2d')
     const scope = {}
+    const addToScope = props => Object.assign(scope, props)
 
     Object.assign(globalThis, { [name]:scope })
 
@@ -37,12 +38,22 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
         ctx.clearRect(0, 0, width * pixelRatio, height * pixelRatio)
     }
 
-    const drawOptions = options => {
+    const draw = options => {
 
-        const { strokeColor, strokeWidth = 1 } = options ?? {}
+        const { strokeColor, strokeWidth = 1, fillColor } = options ?? {}
 
-        ctx.strokeStyle = strokeColor
-        ctx.lineWidth = strokeWidth * pixelRatio
+        if (strokeColor) {
+
+            ctx.strokeStyle = strokeColor
+            ctx.lineWidth = strokeColor ? strokeWidth * pixelRatio : 0
+            ctx.stroke()
+        }
+
+        if (fillColor) {
+
+            ctx.fillStyle = fillColor
+            ctx.fill()
+        }
     }
 
     const drawRect = (x, y, width, height, options) => {
@@ -50,17 +61,18 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
         if (width === 0 && height === 0)
             return drawPoint(x, y, 10, options)
 
-        drawOptions(options)
-
         x += canvasOffset.x
         y += canvasOffset.y
 
-        ctx.strokeRect(x * pixelRatio, y * pixelRatio, width * pixelRatio, height * pixelRatio)
+        ctx.beginPath()
+        ctx.rect(x * pixelRatio, y * pixelRatio, width * pixelRatio, height * pixelRatio)
+
+        draw(options)
     }
 
     const drawPoint = (x, y, size, options) => {
 
-        drawOptions(options)
+        draw(options)
 
         x += canvasOffset.x
         y += canvasOffset.y
@@ -74,6 +86,23 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
         ctx.moveTo(x, y - size * .5)
         ctx.lineTo(x, y + size * .5)
         ctx.stroke()
+    }
+
+    const drawText = (x, y, text, options) => {
+
+        let { size = 11 } = options ?? {}
+
+        x += canvasOffset.x
+        y += canvasOffset.y
+
+        x *= pixelRatio
+        y *= pixelRatio
+        size *= pixelRatio
+
+        ctx.textBaseline = 'hanging'
+        ctx.font = `${size}px monospace`
+        ctx.textAlign = 'center'
+        ctx.fillText(text, x, y)
     }
 
     let onUpdateCallback
@@ -108,9 +137,12 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
         canvas,
         ctx,
         scope,
+        addToScope,
         defaultColor,
         clear,
         drawRect,
+        drawPoint,
+        drawText,
         onStart,
         onUpdate,
         clearOnUpdate,
