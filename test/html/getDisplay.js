@@ -55,7 +55,7 @@ export default (description, { width = 600, height = 300, pixelRatio = 2 } = {})
 
         requestAnimationFrame(loop)
 
-        onUpdateCallback?.({ frame, time })
+        onUpdateCallback?.({ frame, time, timeCos01:Math.cos(time) * .5 + .5 })
 
         time += 1 / 60
         frame++
