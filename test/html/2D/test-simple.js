@@ -3,8 +3,6 @@ import testBed from '../testBed.js'
 import getDisplay from '../getDisplay.js'
 import MyNode from './MyNode.js'
 
-const consoleLog = testBed.subscribe('#f09')
-
 const root = MyNode.vertical({ width:500, height:200, spacing:10 }).add(
     MyNode.new({ color:'#096', width:'fill', height:'fill' }), // "fill" is the default value for "width" & "height"
     MyNode.new({ color:'#096' }),
@@ -24,7 +22,7 @@ Object.assign(globalThis, { root })
 
 const display = getDisplay('simple, "fill"')
 
-const { rootNode } = flex.compute2D(root, { verbose:consoleLog })
+const { rootNode } = flex.compute2D(root, { verbose:display.log })
 Object.assign(display.scope, { rootNode })
 
 // draw

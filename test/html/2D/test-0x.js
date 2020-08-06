@@ -3,8 +3,6 @@ import testBed from '../testBed.js'
 import getDisplay from '../getDisplay.js'
 import MyNode from './MyNode.js'
 
-const consoleLog = testBed.subscribe('#f09')
-
 const root = MyNode.horizontal({ width:400, height:200, gutter:10, padding:10 }).add(
     MyNode.horizontal().add(
         MyNode.horizontal().add(
@@ -35,7 +33,7 @@ for (const node of root.flat({ includeSelf:false }))
     // node.fill()
     node.setLayout({ width:'100%', height:'20%' })
 
-const { rootNode } = flex.compute2D(root, { verbose:consoleLog })
+const { rootNode } = flex.compute2D(root, { verbose:display.log })
 
 Object.assign(globalThis, { rootNode })
 

@@ -2,7 +2,7 @@ import html from './html.js'
 
 let count = 0
 
-export default (description, { width = 600, height = 300, pixelRatio = 2 } = {}) => {
+export default (description, { color = '#ccc', width = 600, height = 300, pixelRatio = 2 } = {}) => {
 
     const id = count++
     const name = `test${id}`
@@ -14,7 +14,7 @@ export default (description, { width = 600, height = 300, pixelRatio = 2 } = {})
         <div class="test-display">
             <canvas width="${fullWidth}" height="${fullHeight}" style="width:${width}px; height:${height}px;"></canvas>
             <header>
-                <h3>${name}</h3>
+                <h3 style="background-color: ${color};">${name}</h3>
                 <h2>${description}</h2>
             </header>
         </div>
@@ -68,6 +68,8 @@ export default (description, { width = 600, height = 300, pixelRatio = 2 } = {})
     }
     const clearOnUpdate = () => onUpdateCallback = undefined
 
+    const log = message => console.log(`%c${name}%c ${message}`, `color: ${color}`, '')
+
     return {
         canvas,
         ctx,
@@ -78,5 +80,6 @@ export default (description, { width = 600, height = 300, pixelRatio = 2 } = {})
         onStart,
         onUpdate,
         clearOnUpdate,
+        log,
     }
 }

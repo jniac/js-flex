@@ -3,8 +3,6 @@ import testBed from '../testBed.js'
 import getDisplay from '../getDisplay.js'
 import MyNode from './MyNode.js'
 
-const consoleLog = testBed.subscribe('#f09')
-
 const root = MyNode.vertical({ width:500, height:200, gutter:10, padding:10, alignItems:'0%' }).add(
     // normal
     MyNode.horizontal({ gutter:10, padding:10 }).add(

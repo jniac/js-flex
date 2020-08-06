@@ -3,8 +3,6 @@ import testBed from '../testBed.js'
 import getDisplay from '../getDisplay.js'
 import MyNode from './MyNode.js'
 
-const consoleLog = testBed.subscribe('#f09')
-
 const root = MyNode.vertical({ width:500, height:200, gutter:4, padding:10, alignItems:'0%' }).add(
     MyNode.vertical({ width:'40%', height:'1w' }),
     MyNode.vertical({ width:'50%', height:'1w' }),
@@ -29,7 +27,7 @@ console.log(root.toGraphString(n => `${n.toString()} ${n.layout.direction ?? '(h
 
 Object.assign(globalThis, { root })
 
-const display = getDisplay('alignItems|Self')
+const display = getDisplay('alignItems|Self', { color:'red' })
 
 display.scope.blue = root.query(c => c.layout.color === 'blue')[0]
 
@@ -100,13 +98,9 @@ display.onUpdate(update)
 
 testBed.addToPerformanceBench(() => {
 
-    MyNode.debug = false
-
-    const { averageTime, totalTime, max } = testBed.bench(() => flex.compute(root), 1000)
+    const { averageTime, totalTime, max } = testBed.bench(() => flex.compute2D(root), 1000)
 
     const message = `[${averageTime.toFixed(3)}ms] average time for ${max} loop (${root.totalNodeCount} nodes, ${totalTime.toFixed(1)}ms)`
 
-    const defaultColor = '#0008'
-
-    consoleLog(message)
+    display.log(message)
 })
