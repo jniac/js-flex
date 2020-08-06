@@ -2,14 +2,17 @@ import html from './html.js'
 
 let count = 0
 
-export default (description, { width = 600, height = 300 } = {}) => {
+export default (description, { width = 600, height = 300, pixelRatio = 2 } = {}) => {
 
     const id = count++
     const name = `test${id}`
 
+    const fullWidth = width * pixelRatio
+    const fullHeight = height * pixelRatio
+
     const element = html`
         <div class="test-display">
-            <canvas width="${width}" height="${height}"></canvas>
+            <canvas width="${fullWidth}" height="${fullHeight}" style="width:${width}px; height:${height}px;"></canvas>
             <header>
                 <h3>${name}</h3>
                 <h2>${description}</h2>
@@ -25,24 +28,25 @@ export default (description, { width = 600, height = 300 } = {}) => {
 
     Object.assign(globalThis, { [name]:scope })
 
-    const defaultColor = '#0038'
+    const defaultColor = '#0036'
     const canvasOffset = { x:50, y:50 }
 
     const clear = () => {
 
-        ctx.clearRect(0, 0, width, height)
+        ctx.clearRect(0, 0, width * pixelRatio, height * pixelRatio)
     }
 
     const drawRect = (x, y, width, height, options) => {
 
-        const { strokeColor } = options ?? {}
+        const { strokeColor, strokeWidth = 1 } = options ?? {}
 
         ctx.strokeStyle = strokeColor
+        ctx.lineWidth = strokeWidth * pixelRatio
 
         x += canvasOffset.x
         y += canvasOffset.y
 
-        ctx.strokeRect(x, y, width, height)
+        ctx.strokeRect(x * pixelRatio, y * pixelRatio, width * pixelRatio, height * pixelRatio)
     }
 
     let onUpdateCallback
