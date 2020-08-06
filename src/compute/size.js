@@ -1,6 +1,11 @@
-import { getWhiteSpaceSize } from './functions.js'
 import nodeByType from './nodeByType.js'
 import getNodeLayoutSize from './getNodeLayoutSize.js'
+
+const getWhiteSpaceSize = node => {
+
+    const { paddingStart, paddingEnd, gutter } = node.layout
+    return paddingStart + paddingEnd + Math.max(node.children.length - 1, 0) * gutter
+}
 
 const proportionalSize = node => {
 

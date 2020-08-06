@@ -1,6 +1,10 @@
-import { getWhiteSpaceSize2D } from './functions.js'
 import nodeByType2D from './nodeByType2D.js'
 import getNodeLayoutSize2D from './getNodeLayoutSize2D.js'
+
+import {
+    sizeIsProportional,
+    sizeIsRelative,
+} from './utils.js'
 
 const getBounds = (node, horizontal) => horizontal ? node.bounds : node.bounds.normal
 
@@ -9,8 +13,17 @@ const isDirectionSizeReady = (node, horizontal) => !!node && (horizontal
     : node.selfVerticalSizeReady
 )
 
-const sizeIsProportional = size => typeof size === 'string' && size.endsWith('w')
-const sizeIsRelative = size => typeof size === 'string' && size.endsWith('%')
+const getWhiteSpaceSize2D = (node, horizontal) => {
+
+    const { gutter } = node.layout
+    const { paddingStart, paddingEnd } = horizontal ? node.layout : node.layout.normal
+
+    const gutterSpace =
+        node.layout.isHorizontal === horizontal ?
+        Math.max(node.children.length - 1, 0) * gutter : 0
+
+    return paddingStart + paddingEnd + gutterSpace
+}
 
 const setBoundsSize = (node, horizontal, value) => {
 

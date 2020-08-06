@@ -25,9 +25,11 @@ export default class ComputeNode extends Node {
         // 'selfSizeReady' is true when bounds.size has been computed
         // 'proportionalSizeReady' can be computed only after that 'selfSizeReady' is true
         this.selfSizeReady = false
+        this.proportionalSizeReady = false
+
+        // 2D props
         this.selfHorizontalSizeReady = false
         this.selfVerticalSizeReady = false
-        this.proportionalSizeReady = false
 
         this.absoluteChildren = null
         this.nonAbsoluteChildren = null
