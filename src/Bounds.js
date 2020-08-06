@@ -45,4 +45,5 @@ export default class Bounds {
 
     get position2D() { return [this.x, this.y] }
     get size2D() { return [this.width, this.height] }
+    get rect() { return [this.x, this.y, this.width, this.height] }
 }
