@@ -1,9 +1,14 @@
 
+import Extension2D from './Extension2D.js'
+import ExtensionShortHand from './ExtensionShortHand.js'
+
 const defaultValues = {
 
     position: 'relative',
-    align: 0,
-    offset: 0,
+    direction: 'horizontal',
+
+    absoluteAlign: 0,
+    absoluteOffset: 0,
 
     // size: 'fit',
     size: '1w',
@@ -16,11 +21,13 @@ const defaultValues = {
 
     // almost identical to https://developer.mozilla.org/en-US/docs/Web/CSS/justify-content
     // difference ? "flex-start|end" simplified to "start|end"
-    justifyContent: 'center',
-    // justifyContent: 'start',
-    // justifyContent: 'end',
-    // justifyContent: 'space-between',
-    // justifyContent: 'space-around',
+    justify: 'center',
+    // justify: 'start',
+    // justify: 'end',
+    // justify: 'space-between',
+    // justify: 'space-around',
+
+    alignItems: 'center',
 }
 
 const stringToNumber = string => {
@@ -50,93 +57,76 @@ export default class Layout {
 
     static get defaultValues() { return defaultValues }
 
-    constructor(props) {
+    constructor(props = undefined) {
 
-        this.assign(props)
+        if (props)
+            this.assign(props)
     }
 
-    assign({
-
-        padding,
-        offsetAlign,
-        ...props
-
-    } = {}) {
-
-        if (padding !== undefined) {
-
-            props.paddingStart =
-            props.paddingEnd = padding
-        }
-
-        if (offsetAlign !== undefined) {
-
-            props.align =
-            props.offset = offsetAlign
-        }
+    assign(props) {
 
         Object.assign(this, props)
 
         return this
     }
 
-    resolveOffset(parentBoundsSize) {
+    resolveAbsoluteOffset(parentBoundsSize) {
 
-        const { offset } = this
+        const { absoluteOffset } = this
 
-        if (typeof offset === 'number')
-            return offset
+        if (typeof absoluteOffset === 'number')
+            return absoluteOffset
 
-        return stringToNumber(offset) * parentBoundsSize
+        return stringToNumber(absoluteOffset) * parentBoundsSize
     }
 
-    resolveAlign(selfBoundsSize) {
+    resolveAbsoluteAlign(selfBoundsSize) {
 
-        const { align } = this
+        const { absoluteAlign } = this
 
-        if (typeof align === 'number')
-            return align
+        if (typeof absoluteAlign === 'number')
+            return absoluteAlign
 
-        return -stringToNumber(align) * selfBoundsSize
+        return -stringToNumber(absoluteAlign) * selfBoundsSize
     }
 
     /**
      * returns
-     * @return {Array} [align, extraGutter, extraPaddingStart]
+     * @return {Array} [freeOffset, extraGutter, extraPaddingStart]
      */
-    getJustifyContentValues(freeSpace, gutterCount, extra) {
+    getJustifyValues(freeSpace, gutterCount, extra) {
 
-        const { justifyContent } = this
+        const { justify } = this
 
-        if (justifyContent.endsWith('%')) {
+        if (justify.endsWith('%')) {
 
-            return [parseFloat(justifyContent) / 100, 0, 0]
+            return [parseFloat(justify) / 100, 0, 0]
         }
 
-        let align = 0
+        let freeOffset = 0
         let extraGutter = 0
         let extraPaddingStart = 0
 
-        switch (justifyContent) {
+        switch (justify) {
 
             case 'start':
-                align = 0
+                freeOffset = 0
                 break
 
             default:
             case 'center':
-                align = .5
+                freeOffset = .5
                 break
 
             case 'end':
-                align = 1
+                freeOffset = 1
                 break
 
             case 'space-between':
 
                 if (gutterCount === 0) {
 
-                    align = .5
+                    freeOffset = .5
 
                 } else {
 
@@ -148,7 +138,7 @@ export default class Layout {
 
                 if (gutterCount === 0) {
 
-                    align = .5
+                    freeOffset = .5
 
                 } else {
 
@@ -161,7 +151,7 @@ export default class Layout {
 
                 if (gutterCount === 0) {
 
-                    align = .5
+                    freeOffset = .5
 
                 } else {
 
@@ -171,8 +161,11 @@ export default class Layout {
                 break
         }
 
-        return [align, extraGutter, extraPaddingStart]
+        return [freeOffset, extraGutter, extraPaddingStart]
     }
 }
 
 Object.assign(Layout.prototype, defaultValues)
+
+Extension2D(Layout)
+ExtensionShortHand(Layout)

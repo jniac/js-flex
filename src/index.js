@@ -1,8 +1,12 @@
 
 import Node from './Node.js'
-import ComputeNode from './ComputeNode.js'
-import Layout from './Layout.js'
+import ComputeNode from './compute/ComputeNode.js'
+import Layout from './Layout/Layout.js'
 import Bounds from './Bounds.js'
+
+// size iteration is about waiting on nodes depending from other nodes to be computed first
+// 3 seems the max iteration real cases can require.
+const MAX_SIZE_ITERATION = 8
 
 const defaultParameters = {
 
@@ -47,18 +51,27 @@ const buildTree = (rootSourceNode, childrenAccessor, layoutAccessor) => {
         node.layout.assign(layoutAccessor(node.sourceNode))
 
         for (const child of childrenAccessor(node.sourceNode) ?? [])
-            node.children.push(wrapNode(child, node))
+            node.add(wrapNode(child, node))
     }
 
     return rootNode
 }
 
-const swap = () => {
+const swapNodes = () => {
 
+    currentNodes.length = 0
     currentNodes.push(...pendingNodes)
     pendingNodes.length = 0
 }
 
+const consoleWarnAboutMaxSizeIteration = rootNode => {
+
+    console.warn(
+        `flex computation needs too much iterations (> ${MAX_SIZE_ITERATION})! ` +
+        `\n${rootNode.toGraphString(n => pendingNodes.includes(n) ? `%c${n.toString()}%c` : n.toString())}` +
+        `\nRemaining pending nodes: %c${pendingNodes.join(', ')}%c`,
+        ...new Array(pendingNodes.length + 1).fill(['color: #f21', '']).flat())
+}
 
 
 const compute = (rootSourceNode, {
@@ -79,14 +92,10 @@ const compute = (rootSourceNode, {
 
 
     // resolving size
+    let sizeIteration = 0
+    while (sizeIteration < MAX_SIZE_ITERATION && pendingNodes.length > 0) {
 
-    const MAX_ITERATION = 10
-
-    let sizeCount = 0
-
-    while (sizeCount < MAX_ITERATION && pendingNodes.length > 0) {
-
-        swap()
+        swapNodes()
 
         for (const node of currentNodes) {
 
@@ -96,32 +105,25 @@ const compute = (rootSourceNode, {
                 pendingNodes.push(node)
         }
 
-        sizeCount++
+        sizeIteration++
     }
 
-    if (sizeCount > MAX_ITERATION)
-        console.warn(`flex computation needs too much iterations! remaining pending nodes:`, pendingNodes)
+    if (sizeIteration === MAX_SIZE_ITERATION)
+        consoleWarnAboutMaxSizeIteration(rootNode)
 
 
 
     // resolving position
-
-    currentNodes.length = 0
-    currentNodes.push(rootNode)
-
-    while (currentNodes.length) {
-
-        const node = currentNodes.shift()
-
+    // resolving position (down the tree)
+    for (const node of rootNode.flat())
         node.computeChildrenPosition()
 
-        currentNodes.push(...node.children)
-    }
+
 
     if (verbose) {
 
         const dt = now() - time
-        const message = `[${dt.toFixed(2)}ms] ${rootNode.totalNodeCount} nodes, size iteration: ${sizeCount}`
+        const message = `[${dt.toFixed(2)}ms] ${rootNode.totalNodeCount} nodes, size iteration: ${sizeIteration}`
         typeof verbose === 'function' ? verbose(message) : console.info(message)
     }
 
@@ -129,24 +131,25 @@ const compute = (rootSourceNode, {
 
     // assigning 'bounds' to 'sourceNode'
     // filling 'nodeMap'
-
-    currentNodes.length = 0
-    currentNodes.push(rootNode)
-
     const nodeMap = new Map()
-
-    while (currentNodes.length) {
-
-        const node = currentNodes.shift()
-
+    for (const node of rootNode.flat()) {
         boundsAssignator(node.sourceNode, node.bounds)
-
-        currentNodes.push(...node.children)
         nodeMap.set(node.sourceNode, node)
     }
 
     return { nodeMap, rootNode }
 }
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -159,9 +162,61 @@ const compute2D = (rootSourceNode, {
 
 } = {}) => {
 
-    const horizontalRootNodes = []
-    const verticalRootNodes = []
+    clearNodes()
+
+    const time = now()
+
+    const rootNode = buildTree(rootSourceNode, childrenAccessor, layoutAccessor)
+
+    // resolving size
+    let sizeIteration = 0
+    while (sizeIteration < MAX_SIZE_ITERATION && pendingNodes.length > 0) {
+
+        swapNodes()
+
+        for (const node of currentNodes) {
+
+            node.computeSize2D()
+
+            if (node.computeSizeIsDone() === false) {
+                pendingNodes.push(node)
+            }
+        }
+
+        sizeIteration++
+    }
+
+    if (sizeIteration === MAX_SIZE_ITERATION)
+        consoleWarnAboutMaxSizeIteration(rootNode)
+
+
+
+    // resolving position (down the tree)
+    for (const node of rootNode.flat())
+        node.computeChildrenPosition2D()
+
+
+
+    if (verbose) {
+
+        const dt = now() - time
+        const message = `[${dt.toFixed(2)}ms] ${rootNode.totalNodeCount} nodes, size iteration: ${sizeIteration}`
+        typeof verbose === 'function' ? verbose(message) : console.info(message)
+    }
+
+
+
+    // assigning 'bounds' to 'sourceNode'
+    // filling 'nodeMap'
+    const nodeMap = new Map()
+    for (const node of rootNode.flat()) {
+        boundsAssignator(node.sourceNode, node.bounds)
+        nodeMap.set(node.sourceNode, node)
+    }
+
+    return { nodeMap, rootNode }
 }
+
 
 
 export default {

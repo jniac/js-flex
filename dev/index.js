@@ -9,10 +9,13 @@ const packageJson = require('../package.json')
 
 console.log(chalk`start develop on {green ${packageJson.name}}{yellow @${packageJson.version}}\n`)
 
-build()
+const buildAndTest = async () => {
+
+    await build()
+    console.log(await test())
+}
 
 chokidar.watch('./src').on('change', async path => {
 
-    await build()
-    console.log(await await test())
+    buildAndTest()
 })

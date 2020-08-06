@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head>
+        <meta charset="utf-8">
+        <title>2D</title>
+        <link rel="stylesheet" href="../style.css">
+    </head>
+    <body>
+        <script type="module" src="./test-simple.js"></script>
+        <script type="module" src="./test-order.js"></script>
+        <script type="module" src="./test-align-anim.js"></script>
+        <script type="module" src="./test-fit-anim.js"></script>
+        <script type="module">
+            import testBed from '../testBed.js'
+            requestAnimationFrame(testBed.dumpPerformanceBench)
+        </script>
+    </body>
+</html>

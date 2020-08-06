@@ -1,10 +1,6 @@
-import flex from '../../src/index.js'
-import testBed from './testBed.js'
+import flex from '../../../src/index.js'
 
-const consoleLog = testBed.subscribe('#f09')
-
-//
-class MyNode extends flex.Node {
+export default class MyNode extends flex.Node {
 
     static repeat(n, layout) {
 
@@ -23,6 +19,3 @@ class MyNode extends flex.Node {
         this.layout = layout
     }
 }
-
-const root = MyNode.new({ width:600, height:300, gutter:10, padding:10 }).add(
-)

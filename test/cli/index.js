@@ -79,6 +79,8 @@ const main = ({ verbose = false } = {}) => test({ verbose }, () => {
 
         // it('lol', () => {throw new Error('failed')})
     })
+
+    require('./2D/layout.js')()
 })
 
 module.exports = main
