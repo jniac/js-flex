@@ -64,6 +64,14 @@ const swapNodes = () => {
     pendingNodes.length = 0
 }
 
+const consoleWarnAboutMaxSizeIteration = rootNode => {
+
+    console.warn(
+        `flex computation needs too much iterations (> ${MAX_SIZE_ITERATION})! ` +
+        `\n${rootNode.toGraphString(n => pendingNodes.includes(n) ? `%c${n.toString()}%c` : n.toString())}` +
+        `\nRemaining pending nodes: %c${pendingNodes.join(', ')}%c`,
+        ...new Array(pendingNodes.length + 1).fill(['color: #f21', '']).flat())
+}
 
 
 const compute = (rootSourceNode, {
@@ -103,10 +111,7 @@ const compute = (rootSourceNode, {
     }
 
     if (sizeIteration === MAX_SIZE_ITERATION)
-        console.warn(
-            `flex computation needs too much iterations (> ${MAX_SIZE_ITERATION})! ` +
-            `\n${rootNode.toGraphString()}` +
-            `\nRemaining pending nodes: ${pendingNodes.join(', ')}`)
+        consoleWarnAboutMaxSizeIteration(rootNode)
 
 
 
@@ -205,10 +210,7 @@ const compute2D = (rootSourceNode, {
     }
 
     if (sizeIteration === MAX_SIZE_ITERATION)
-        console.warn(
-            `flex computation needs too much iterations (> ${MAX_SIZE_ITERATION})! ` +
-            `\n${rootNode.toGraphString()}` +
-            `\nRemaining pending nodes: ${pendingNodes.join(', ')}`)
+        consoleWarnAboutMaxSizeIteration(rootNode)
 
 
 
