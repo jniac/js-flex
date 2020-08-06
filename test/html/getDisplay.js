@@ -30,7 +30,7 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
 
     Object.assign(globalThis, { [name]:scope })
 
-    const defaultColor = '#0036'
+    const defaultColor = '#aab'
     const canvasOffset = { x:50, y:50 }
 
     const clear = () => {
@@ -72,8 +72,6 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
 
     const drawPoint = (x, y, size, options) => {
 
-        draw(options)
-
         x += canvasOffset.x
         y += canvasOffset.y
 
@@ -81,16 +79,19 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
         y *= pixelRatio
         size *= pixelRatio
 
+        ctx.beginPath()
         ctx.moveTo(x - size * .5, y)
         ctx.lineTo(x + size * .5, y)
         ctx.moveTo(x, y - size * .5)
         ctx.lineTo(x, y + size * .5)
         ctx.stroke()
+
+        draw(options)
     }
 
     const drawText = (x, y, text, options) => {
 
-        let { size = 11 } = options ?? {}
+        let { size = 11, color } = options ?? {}
 
         x += canvasOffset.x
         y += canvasOffset.y
@@ -102,7 +103,27 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
         ctx.textBaseline = 'hanging'
         ctx.font = `${size}px monospace`
         ctx.textAlign = 'center'
+        ctx.fillStyle = color
         ctx.fillText(text, x, y)
+    }
+
+    const moveTo = (x, y) => ctx.moveTo((x + canvasOffset.x) * pixelRatio, (y + canvasOffset.y) * pixelRatio)
+    const lineTo = (x, y) => ctx.lineTo((x + canvasOffset.x) * pixelRatio, (y + canvasOffset.y) * pixelRatio)
+
+    const drawRange = (x, y, width, options) => {
+
+        const { text, color } = options
+        drawRect(x, y - 1, width, 2, { fillColor:color })
+
+        ctx.beginPath()
+        moveTo(x, y - 2)
+        lineTo(x, y + 2)
+        moveTo(x + width, y - 2)
+        lineTo(x + width, y + 2)
+        draw({ strokeColor:color, fillColor:null })
+
+        if (text)
+            drawText(x + width / 2, y + 5, text, { color })
     }
 
     let onUpdateCallback
@@ -143,6 +164,7 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
         drawRect,
         drawPoint,
         drawText,
+        drawRange,
         onStart,
         onUpdate,
         clearOnUpdate,

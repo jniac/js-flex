@@ -1,8 +1,10 @@
 import flex from '../../../src/index.js'
+import testBed from '../testBed.js'
+import getDisplay from '../getDisplay.js'
 import MyNode from './MyNode.js'
+import draw from './draw.js'
 
-const tree = new MyNode({ padding:0, size:400, gutter:0, justify:'space-between' })
-.add(
+const root = new MyNode({ padding:0, size:400, gutter:0, justify:'space-between' }).add(
     ...MyNode.repeat(1, { size:60 }),
     MyNode.new({ size:60 }).add(
         MyNode.new({ size:10 }).add(
@@ -34,79 +36,43 @@ const tree = new MyNode({ padding:0, size:400, gutter:0, justify:'space-between'
     ),
 )
 
-const width = 600
-const height = 300
 
-const canvas = document.createElement('canvas')
-canvas.width = width
-canvas.height = height
-document.body.append(canvas)
+const display = getDisplay('"fit"', { color:undefined })
+display.addToScope({ root })
+display.onStart(() => draw({ flex, root, display, showText:false, depthStride:16 }))
 
-const ctx = canvas.getContext('2d')
-const start = { x:50, y:50 }
-
-let frame = 0, time = 0
-const draw = () => {
-
-    const { rootNode } = flex.compute(tree, { verbose:frame === 0 })
-
-    const ranges = new Set()
-    const collidesWithAnExistingRange = (node, dy) => {
-
-        for (const range of ranges)
-            if (range.dy === dy && range.node.bounds.intersects(node.bounds))
-                return true
-
-        return false
-    }
-
-    ctx.clearRect(0, 0, width, height)
-
-    for (const node of rootNode.flat()) {
-
-        ctx.fillStyle = node.layout.color ?? '#0008'
-
-        let dy = node.depth * 12
-        while (collidesWithAnExistingRange(node, dy))
-            dy += 3
-
-        ranges.add({ node, dy })
-
-        const x = start.x + node.bounds.position
-        const y = start.y + dy
-        ctx.fillRect(x, y, node.bounds.size, 2)
-    }
-}
-
-const loop = () => {
+const update = ({ time }) => {
 
     {
-        const [node] = tree.query(n => n.layout.name === 'the-yellow-one')
+        const node = root.find(n => n.layout.name === 'the-yellow-one')
         node.layout.absoluteOffset = `${((Math.sin(time * 2) * .5 + .5) * 100).toFixed(1)}%`
     }
 
     {
-        const [node] = tree.query(n => n.layout.name === 'the-yellow-two')
+        const node = root.find(n => n.layout.name === 'the-yellow-two')
         node.layout.absoluteOffsetAlign = `${((Math.sin(time * 4) * .5 + .5) * 100).toFixed(1)}%`
     }
 
     {
-        const [node] = tree.query(n => n.layout.name === 'red-grand-child')
+        const node = root.find(n => n.layout.name === 'red-grand-child')
         const value = (Math.sin(time * 4) * .5) * 30
         node.layout.padding = value / 2
         node.layout.gutter = value
     }
 
     {
-        tree.layout.size = 300 + Math.round((Math.sin(time * .4) * .5 + .5) * 100)
+        root.layout.size = 300 + Math.round((Math.sin(time * .4) * .5 + .5) * 100)
     }
 
-    requestAnimationFrame(loop)
-
-    draw()
-
-    time += 1 / 60
-    frame++
+    draw({ flex, root, display, showText:false, depthStride:16 })
 }
+display.onUpdate(update)
 
-loop()
+testBed.addToPerformanceBench(() => {
+
+    const { averageTime, totalTime, max } = testBed.bench(() => flex.compute(root), 1000)
+    const message = `[${averageTime.toFixed(3)}ms] average time for ${max} loop (${root.totalNodeCount} nodes, ${totalTime.toFixed(1)}ms)`
+
+    display.log(message)
+    display.addMessageToFooter(message)
+})
