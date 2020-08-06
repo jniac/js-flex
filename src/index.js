@@ -92,9 +92,7 @@ const compute = (rootSourceNode, {
 
 
     // resolving size
-
     let sizeIteration = 0
-
     while (sizeIteration < MAX_SIZE_ITERATION && pendingNodes.length > 0) {
 
         swapNodes()
@@ -116,18 +114,9 @@ const compute = (rootSourceNode, {
 
 
     // resolving position
-
-    currentNodes.length = 0
-    currentNodes.push(rootNode)
-
-    while (currentNodes.length > 0) {
-
-        const node = currentNodes.shift()
-
+    // resolving position (down the tree)
+    for (const node of rootNode.flat())
         node.computeChildrenPosition()
-
-        currentNodes.push(...node.children)
-    }
 
 
 
@@ -142,19 +131,9 @@ const compute = (rootSourceNode, {
 
     // assigning 'bounds' to 'sourceNode'
     // filling 'nodeMap'
-
-    currentNodes.length = 0
-    currentNodes.push(rootNode)
-
     const nodeMap = new Map()
-
-    while (currentNodes.length > 0) {
-
-        const node = currentNodes.shift()
-
+    for (const node of rootNode.flat()) {
         boundsAssignator(node.sourceNode, node.bounds)
-
-        currentNodes.push(...node.children)
         nodeMap.set(node.sourceNode, node)
     }
 
@@ -190,9 +169,7 @@ const compute2D = (rootSourceNode, {
     const rootNode = buildTree(rootSourceNode, childrenAccessor, layoutAccessor)
 
     // resolving size
-
     let sizeIteration = 0
-
     while (sizeIteration < MAX_SIZE_ITERATION && pendingNodes.length > 0) {
 
         swapNodes()
@@ -214,19 +191,9 @@ const compute2D = (rootSourceNode, {
 
 
 
-    // resolving position
-
-    currentNodes.length = 0
-    currentNodes.push(rootNode)
-
-    while (currentNodes.length > 0) {
-
-        const node = currentNodes.shift()
-
+    // resolving position (down the tree)
+    for (const node of rootNode.flat())
         node.computeChildrenPosition2D()
-
-        currentNodes.push(...node.children)
-    }
 
 
 
@@ -241,19 +208,9 @@ const compute2D = (rootSourceNode, {
 
     // assigning 'bounds' to 'sourceNode'
     // filling 'nodeMap'
-
-    currentNodes.length = 0
-    currentNodes.push(rootNode)
-
     const nodeMap = new Map()
-
-    while (currentNodes.length > 0) {
-
-        const node = currentNodes.shift()
-
+    for (const node of rootNode.flat()) {
         boundsAssignator(node.sourceNode, node.bounds)
-
-        currentNodes.push(...node.children)
         nodeMap.set(node.sourceNode, node)
     }
 
