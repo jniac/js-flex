@@ -9,6 +9,7 @@ const isDirectionSizeReady = (node, horizontal) => !!node && (horizontal
     : node.selfVerticalSizeReady
 )
 
+const sizeIsProportional = size => typeof size === 'string' && size.endsWith('w')
 const sizeIsRelative = size => typeof size === 'string' && size.endsWith('%')
 
 const setBoundsSize = (node, horizontal, value) => {
@@ -27,7 +28,7 @@ const setBoundsSize = (node, horizontal, value) => {
     node.selfSizeReady = node.selfHorizontalSizeReady && node.selfVerticalSizeReady
 }
 
-const computeProportionalSize2D = node => {
+const proportionalSize = node => {
 
     const { isHorizontal:horizontal } = node.layout
 
@@ -52,8 +53,21 @@ const regularFitSize = (node, horizontal) => {
 
     for (const child of node.nonAbsoluteChildren) {
 
-        if (!isDirectionSizeReady(child, horizontal))
-            return
+        if (!isDirectionSizeReady(child, horizontal)) {
+
+            const size = getNodeLayoutSize2D(child, horizontal)
+
+            if (sizeIsProportional(size)) {
+
+                // proportional children in the direction (regular) of a "fit" container are non-sense
+                // no error, but 0 size will end there
+                setBoundsSize(child, horizontal, 0)
+
+            } else {
+
+                return
+            }
+        }
 
         space += getBounds(child, horizontal).size
     }
@@ -113,8 +127,10 @@ const computeOneSize2D = (node, horizontal) => {
 
     } else if (sizeIsRelative(size)) {
 
-        if (!isDirectionSizeReady(node.parent, horizontal))
+        if (!isDirectionSizeReady(node.parent, horizontal)) {
+
             return
+        }
 
         const x = parseFloat(size) / 100
         const relativeSpace = node.layout.position === 'absolute'
@@ -135,7 +151,7 @@ export default node => {
     if (isDirectionSizeReady(node, node.layout.isHorizontal)) {
         // size has been computed, but proportional children are still waiting
         // (node.proportionalSizeReady is false)
-        computeProportionalSize2D(node)
+        proportionalSize(node)
     }
 
     if (!node.selfHorizontalSizeReady)
