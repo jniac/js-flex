@@ -43,6 +43,42 @@ const computeProportionalSize2D = node => {
     node.proportionalSizeReady = true
 }
 
+// sum of all the non-absolute children
+const regularFitSize = (node, horizontal) => {
+
+    let space = 0
+
+    for (const child of node.nonAbsoluteChildren) {
+
+        if (!isDirectionSizeReady(child, horizontal))
+            return
+
+        space += getBounds(child, horizontal).size
+    }
+
+    space += getWhiteSpaceSize2D(node, horizontal)
+
+    setBoundsSize(node, horizontal, space)
+}
+
+// get the biggest child, add whitespace
+const oppositeFitSize = (node, horizontal) => {
+
+    let space = 0
+
+    for (const child of node.nonAbsoluteChildren) {
+
+        if (!isDirectionSizeReady(child, horizontal))
+            return
+
+        space = Math.max(space, getBounds(child, horizontal).size)
+    }
+
+    space += getWhiteSpaceSize2D(node, horizontal)
+
+    setBoundsSize(node, horizontal, space)
+}
+
 const computeOneSize2D = (node, horizontal) => {
 
     const size = getNodeLayoutSize2D(node, horizontal)
@@ -53,19 +89,14 @@ const computeOneSize2D = (node, horizontal) => {
 
     } else if (size === 'fit') {
 
-        let space = 0
+        if (node.layout.isHorizontal === horizontal) {
 
-        for (const child of node.nonAbsoluteChildren) {
+            regularFitSize(node, horizontal)
 
-            if (!isDirectionSizeReady(child, horizontal))
-                return
+        } else {
 
-            space += child.bounds.getSize2D(horizontal)
+            oppositeFitSize(node, horizontal)
         }
-
-        space += getWhiteSpaceSize2D(node, horizontal)
-
-        setBoundsSize(node, horizontal, space)
 
     } else if (size.endsWith('%')) {
 
