@@ -9,6 +9,8 @@ const isDirectionSizeReady = (node, horizontal) => !!node && (horizontal
     : node.selfVerticalSizeReady
 )
 
+const sizeIsRelative = size => typeof size === 'string' && size.endsWith('%')
+
 const setBoundsSize = (node, horizontal, value) => {
 
     if (horizontal) {
@@ -68,8 +70,19 @@ const oppositeFitSize = (node, horizontal) => {
 
     for (const child of node.nonAbsoluteChildren) {
 
-        if (!isDirectionSizeReady(child, horizontal))
-            return
+        if (!isDirectionSizeReady(child, horizontal)) {
+
+            const size = getNodeLayoutSize2D(child, horizontal)
+
+            if (sizeIsRelative(size)) {
+
+                continue
+
+            } else {
+
+                return
+            }
+        }
 
         space = Math.max(space, getBounds(child, horizontal).size)
     }
@@ -98,7 +111,7 @@ const computeOneSize2D = (node, horizontal) => {
             oppositeFitSize(node, horizontal)
         }
 
-    } else if (size.endsWith('%')) {
+    } else if (sizeIsRelative(size)) {
 
         if (!isDirectionSizeReady(node.parent, horizontal))
             return
