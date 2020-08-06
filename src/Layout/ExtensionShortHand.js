@@ -17,6 +17,15 @@ export default Layout => {
             },
         },
 
+        spacing: {
+
+            set(value) {
+                
+                this.padding = value
+                this.gutter = value
+            },
+        },
+
         absoluteOffsetAlign: {
 
             set(value) {
