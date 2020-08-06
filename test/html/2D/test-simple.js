@@ -5,14 +5,14 @@ import MyNode from './MyNode.js'
 
 const consoleLog = testBed.subscribe('#f09')
 
-const root = MyNode.vertical({ width:400, height:200, spacing:10 }).add(
+const root = MyNode.vertical({ width:500, height:200, spacing:10 }).add(
     MyNode.new({ color:'#096', width:'fill', height:'fill' }), // "fill" is the default value for "width" & "height"
     MyNode.new({ color:'#096' }),
     MyNode.horizontal({ height:'50%', spacing:10 }).add(
         MyNode.new(),
         MyNode.new(),
         MyNode.new(),
-        MyNode.vertical({ width:30, spacing:10 }).add(
+        MyNode.vertical({ width:34, spacing:10 }).add(
             MyNode.new(),
             MyNode.new(),
         ),
