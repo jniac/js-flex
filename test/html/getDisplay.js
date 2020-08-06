@@ -36,17 +36,43 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
         ctx.clearRect(0, 0, width * pixelRatio, height * pixelRatio)
     }
 
-    const drawRect = (x, y, width, height, options) => {
+    const drawOptions = options => {
 
         const { strokeColor, strokeWidth = 1 } = options ?? {}
 
         ctx.strokeStyle = strokeColor
         ctx.lineWidth = strokeWidth * pixelRatio
+    }
+
+    const drawRect = (x, y, width, height, options) => {
+
+        if (width === 0 && height === 0)
+            return drawPoint(x, y, 10, options)
+
+        drawOptions(options)
 
         x += canvasOffset.x
         y += canvasOffset.y
 
         ctx.strokeRect(x * pixelRatio, y * pixelRatio, width * pixelRatio, height * pixelRatio)
+    }
+
+    const drawPoint = (x, y, size, options) => {
+
+        drawOptions(options)
+
+        x += canvasOffset.x
+        y += canvasOffset.y
+
+        x *= pixelRatio
+        y *= pixelRatio
+        size *= pixelRatio
+
+        ctx.moveTo(x - size * .5, y)
+        ctx.lineTo(x + size * .5, y)
+        ctx.moveTo(x, y - size * .5)
+        ctx.lineTo(x, y + size * .5)
+        ctx.stroke()
     }
 
     let onUpdateCallback

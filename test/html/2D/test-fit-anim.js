@@ -16,7 +16,7 @@ const root = MyNode.new({ width:500, height:200, spacing:10 })
             MyNode.horizontal({ height:'60%', width:10, color:'#0cc' }),
             MyNode.vertical({ sides:'fit', padding:10, gutter:3 }).add(
                 MyNode.new({ height:10, color:'#0cc' }),
-                MyNode.horizontal({ sides:50, color:'red', spacing:3 }).add(
+                MyNode.horizontal({ sides:50, color:'#93f', spacing:3 }).add(
                     MyNode.new(),
                     MyNode.new(),
                     MyNode.new(),
@@ -24,8 +24,19 @@ const root = MyNode.new({ width:500, height:200, spacing:10 })
                 MyNode.new({ height:10, color:'#0cc' }),
             ),
             MyNode.horizontal({ sides:10 }),
+            MyNode.vertical({ height:'fill', width:'fit', color:'#0cc', spacing:3 }).add(
+                MyNode.new({ width:10 }),
+                MyNode.new({ width:10 }),
+                MyNode.new({ width:10 }),
+            ),
+            MyNode.horizontal({ height:'fill', width:'fit', color:'#0cc', spacing:3 }).add(
+                MyNode.new({ width:10 }),
+                MyNode.new({ width:10 }),
+                MyNode.new({ width:10 }),
+            ),
         ),
         MyNode.horizontal({ sides:50 }),
+        MyNode.new({ color:'red'}),
     ),
 )
 
@@ -33,9 +44,9 @@ Object.assign(globalThis, { root })
 
 const display = getDisplay('"fit"', { color:'#0cc' })
 
-const draw = (verbose) => {
+const draw = (verbose = true) => {
 
-    const { rootNode } = flex.compute2D(root, { verbose })
+    const { rootNode } = flex.compute2D(root, { verbose:verbose && display.log })
     Object.assign(display.scope, { rootNode })
 
     display.clear()
@@ -49,13 +60,13 @@ const draw = (verbose) => {
 
 const update = ({ time }) => {
 
-    const [node] = root.query(n => n.layout.color === 'red')
+    const [node] = root.query(n => n.layout.color === '#93f')
     node.layout.sides = 50 + 30 * Math.sin(time * 2)
 
-    draw()
+    draw(false)
 }
 
-draw(display.log)
+display.onStart(draw)
 display.onUpdate(update)
 
 testBed.addToPerformanceBench(() => {
