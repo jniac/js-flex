@@ -39,7 +39,7 @@ const root = new MyNode({ padding:0, size:400, gutter:0, justify:'space-between'
 
 const display = getDisplay('"fit"', { color:undefined })
 display.addToScope({ root })
-display.onStart(() => draw({ flex, root, display, showText:false, depthStride:16 }))
+display.onStart(() => draw({ flex, root, display, showText:false, depthStride:20 }))
 
 const update = ({ time }) => {
 
@@ -64,7 +64,7 @@ const update = ({ time }) => {
         root.layout.size = 300 + Math.round((Math.sin(time * .4) * .5 + .5) * 100)
     }
 
-    draw({ flex, root, display, showText:false, depthStride:16 })
+    draw({ flex, root, display, showText:false, depthStride:20 })
 }
 display.onUpdate(update)
 
