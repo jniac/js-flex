@@ -229,12 +229,18 @@ export default class Node {
 
     query(filter) {
 
+        if (typeof filter === 'number')
+            return this.query(node => node[ID] === filter)
+
         return [...this.flat({ filter })]
     }
 
     find(test, { includeSelf = true } = {}) {
 
-        return rootNode.flat({ filter:test }).next().value
+        if (typeof test === 'number')
+            return this.find(node => node[ID] === test, { includeSelf })
+
+        return this.flat({ filter:test }).next().value
     }
 
     * tips() {
