@@ -20,10 +20,19 @@ export default Layout => {
         spacing: {
 
             set(value) {
-                
+
                 this.padding = value
                 this.gutter = value
             },
+        },
+
+        sides: {
+
+            set(value) {
+
+                this.width = value
+                this.height = value
+            }
         },
 
         absoluteOffsetAlign: {
