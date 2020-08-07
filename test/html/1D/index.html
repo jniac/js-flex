@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title></title>
+        <link rel="stylesheet" href="../style.css">
+    </head>
+    <body>
+        <script type="module">
+            import flex from '../../../src/index.js'
+            Object.assign(window, { flex })
+        </script>
+        <script type="module" src="./test-01.js"></script>
+        <script type="module" src="./test-02.js"></script>
+        <script type="module" src="./test-03.js"></script>
+        <script type="module" src="./test-04.js"></script>
+        <script type="module">
+            import testBed from '../testBed.js'
+            requestAnimationFrame(testBed.dumpPerformanceBench)
+        </script>
+    </body>
+</html>
