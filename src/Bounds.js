@@ -7,6 +7,7 @@ export default class Bounds {
     constructor() {
 
         this.position = 0
+        this.localPosition = 0
         this.size = 0
         this.normal = null
     }
@@ -39,6 +40,9 @@ export default class Bounds {
 
     get x() { return this.position }
     get y() { return this.normal?.position ?? 0 }
+
+    get localX() { return this.localPosition }
+    get localY() { return this.normal?.localPosition ?? 0 }
 
     get width() { return this.size }
     get height() { return this.normal?.size ?? 0 }
