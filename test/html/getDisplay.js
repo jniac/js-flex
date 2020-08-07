@@ -116,10 +116,10 @@ export default (description, { color = '#ccc', width = 600, height = 300, pixelR
         drawRect(x, y - 1, width, 2, { fillColor:color })
 
         ctx.beginPath()
-        moveTo(x, y - 2)
-        lineTo(x, y + 2)
-        moveTo(x + width, y - 2)
-        lineTo(x + width, y + 2)
+        moveTo(x, y - 3)
+        lineTo(x, y + 3)
+        moveTo(x + width, y - 3)
+        lineTo(x + width, y + 3)
         draw({ strokeColor:color, fillColor:null })
 
         if (text)

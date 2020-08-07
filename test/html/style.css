@@ -14,10 +14,8 @@ canvas {
     border: solid 1px #0003;
 }
 
-* {
+body, body * {
     margin: 0;
-}
-div {
     position: relative;
     box-sizing: border-box;
 }

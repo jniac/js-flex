@@ -45,12 +45,12 @@ const update = ({ time }) => {
 
     {
         const node = root.find(n => n.layout.name === 'the-yellow-one')
-        node.layout.absoluteOffset = `${((Math.sin(time * 2) * .5 + .5) * 100).toFixed(1)}%`
+        node.layout.absoluteOffset = `${((Math.sin(time * 2) * .5 + .5) * 100).toFixed(3)}%`
     }
 
     {
         const node = root.find(n => n.layout.name === 'the-yellow-two')
-        node.layout.absoluteOffsetAlign = `${((Math.sin(time * 4) * .5 + .5) * 100).toFixed(1)}%`
+        node.layout.absoluteOffsetAlign = `${((Math.sin(time * 4) * .5 + .5) * 100).toFixed(3)}%`
     }
 
     {
