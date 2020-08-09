@@ -140,15 +140,13 @@ const computeOneSize2D = (node, horizontal) => {
 
     } else if (sizeIsRelative(size)) {
 
-        if (!isDirectionSizeReady(node.parent, horizontal)) {
-
+        if (!isDirectionSizeReady(node.parent, horizontal))
             return
-        }
 
         const x = parseFloat(size) / 100
         const relativeSpace = node.layout.position === 'absolute'
-            ? node.parent.bounds.getSize2D(horizontal)
-            : node.parent.bounds.getSize2D(horizontal) - getWhiteSpaceSize2D(node.parent, horizontal)
+            ? getBounds(node.parent, horizontal).size
+            : getBounds(node.parent, horizontal).size - getWhiteSpaceSize2D(node.parent, horizontal)
 
         setBoundsSize(node, horizontal, relativeSpace * x)
     }
