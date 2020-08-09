@@ -19,7 +19,7 @@ const getWhiteSpaceSize2D = (node, horizontal) => {
     const { paddingStart, paddingEnd } = horizontal ? node.layout : node.layout.normal
 
     const gutterSpace =
-        node.layout.isHorizontal === horizontal ?
+        node.layout.horizontal === horizontal ?
         Math.max(node.children.length - 1, 0) * gutter : 0
 
     return paddingStart + paddingEnd + gutterSpace
@@ -43,7 +43,7 @@ const setBoundsSize = (node, horizontal, value) => {
 
 const proportionalSize = node => {
 
-    const { isHorizontal:horizontal } = node.layout
+    const { horizontal } = node.layout
 
     const relativeChildrenSpace = node.relativeChildren.reduce((total, child) => total + getBounds(child, horizontal).size, 0)
     const fixedChildrenSpace = node.fixedChildren.reduce((total, child) => total + getBounds(child, horizontal).size, 0)
@@ -129,7 +129,7 @@ const computeOneSize2D = (node, horizontal) => {
 
     } else if (size === 'fit') {
 
-        if (node.layout.isHorizontal === horizontal) {
+        if (node.layout.horizontal === horizontal) {
 
             regularFitSize(node, horizontal)
 
@@ -159,7 +159,7 @@ export default node => {
     if (!node.absoluteChildren)
         nodeByType2D(node)
 
-    if (isDirectionSizeReady(node, node.layout.isHorizontal)) {
+    if (isDirectionSizeReady(node, node.layout.horizontal)) {
         // size has been computed, but proportional children are still waiting
         // (node.proportionalSizeReady is false)
         proportionalSize(node)

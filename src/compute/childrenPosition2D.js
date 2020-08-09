@@ -6,7 +6,7 @@ const getBounds = (node, horizontal) => horizontal ? node.bounds : node.bounds.n
 
 const computeNonAbsoluteRegularPosition = node => {
 
-    const { justify, gutter, isHorizontal:horizontal } = node.layout
+    const { justify, gutter, horizontal } = node.layout
     const { paddingStart, paddingEnd } = horizontal ? node.layout : node.layout.normal
 
     const nodeBounds = getBounds(node, horizontal)
@@ -33,7 +33,7 @@ const computeNonAbsoluteRegularPosition = node => {
 
 const computeNonAbsoluteOppositePosition = node => {
 
-    const { alignItems, isHorizontal:horizontal } = node.layout
+    const { alignItems, horizontal } = node.layout
     const { paddingStart, paddingEnd } = !horizontal ? node.layout : node.layout.normal
     const nodeBounds = getBounds(node, !horizontal)
 

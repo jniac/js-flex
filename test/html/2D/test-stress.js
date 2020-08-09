@@ -46,7 +46,7 @@ const display = getDisplay('simple, "Stress test"', { width:1200, height:600 })
 
 const { rootNode } = flex.compute2D(root, { verbose:display.log })
 display.addToScope({ rootNode })
-console.log(rootNode.toGraphString(n => `${n.id} ${n.layout.isHorizontal ? 'horz' : 'vert'}`))
+console.log(rootNode.toGraphString(n => `${n.id} ${n.layout.horizontal ? 'horz' : 'vert'}`))
 
 // draw
 for (const node of rootNode.flat()) {

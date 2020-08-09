@@ -21,19 +21,29 @@ export default Layout => {
             },
         },
 
-        isHorizontal: {
+        horizontal: {
 
             get() {
 
                 return this.direction === 'horizontal'
             },
+
+            set(value) {
+
+                this.direction = value ? 'horizontal' : 'vertical'
+            },
         },
 
-        isVertical: {
+        vertical: {
 
             get() {
 
                 return this.direction === 'vertical'
+            },
+
+            set(value) {
+
+                this.direction = value ? 'vertical' : 'horizontal'
             },
         },
 
@@ -54,12 +64,12 @@ export default Layout => {
 
             get() {
 
-                return this.isHorizontal ? this.size : this.normal?.size
+                return this.horizontal ? this.size : this.normal?.size
             },
 
             set(value) {
 
-                if (this.isHorizontal) {
+                if (this.horizontal) {
 
                     this.size = value
 
@@ -74,12 +84,12 @@ export default Layout => {
 
             get() {
 
-                return this.isHorizontal ? this.normal?.size : this.size
+                return this.horizontal ? this.normal?.size : this.size
             },
 
             set(value) {
 
-                if (this.isHorizontal) {
+                if (this.horizontal) {
 
                     this.ensureNormal().size = value
 
