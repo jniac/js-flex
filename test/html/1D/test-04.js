@@ -4,8 +4,6 @@ import getDisplay from '../getDisplay.js'
 import MyNode from './MyNode.js'
 import draw from './draw.js'
 
-const consoleLog = testBed.subscribe('#f06')
-
 const nextItem = (...items) => {
 
     let index = -1
