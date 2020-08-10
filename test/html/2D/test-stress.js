@@ -19,7 +19,13 @@ const nextItem = (...items) => {
 const next = {
     childrenCount: nextItem(3, 7, 4, 3, 6, 3, 11),
     // size: nextItem('1w', '3w', '10%', '1w', '3w', '1w', '50%'),
-    size: nextItem('1w', '3w', '2w'),
+    // size: nextItem('1w', '3w', '2w'),
+    size: () => R.weightedItem([
+        { value:'1w',  weight:140 },
+        { value:'3w',  weight:40 },
+        { value:'2w',  weight:40 },
+        { value:'40%',  weight:1 },
+    ]).value,
     // size: nextItem('1w', '3w', '5%', '1w', '3w', '1w', '20%'),
     horizontal: nextItem(true, false, true, true, false, false, true, true, false),
     color: nextItem('#aab', '#aab', 'red', '#aab', '#bbc', '#fc0', '#fc0', '#99a', '#aab', '#bbc', 'white'),

@@ -10,10 +10,11 @@
         <script type="module" src="./test-order.js"></script>
         <script type="module" src="./test-align-anim.js"></script>
         <script type="module" src="./test-fit-anim.js"></script>
+        <script type="module" src="./test-opposite-relative.js"></script>
         <script type="module" src="./test-stress.js"></script>
         <script type="module">
             import testBed from '../testBed.js'
-            requestAnimationFrame(testBed.dumpPerformanceBench)
+            setTimeout(testBed.dumpPerformanceBench, 500)
         </script>
     </body>
 </html>
