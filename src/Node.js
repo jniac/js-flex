@@ -46,6 +46,21 @@ export default class Node {
         return node
     }
 
+    getChild(...indexes) {
+
+        let node = this
+
+        for (const index of indexes) {
+
+            node = node.children[index]
+
+            if (!node)
+                break
+        }
+
+        return node
+    }
+
     contains(child) {
 
         let node = child
