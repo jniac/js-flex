@@ -8,6 +8,7 @@ body {
     flex-wrap: wrap;
     font-family: 'Roboto Mono', monospace;
     padding: 8px;
+    justify-content: center;
 }
 canvas {
     background-color: #fff;

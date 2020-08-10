@@ -2,6 +2,9 @@ import flex from '../../../src/index.js'
 import testBed from '../testBed.js'
 import getDisplay from '../getDisplay.js'
 import MyNode from './MyNode.js'
+import { Random } from 'https://jniac.github.io/js-kit/build/kit.module.js'
+
+const R = new Random()
 
 const spacing = 2
 
@@ -15,8 +18,20 @@ const nextItem = (...items) => {
 
 const next = {
     childrenCount: nextItem(3, 7, 4, 3, 6, 3, 11),
-    size: nextItem('1w', '3w', '10%', '1w', '3w', '1w', '50%'),
-    horizontal: nextItem(true, false, false),
+    // size: nextItem('1w', '3w', '10%', '1w', '3w', '1w', '50%'),
+    size: nextItem('1w', '3w', '2w'),
+    // size: nextItem('1w', '3w', '5%', '1w', '3w', '1w', '20%'),
+    horizontal: nextItem(true, false, true, true, false, false, true, true, false),
+    color: nextItem('#aab', '#aab', 'red', '#aab', '#bbc', '#fc0', '#fc0', '#99a', '#aab', '#bbc', 'white'),
+    color: () => R.weightedItem([
+        { value:'#03c',  weight:1 },
+        { value:'#aab',  weight:10 },
+        { value:'#bbc',  weight:10 },
+        { value:'#99a',  weight:6 },
+        { value:'white', weight:4 },
+        { value:'#fc0',  weight:6 },
+        { value:'red',   weight:2 },
+    ]).value,
     // size: nextItem('1w'),
     // size: nextItem('fill'),
 }
@@ -28,29 +43,41 @@ const addSomeChildren = (parent, recursiveLimit = 3) => {
         const count = next.childrenCount()
         for (let i = 0; i < count; i++) {
 
-            const size = next.size()
             const horizontal = next.horizontal()
-            const child = MyNode.new({ size, spacing, horizontal })
+            const color = next.color()
+            const width = parent.layout.horizontal ? next.size() : 'fill'
+            const height = !parent.layout.horizontal ? next.size() : 'fill'
+            const child = MyNode.new({ width, height, spacing, horizontal, color })
             addSomeChildren(child, recursiveLimit - 1)
             parent.add(child)
         }
     }
 }
 
-const root = MyNode.vertical({ width:1200 - 100, height:600 - 100, spacing })
+const root = MyNode.vertical({ width:1208 - 100, height:600 - 100, spacing })
 addSomeChildren(root, 4)
 
 Object.assign(globalThis, { root })
 
-const display = getDisplay('simple, "Stress test"', { width:1200, height:600 })
+const display = getDisplay('simple, "Stress test"', { width:1208, height:600 })
 
 const { rootNode } = flex.compute2D(root, { verbose:display.log })
 display.addToScope({ rootNode })
-console.log(rootNode.toGraphString(n => `${n.id} ${n.layout.horizontal ? 'horz' : 'vert'}`))
 
+next.color()
 // draw
 for (const node of rootNode.flat()) {
 
-    const strokeColor = node.findUp(n => n.layout.color)?.layout.color ?? display.defaultColor
-    display.drawRect(...node.bounds.rect, { strokeColor })
+    const fillColor = node.findUp(n => n.layout.color)?.layout.color ?? display.defaultColor
+    const strokeColor = next.color()
+    display.drawRect(...node.bounds.rect, { fillColor })
 }
+
+testBed.addToPerformanceBench(() => {
+
+    const { averageTime, totalTime, max } = testBed.bench(() => flex.compute2D(root), 1000)
+    const message = `[${averageTime.toFixed(3)}ms] average time for ${max} loop (${root.totalNodeCount} nodes, ${totalTime.toFixed(1)}ms)`
+
+    display.log(message)
+    display.addMessageToFooter(message)
+})
