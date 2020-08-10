@@ -4,6 +4,7 @@ import getNodeLayoutSize2D from './getNodeLayoutSize2D.js'
 import {
     sizeIsProportional,
     sizeIsRelative,
+    sizeIsOppositeRelative,
 } from './utils.js'
 
 const getBounds = (node, horizontal) => horizontal ? node.bounds : node.bounds.normal
@@ -138,6 +139,15 @@ const computeOneSize2D = (node, horizontal) => {
             oppositeFitSize(node, horizontal)
         }
 
+    } else if (sizeIsOppositeRelative(size)) {
+
+        if (!isDirectionSizeReady(node, !horizontal))
+            return
+
+        const x = parseFloat(size)
+        const relativeSpace = getBounds(node, !horizontal).size
+        setBoundsSize(node, horizontal, relativeSpace * x)
+
     } else if (sizeIsRelative(size)) {
 
         if (!isDirectionSizeReady(node.parent, horizontal))
@@ -160,9 +170,11 @@ export default node => {
         nodeByType2D(node)
 
     if (isDirectionSizeReady(node, node.layout.horizontal)) {
+
         // size has been computed, but proportional children are still waiting
         // (node.proportionalSizeReady is false)
-        proportionalSize(node)
+        if (node.relativeChildren.every(child => isDirectionSizeReady(child, node.layout.horizontal)))
+            proportionalSize(node)
     }
 
     if (!node.selfHorizontalSizeReady)

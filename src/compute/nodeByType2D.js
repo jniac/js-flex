@@ -1,3 +1,9 @@
+import {
+    stringIsPureNumber,
+    sizeIsRelative,
+    sizeIsOppositeRelative,
+} from './utils.js'
+
 import getNodeLayoutSize2D from './getNodeLayoutSize2D.js'
 
 export default node => {
@@ -26,33 +32,32 @@ export default node => {
 
         node.nonAbsoluteChildren.push(child)
 
-        if (typeof size === 'string') {
+        if (stringIsPureNumber(size)) {
+
+            node.fixedChildren.push(child)
+
+        } else if (typeof size === 'string') {
 
             if (size.endsWith('w')) {
 
                 child.proportionalWeight = parseFloat(size)
                 node.proportionalChildren.push(child)
 
-            } else if (size.endsWith('%') || size === 'fit' || size === 'fill') {
+            } else if (
+                sizeIsRelative('%') ||
+                sizeIsOppositeRelative('op') ||
+                size === 'fit' || size === 'fill') {
 
                 node.relativeChildren.push(child)
-
-            } else if (/^\d$/.test(size)) {
-
-                node.fixedChildren.push(child)
 
             } else {
 
                 throw new Error(`Invalid size value: "${size}"`)
             }
 
-        } else if (typeof size === 'number') {
-
-            node.fixedChildren.push(child)
-
         } else {
 
-            throw new Error(`Invalid size value: "${size}"`)
+            throw new Error(`Invalid size value: ${size} (${typeof size})`)
         }
 
     }
