@@ -64,19 +64,12 @@ export default Layout => {
 
             get() {
 
-                return this.horizontal ? this.size : this.normal?.size
+                return this.size
             },
 
             set(value) {
 
-                if (this.horizontal) {
-
-                    this.size = value
-
-                } else {
-
-                    this.ensureNormal().size = value
-                }
+                this.size = value
             },
         },
 
@@ -84,19 +77,12 @@ export default Layout => {
 
             get() {
 
-                return this.horizontal ? this.normal?.size : this.size
+                return this.normal?.size
             },
 
             set(value) {
 
-                if (this.horizontal) {
-
-                    this.ensureNormal().size = value
-
-                } else {
-
-                    this.size = value
-                }
+                this.ensureNormal().size = value
             },
         },
 
