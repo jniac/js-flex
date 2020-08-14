@@ -1,7 +1,7 @@
 
 import Node from './Node.js'
 import ComputeNode from './compute/ComputeNode.js'
-import Layout from './Layout/Layout.js'
+import Style from './Style/Style.js'
 import Bounds from './Bounds.js'
 
 // size iteration is about waiting on nodes depending from other nodes to be computed first
@@ -11,7 +11,7 @@ const MAX_SIZE_ITERATION = 8
 const defaultParameters = {
 
     childrenAccessor: rootSourceNode => rootSourceNode.children ?? [],
-    layoutAccessor: node => node.layout,
+    styleAccessor: node => node.style,
     boundsAssignator: (node, bounds) => node.bounds = bounds,
 }
 
@@ -40,7 +40,7 @@ const wrapNode = (sourceNode, parent) => {
     return node
 }
 
-const buildTree = (rootSourceNode, childrenAccessor, layoutAccessor) => {
+const buildTree = (rootSourceNode, childrenAccessor, styleAccessor) => {
 
     const rootNode = wrapNode(rootSourceNode, null)
 
@@ -48,7 +48,7 @@ const buildTree = (rootSourceNode, childrenAccessor, layoutAccessor) => {
     while (currentNodes.length > 0) {
 
         const node = currentNodes.shift()
-        node.layout.assign(layoutAccessor(node.sourceNode))
+        node.style.assign(styleAccessor(node.sourceNode))
 
         for (const child of childrenAccessor(node.sourceNode) ?? [])
             node.add(wrapNode(child, node))
@@ -77,7 +77,7 @@ const consoleWarnAboutMaxSizeIteration = rootNode => {
 const compute = (rootSourceNode, {
 
     childrenAccessor = defaultParameters.childrenAccessor,
-    layoutAccessor = defaultParameters.layoutAccessor,
+    styleAccessor = defaultParameters.styleAccessor,
     boundsAssignator = defaultParameters.boundsAssignator,
     verbose = false,
 
@@ -87,7 +87,7 @@ const compute = (rootSourceNode, {
 
     const time = now()
 
-    const rootNode = buildTree(rootSourceNode, childrenAccessor, layoutAccessor)
+    const rootNode = buildTree(rootSourceNode, childrenAccessor, styleAccessor)
 
 
 
@@ -156,7 +156,7 @@ const compute = (rootSourceNode, {
 const compute2D = (rootSourceNode, {
 
     childrenAccessor = defaultParameters.childrenAccessor,
-    layoutAccessor = defaultParameters.layoutAccessor,
+    styleAccessor = defaultParameters.styleAccessor,
     boundsAssignator = defaultParameters.boundsAssignator,
     verbose = false,
 
@@ -166,7 +166,7 @@ const compute2D = (rootSourceNode, {
 
     const time = now()
 
-    const rootNode = buildTree(rootSourceNode, childrenAccessor, layoutAccessor)
+    const rootNode = buildTree(rootSourceNode, childrenAccessor, styleAccessor)
 
     // resolving size
     let sizeIteration = 0
@@ -223,6 +223,6 @@ export default {
     compute,
     compute2D,
     Node,
-    Layout,
+    Style,
     Bounds,
 }

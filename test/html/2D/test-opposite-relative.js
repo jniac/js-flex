@@ -32,9 +32,9 @@ const display = getDisplay('opposite-relative "1op", ${16/9}op')
 const { rootNode } = flex.compute2D(root, { verbose:display.log })
 display.addToScope({ rootNode })
 
-display.addMessageToFooter(`the yellow box is a square (size: ${rootNode.find(n => n.layout.width === '1op').bounds.size2D.join(',')})`)
-display.addMessageToFooter(`the brown boxes too (size: ${rootNode.find(n => n.layout.name === 'small').bounds.size2D.join(',')})`)
-display.addMessageToFooter(`the blue box is 16/9 (size: ${rootNode.find(n => n.layout.name === '16/9').bounds.size2D.join(',')})`)
+display.addMessageToFooter(`the yellow box is a square (size: ${rootNode.find(n => n.style.width === '1op').bounds.size2D.join(',')})`)
+display.addMessageToFooter(`the brown boxes too (size: ${rootNode.find(n => n.style.name === 'small').bounds.size2D.join(',')})`)
+display.addMessageToFooter(`the blue box is 16/9 (size: ${rootNode.find(n => n.style.name === '16/9').bounds.size2D.join(',')})`)
 
 const draw = () => {
 
@@ -46,9 +46,9 @@ const draw = () => {
 
         const orColor = (value, defaultValue) => value && (typeof value === 'string' ? value : defaultValue)
 
-        const color = node.findUp(n => n.layout.color !== undefined)?.layout.color ?? display.defaultColor
-        const stroke = node.layout.stroke ?? true
-        const fill = node.layout.fill ?? false
+        const color = node.findUp(n => n.style.color !== undefined)?.style.color ?? display.defaultColor
+        const stroke = node.style.stroke ?? true
+        const fill = node.style.fill ?? false
         const strokeColor = orColor(stroke, color)
         const fillColor = orColor(fill, color)
 
@@ -62,8 +62,8 @@ const update = ({ time, timeCos01 }) => {
 
     const sub = 100 * (1 - timeCos01)
     const node = root.children[0]
-    node.layout.width = 500 - 20 - sub
-    node.layout.height = 200 - 20 - sub
+    node.style.width = 500 - 20 - sub
+    node.style.height = 200 - 20 - sub
 
     draw()
 }

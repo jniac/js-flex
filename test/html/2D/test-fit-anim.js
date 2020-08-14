@@ -52,15 +52,15 @@ const draw = (verbose = true) => {
 
     for (const node of rootNode.flat()) {
 
-        const strokeColor = node.findUp(n => n.layout.color)?.layout.color ?? display.defaultColor
+        const strokeColor = node.findUp(n => n.style.color)?.style.color ?? display.defaultColor
         display.drawRect(...node.bounds.rect, { strokeColor })
     }
 }
 
 const update = ({ time }) => {
 
-    const [node] = root.query(n => n.layout.color === '#93f')
-    node.layout.sides = 50 + 30 * Math.sin(time * 2)
+    const [node] = root.query(n => n.style.color === '#93f')
+    node.style.sides = 50 + 30 * Math.sin(time * 2)
 
     draw(false)
 }

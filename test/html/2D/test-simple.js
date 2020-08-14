@@ -28,6 +28,6 @@ display.addToScope({ rootNode })
 // draw
 for (const node of rootNode.flat()) {
 
-    const strokeColor = node.findUp(n => n.layout.color)?.layout.color ?? display.defaultColor
+    const strokeColor = node.findUp(n => n.style.color)?.style.color ?? display.defaultColor
     display.drawRect(...node.bounds.rect, { strokeColor })
 }

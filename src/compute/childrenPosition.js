@@ -1,8 +1,8 @@
-const orderSorter = (A, B) => A.layout.order < B.layout.order ? -1 : 1
+const orderSorter = (A, B) => A.style.order < B.style.order ? -1 : 1
 
 const computeNonAbsoluteChildren = node => {
 
-    const { paddingStart, paddingEnd, gutter } = node.layout
+    const { paddingStart, paddingEnd, gutter } = node.style
 
     const gutterCount = Math.max(0, node.nonAbsoluteChildren.length - 1)
     const freeSpace = node.bounds.size
@@ -11,7 +11,7 @@ const computeNonAbsoluteChildren = node => {
         - gutterCount * gutter
         - node.nonAbsoluteChildren.reduce((total, child) => total + child.bounds.size, 0)
 
-    const [freeOffset, extraGutter, extraPaddingStart] = node.layout.getJustifyValues(freeSpace, gutterCount)
+    const [freeOffset, extraGutter, extraPaddingStart] = node.style.getJustifyValues(freeSpace, gutterCount)
 
     let localPosition = paddingStart + extraPaddingStart + freeOffset * freeSpace
 
@@ -29,8 +29,8 @@ const computeAbsoluteChildren = node => {
     for (const child of node.absoluteChildren) {
 
         const localPosition =
-            child.layout.resolveAbsoluteOffset(node.bounds.size) +
-            child.layout.resolveAbsoluteAlign(child.bounds.size)
+            child.style.resolveAbsoluteOffset(node.bounds.size) +
+            child.style.resolveAbsoluteAlign(child.bounds.size)
 
         child.bounds.localPosition = localPosition
         child.bounds.position = node.bounds.position + localPosition

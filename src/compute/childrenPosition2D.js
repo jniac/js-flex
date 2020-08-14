@@ -1,13 +1,13 @@
-import getJustifyValues from '../Layout/getJustifyValues.js'
+import getJustifyValues from '../Style/getJustifyValues.js'
 
-const orderSorter = (A, B) => A.layout.order < B.layout.order ? -1 : 1
+const orderSorter = (A, B) => A.style.order < B.style.order ? -1 : 1
 
 const getBounds = (node, horizontal) => horizontal ? node.bounds : node.bounds.normal
 
 const computeNonAbsoluteRegularPosition = node => {
 
-    const { justify, gutter, horizontal } = node.layout
-    const { paddingStart, paddingEnd } = horizontal ? node.layout : node.layout.normal
+    const { justify, gutter, horizontal } = node.style
+    const { paddingStart, paddingEnd } = horizontal ? node.style : node.style.normal
 
     const nodeBounds = getBounds(node, horizontal)
     const gutterCount = Math.max(0, node.nonAbsoluteChildren.length - 1)
@@ -33,8 +33,8 @@ const computeNonAbsoluteRegularPosition = node => {
 
 const computeNonAbsoluteOppositePosition = node => {
 
-    const { alignItems, horizontal } = node.layout
-    const { paddingStart, paddingEnd } = !horizontal ? node.layout : node.layout.normal
+    const { alignItems, horizontal } = node.style
+    const { paddingStart, paddingEnd } = !horizontal ? node.style : node.style.normal
     const nodeBounds = getBounds(node, !horizontal)
 
     for (const child of node.nonAbsoluteChildren) {
@@ -44,7 +44,7 @@ const computeNonAbsoluteOppositePosition = node => {
             - paddingEnd
             - getBounds(child, !horizontal).size
 
-        const { alignSelf } = child.layout
+        const { alignSelf } = child.style
 
         const [freeOffset, , extraPaddingStart] = getJustifyValues(alignSelf ?? alignItems, freeSpace, 0)
 
@@ -61,8 +61,8 @@ const computeAbsoluteChildren2D = node => {
     for (const child of node.absoluteChildren) {
 
         const localPosition =
-            child.layout.resolveAbsoluteOffset(node.bounds.size) +
-            child.layout.resolveAbsoluteAlign(child.bounds.size)
+            child.style.resolveAbsoluteOffset(node.bounds.size) +
+            child.style.resolveAbsoluteAlign(child.bounds.size)
 
         child.bounds.localPosition = localPosition
         child.bounds.position = node.bounds.position + localPosition

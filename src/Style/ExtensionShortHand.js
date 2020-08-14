@@ -1,6 +1,6 @@
-export default Layout => {
+export default Style => {
 
-    Object.defineProperties(Layout.prototype, {
+    Object.defineProperties(Style.prototype, {
 
         padding: {
 

@@ -5,31 +5,31 @@ const flex = require('../../../build/flex.common.js')
 
 const main = () => {
 
-    describe('2D:Layout', () => {
+    describe('2D:Style', () => {
 
-        it (`'width', 'height' trigger 2D layout`, () => {
+        it (`'width', 'height' trigger 2D style`, () => {
 
-            assert.equal(new flex.Layout({ height:300 }).is2D, true)
-            assert.equal(new flex.Layout({ direction:'vertical', width:300 }).is2D, true)
+            assert.equal(new flex.Style({ height:300 }).is2D, true)
+            assert.equal(new flex.Style({ direction:'vertical', width:300 }).is2D, true)
         })
 
         it (`default 'direction' is "horizontal"`, () => {
 
-            assert.equal(new flex.Layout({ width:1 }).direction, 'horizontal')
+            assert.equal(new flex.Style({ width:1 }).direction, 'horizontal')
         })
 
-        it(`depending on 'direction', 'width' & 'height' are transfered to normalLayout.size`, () => {
+        it(`depending on 'direction', 'width' & 'height' are transfered to normalStyle.size`, () => {
 
-            assert.equal(new flex.Layout({ height:Math.PI }).normalLayout.size, Math.PI)
-            assert.equal(new flex.Layout({ direction:'vertical', width:Math.PI }).normalLayout.size, Math.PI)
+            assert.equal(new flex.Style({ height:Math.PI }).normalStyle.size, Math.PI)
+            assert.equal(new flex.Style({ direction:'vertical', width:Math.PI }).normalStyle.size, Math.PI)
         })
 
         it(`getter|setter 'width|height' are correctly linked`, () => {
 
             const width = Math.PI
             const height = Math.E
-            const H = new flex.Layout({ width, height })
-            const V = new flex.Layout({ direction:'vertical', width, height })
+            const H = new flex.Style({ width, height })
+            const V = new flex.Style({ direction:'vertical', width, height })
             assert.equal(H.width, width)
             assert.equal(H.height, height)
             assert.equal(V.width, width)

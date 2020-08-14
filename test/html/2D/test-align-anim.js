@@ -23,19 +23,19 @@ const root = MyNode.vertical({ width:500, height:200, gutter:4, padding:10, alig
     ),
 )
 
-console.log(root.toGraphString(n => `${n.toString()} ${n.layout.direction ?? '(horizontal)'}`))
+console.log(root.toGraphString(n => `${n.toString()} ${n.style.direction ?? '(horizontal)'}`))
 
 Object.assign(globalThis, { root })
 
 const display = getDisplay('alignItems|Self', { color:'#93f' })
 
-display.scope.blue = root.query(c => c.layout.color === 'blue')[0]
+display.scope.blue = root.query(c => c.style.color === 'blue')[0]
 
 const draw = () => {
 
     const { rootNode } = flex.compute2D(root)
     display.addToScope({ rootNode })
-    // console.log(rootNode.toGraphString(n => `${n.toString()} ${n.layout.direction}`))
+    // console.log(rootNode.toGraphString(n => `${n.toString()} ${n.style.direction}`))
 
     display.clear()
 
@@ -43,9 +43,9 @@ const draw = () => {
 
         const orColor = (value, defaultValue) => value && (typeof value === 'string' ? value : defaultValue)
 
-        const color = node.findUp(n => n.layout.color !== undefined)?.layout.color ?? display.defaultColor
-        const stroke = node.layout.stroke ?? true
-        const fill = node.layout.fill ?? false
+        const color = node.findUp(n => n.style.color !== undefined)?.style.color ?? display.defaultColor
+        const stroke = node.style.stroke ?? true
+        const fill = node.style.fill ?? false
         const strokeColor = orColor(stroke, color)
         const fillColor = orColor(fill, color)
 
@@ -57,16 +57,16 @@ const update = ({ frame, time }) => {
 
     {
         // alignItems animation
-        root.layout.alignItems = `${((-Math.cos(time * .2) * .5 + .5) * 100).toFixed(1)}%`
+        root.style.alignItems = `${((-Math.cos(time * .2) * .5 + .5) * 100).toFixed(1)}%`
 
         const node = root.children[3]
-        node.layout.alignSelf = `${((Math.cos(time * .8) * .5 + .5) * 100).toFixed(1)}%`
+        node.style.alignSelf = `${((Math.cos(time * .8) * .5 + .5) * 100).toFixed(1)}%`
     }
 
     {
         // blue animation for fun
         const node = root.children[3].children[2]
-        node.layout.width = `${((-Math.cos(time * .8 * 4) * .5 + .5) * 2 + 2).toFixed(3)}w`
+        node.style.width = `${((-Math.cos(time * .8 * 4) * .5 + .5) * 2 + 2).toFixed(3)}w`
     }
 
     draw()

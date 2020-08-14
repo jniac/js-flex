@@ -4,11 +4,11 @@ import {
     sizeIsOppositeRelative,
 } from './utils.js'
 
-import getNodeLayoutSize2D from './getNodeLayoutSize2D.js'
+import getNodeStyleSize2D from './getNodeStyleSize2D.js'
 
 export default node => {
 
-    const { horizontal } = node.layout
+    const { horizontal } = node.style
 
     // position type
     node.absoluteChildren = []
@@ -21,8 +21,8 @@ export default node => {
 
     for (const child of node.children) {
 
-        const { position } = child.layout
-        const size = getNodeLayoutSize2D(child, horizontal)
+        const { position } = child.style
+        const size = getNodeStyleSize2D(child, horizontal)
 
         if (position === 'absolute') {
 

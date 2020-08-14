@@ -1,5 +1,5 @@
 import nodeByType2D from './nodeByType2D.js'
-import getNodeLayoutSize2D from './getNodeLayoutSize2D.js'
+import getNodeStyleSize2D from './getNodeStyleSize2D.js'
 
 import {
     sizeIsProportional,
@@ -16,11 +16,11 @@ const isDirectionSizeReady = (node, horizontal) => !!node && (horizontal
 
 const getWhiteSpaceSize2D = (node, horizontal) => {
 
-    const { gutter } = node.layout
-    const { paddingStart, paddingEnd } = horizontal ? node.layout : node.layout.normal
+    const { gutter } = node.style
+    const { paddingStart, paddingEnd } = horizontal ? node.style : node.style.normal
 
     const gutterSpace =
-        node.layout.horizontal === horizontal ?
+        node.style.horizontal === horizontal ?
         Math.max(node.children.length - 1, 0) * gutter : 0
 
     return paddingStart + paddingEnd + gutterSpace
@@ -44,7 +44,7 @@ const setBoundsSize = (node, horizontal, value) => {
 
 const proportionalSize = node => {
 
-    const { horizontal } = node.layout
+    const { horizontal } = node.style
 
     const relativeChildrenSpace = node.relativeChildren.reduce((total, child) => total + getBounds(child, horizontal).size, 0)
     const fixedChildrenSpace = node.fixedChildren.reduce((total, child) => total + getBounds(child, horizontal).size, 0)
@@ -69,7 +69,7 @@ const regularFitSize = (node, horizontal) => {
 
         if (!isDirectionSizeReady(child, horizontal)) {
 
-            const size = getNodeLayoutSize2D(child, horizontal)
+            const size = getNodeStyleSize2D(child, horizontal)
 
             if (sizeIsProportional(size)) {
 
@@ -100,7 +100,7 @@ const oppositeFitSize = (node, horizontal) => {
 
         if (!isDirectionSizeReady(child, horizontal)) {
 
-            const size = getNodeLayoutSize2D(child, horizontal)
+            const size = getNodeStyleSize2D(child, horizontal)
 
             if (sizeIsRelative(size)) {
 
@@ -122,7 +122,7 @@ const oppositeFitSize = (node, horizontal) => {
 
 const computeOneSize2D = (node, horizontal) => {
 
-    const size = getNodeLayoutSize2D(node, horizontal)
+    const size = getNodeStyleSize2D(node, horizontal)
 
     if (typeof size === 'number') {
 
@@ -130,7 +130,7 @@ const computeOneSize2D = (node, horizontal) => {
 
     } else if (size === 'fit') {
 
-        if (node.layout.horizontal === horizontal) {
+        if (node.style.horizontal === horizontal) {
 
             regularFitSize(node, horizontal)
 
@@ -154,7 +154,7 @@ const computeOneSize2D = (node, horizontal) => {
             return
 
         const x = parseFloat(size) / 100
-        const relativeSpace = node.layout.position === 'absolute'
+        const relativeSpace = node.style.position === 'absolute'
             ? getBounds(node.parent, horizontal).size
             : getBounds(node.parent, horizontal).size - getWhiteSpaceSize2D(node.parent, horizontal)
 
@@ -169,11 +169,11 @@ export default node => {
     if (!node.absoluteChildren)
         nodeByType2D(node)
 
-    if (isDirectionSizeReady(node, node.layout.horizontal)) {
+    if (isDirectionSizeReady(node, node.style.horizontal)) {
 
         // size has been computed, but proportional children are still waiting
         // (node.proportionalSizeReady is false)
-        if (node.relativeChildren.every(child => isDirectionSizeReady(child, node.layout.horizontal)))
+        if (node.relativeChildren.every(child => isDirectionSizeReady(child, node.style.horizontal)))
             proportionalSize(node)
     }
 

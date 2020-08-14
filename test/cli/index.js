@@ -5,14 +5,14 @@ const flex = require('../../build/flex.common.js')
 
 const main = ({ verbose = false } = {}) => test({ verbose }, () => {
 
-    describe('Layout', () => {
+    describe('Style', () => {
 
         it('padding * 2 = paddingStart + paddingEnd', () => {
 
             const padding = Math.random()
-            const layout = new flex.Layout({ padding })
+            const style = new flex.Style({ padding })
 
-            assert.equal(padding * 2, layout.paddingStart + layout.paddingEnd)
+            assert.equal(padding * 2, style.paddingStart + style.paddingEnd)
         })
     })
 
@@ -22,11 +22,11 @@ const main = ({ verbose = false } = {}) => test({ verbose }, () => {
 
         class MyNode extends flex.Node {
 
-            constructor(layout) {
+            constructor(style) {
 
                 super()
 
-                this.layout = layout
+                this.style = style
             }
         }
 
@@ -80,7 +80,7 @@ const main = ({ verbose = false } = {}) => test({ verbose }, () => {
         // it('lol', () => {throw new Error('failed')})
     })
 
-    require('./2D/layout.js')()
+    require('./2D/style.js')()
 })
 
 module.exports = main

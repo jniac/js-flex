@@ -53,7 +53,7 @@ const stringToNumber = string => {
     throw new Error(`oups, invalid value "${string}"`)
 }
 
-export default class Layout {
+export default class Style {
 
     static get defaultValues() { return defaultValues }
 
@@ -165,7 +165,7 @@ export default class Layout {
     }
 }
 
-Object.assign(Layout.prototype, defaultValues)
+Object.assign(Style.prototype, defaultValues)
 
-Extension2D(Layout)
-ExtensionShortHand(Layout)
+Extension2D(Style)
+ExtensionShortHand(Style)

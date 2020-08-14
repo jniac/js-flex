@@ -1,9 +1,9 @@
 import nodeByType from './nodeByType.js'
-import getNodeLayoutSize from './getNodeLayoutSize.js'
+import getNodeStyleSize from './getNodeStyleSize.js'
 
 const getWhiteSpaceSize = node => {
 
-    const { paddingStart, paddingEnd, gutter } = node.layout
+    const { paddingStart, paddingEnd, gutter } = node.style
     return paddingStart + paddingEnd + Math.max(node.children.length - 1, 0) * gutter
 }
 
@@ -36,7 +36,7 @@ export default node => {
         return
     }
 
-    const size = getNodeLayoutSize(node)
+    const size = getNodeStyleSize(node)
 
     if (typeof size === 'number') {
 
@@ -66,7 +66,7 @@ export default node => {
             return
 
         const x = parseFloat(size) / 100
-        const relativeSpace = node.layout.position === 'absolute'
+        const relativeSpace = node.style.position === 'absolute'
             ? node.parent.bounds.size
             : node.parent.bounds.size - getWhiteSpaceSize(node.parent)
         node.bounds.size = relativeSpace * x

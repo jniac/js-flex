@@ -1,13 +1,13 @@
 import Node from '../Node.js'
 import Bounds from '../Bounds.js'
-import Layout from '../Layout/Layout.js'
+import Style from '../Style/Style.js'
 
 import size from './size.js'
 import size2D from './size2D.js'
 import childrenPosition from './childrenPosition.js'
 import childrenPosition2D from './childrenPosition2D.js'
 
-const orderSorter = (A, B) => A.layout.order < B.layout.order ? -1 : 1
+const orderSorter = (A, B) => A.style.order < B.style.order ? -1 : 1
 
 export default class ComputeNode extends Node {
 
@@ -16,7 +16,7 @@ export default class ComputeNode extends Node {
         super()
 
         this.bounds = new Bounds()
-        this.layout = new Layout()
+        this.style = new Style()
 
         this.sourceNode = sourceNode
         this.parent = parent

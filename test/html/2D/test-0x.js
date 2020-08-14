@@ -31,7 +31,7 @@ Object.assign(globalThis, { root })
 
 for (const node of root.flat({ includeSelf:false }))
     // node.fill()
-    node.setLayout({ width:'100%', height:'20%' })
+    node.setStyle({ width:'100%', height:'20%' })
 
 const { rootNode } = flex.compute2D(root, { verbose:display.log })
 
@@ -46,7 +46,7 @@ Object.assign(globalThis, { rootNode })
 
     for (const node of rootNode.flat()) {
 
-        ctx.strokeStyle = node.findUp(n => n.layout.color)?.layout.color ?? defaultColor
+        ctx.strokeStyle = node.findUp(n => n.style.color)?.style.color ?? defaultColor
 
         const x = start.x + node.bounds.x
         const y = start.y + node.bounds.y

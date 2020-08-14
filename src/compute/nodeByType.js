@@ -1,4 +1,4 @@
-import getNodeLayoutSize from './getNodeLayoutSize.js'
+import getNodeStyleSize from './getNodeStyleSize.js'
 
 export default node => {
 
@@ -13,8 +13,8 @@ export default node => {
 
     for (const child of node.children) {
 
-        const { position } = child.layout
-        const size = getNodeLayoutSize(child)
+        const { position } = child.style
+        const size = getNodeStyleSize(child)
 
         if (position === 'absolute') {
 

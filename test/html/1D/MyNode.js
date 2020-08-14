@@ -2,20 +2,20 @@ import flex from '../../../src/index.js'
 
 export default class MyNode extends flex.Node {
 
-    static repeat(n, layout) {
+    static repeat(n, style) {
 
-        if (typeof layout === 'function')
-            return new Array(n).fill().map((v, index) => new MyNode(layout(index)))
+        if (typeof style === 'function')
+            return new Array(n).fill().map((v, index) => new MyNode(style(index)))
 
-        return new Array(n).fill().map(() => new MyNode(layout))
+        return new Array(n).fill().map(() => new MyNode(style))
     }
 
-    static new(layout) { return new MyNode(layout) }
+    static new(style) { return new MyNode(style) }
 
-    constructor(layout) {
+    constructor(style) {
 
         super()
 
-        this.layout = layout
+        this.style = style
     }
 }

@@ -44,24 +44,24 @@ display.onStart(() => draw({ flex, root, display, showText:false, depthStride:20
 const update = ({ time }) => {
 
     {
-        const node = root.find(n => n.layout.name === 'the-yellow-one')
-        node.layout.absoluteOffset = `${((Math.sin(time * 2) * .5 + .5) * 100).toFixed(3)}%`
+        const node = root.find(n => n.style.name === 'the-yellow-one')
+        node.style.absoluteOffset = `${((Math.sin(time * 2) * .5 + .5) * 100).toFixed(3)}%`
     }
 
     {
-        const node = root.find(n => n.layout.name === 'the-yellow-two')
-        node.layout.absoluteOffsetAlign = `${((Math.sin(time * 4) * .5 + .5) * 100).toFixed(3)}%`
+        const node = root.find(n => n.style.name === 'the-yellow-two')
+        node.style.absoluteOffsetAlign = `${((Math.sin(time * 4) * .5 + .5) * 100).toFixed(3)}%`
     }
 
     {
-        const node = root.find(n => n.layout.name === 'red-grand-child')
+        const node = root.find(n => n.style.name === 'red-grand-child')
         const value = (Math.sin(time * 4) * .5) * 30
-        node.layout.padding = value / 2
-        node.layout.gutter = value
+        node.style.padding = value / 2
+        node.style.gutter = value
     }
 
     {
-        root.layout.size = 300 + Math.round((Math.sin(time * .4) * .5 + .5) * 100)
+        root.style.size = 300 + Math.round((Math.sin(time * .4) * .5 + .5) * 100)
     }
 
     draw({ flex, root, display, showText:false, depthStride:20 })

@@ -35,12 +35,12 @@ const root = MyNode.new({ size:500, gutter:10, padding:10 })
 
 addSomeChildren(root, 4)
 
-root.children[1].layout.color = '#36f'
+root.children[1].style.color = '#36f'
 
 for (const [index, child] of root.children[1].children.entries()) {
 
     if (index % 2)
-        child.layout.color = '#3f9'
+        child.style.color = '#3f9'
 }
 
 

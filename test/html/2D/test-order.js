@@ -24,7 +24,7 @@ const root = MyNode.vertical({ width:500, height:200, gutter:10, padding:10, ali
     ),
 )
 
-console.log(root.toGraphString(n => `${n.toString()} ${n.layout.direction ?? '(horizontal)'}`))
+console.log(root.toGraphString(n => `${n.toString()} ${n.style.direction ?? '(horizontal)'}`))
 
 Object.assign(globalThis, { root })
 
@@ -34,12 +34,12 @@ const draw = () => {
 
     const { rootNode } = flex.compute2D(root)
     display.addToScope({ rootNode })
-    // console.log(rootNode.toGraphString(n => `${n.toString()} ${n.layout.direction}`))
+    // console.log(rootNode.toGraphString(n => `${n.toString()} ${n.style.direction}`))
 
 
     for (const node of rootNode.flat()) {
 
-        const strokeColor = node.findUp(n => n.layout.color)?.layout.color ?? display.defaultColor
+        const strokeColor = node.findUp(n => n.style.color)?.style.color ?? display.defaultColor
         display.drawRect(...node.bounds.rect, { strokeColor })
     }
 }

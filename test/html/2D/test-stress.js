@@ -51,8 +51,8 @@ const addSomeChildren = (parent, recursiveLimit = 3) => {
 
             const horizontal = next.horizontal()
             const color = next.color()
-            const width = parent.layout.horizontal ? next.size() : 'fill'
-            const height = !parent.layout.horizontal ? next.size() : 'fill'
+            const width = parent.style.horizontal ? next.size() : 'fill'
+            const height = !parent.style.horizontal ? next.size() : 'fill'
             const child = MyNode.new({ width, height, spacing, horizontal, color })
             addSomeChildren(child, recursiveLimit - 1)
             parent.add(child)
@@ -74,7 +74,7 @@ next.color()
 // draw
 for (const node of rootNode.flat()) {
 
-    const fillColor = node.findUp(n => n.layout.color)?.layout.color ?? display.defaultColor
+    const fillColor = node.findUp(n => n.style.color)?.style.color ?? display.defaultColor
     const strokeColor = next.color()
     display.drawRect(...node.bounds.rect, { fillColor })
 }

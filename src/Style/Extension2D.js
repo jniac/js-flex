@@ -1,17 +1,17 @@
-export default Layout => {
+export default Style => {
 
-    Object.assign(Layout.prototype, {
+    Object.assign(Style.prototype, {
 
         ensureNormal() {
 
             if (!this.normal)
-                this.normal = new Layout()
+                this.normal = new Style()
 
             return this.normal
         },
     })
 
-    Object.defineProperties(Layout.prototype, {
+    Object.defineProperties(Style.prototype, {
 
         is2D: {
 
