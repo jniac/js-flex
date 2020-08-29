@@ -186,3 +186,26 @@ for (const key of Object.getOwnPropertyNames(Style.prototype)) {
 }
 
 Style.keys = Object.freeze(keys)
+
+Style.splitKeys = object => {
+
+    const style = {}
+    const rest = {}
+
+    for (const [key, value] of Object.entries(object)) {
+
+        if (value === undefined)
+            continue
+
+        if (keys.includes(key)) {
+
+            style[key] = value
+
+        } else {
+
+            rest[key] = value
+        }
+    }
+
+    return [style, rest]
+}
