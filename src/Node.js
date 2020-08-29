@@ -163,9 +163,9 @@ export default class Node {
         return this.parent?.children.indexOf(this) ?? 0
     }
 
-    * parents() {
+    * parents({ includeSelf = false } = {}) {
 
-        let node = this.parent
+        let node = includeSelf ? this : this.parent
 
         while (node) {
 
@@ -174,9 +174,9 @@ export default class Node {
         }
     }
 
-    parentsArray() {
+    parentsArray(options) {
 
-        return [...this.parents()]
+        return [...this.parents(options)]
     }
 
     * flat({ includeSelf = true, filter = null, progression = 'vertical' } = {}) {
@@ -311,5 +311,38 @@ export default class Node {
     toString() {
 
         return `#${this[ID]}`
+    }
+
+
+
+    // static
+    static buildFromObject(object) {
+
+        const stack = []
+
+        const root = new Node()
+        root.name = 'root'
+        root.object = object
+        stack.push([root, object])
+
+        while (stack.length > 0) {
+
+            const [current, object] = stack.shift()
+
+            for (const [key, value] of Object.entries(object)) {
+
+                if (value && typeof value === 'object') {
+
+                    const child = new Node()
+                    child.name = key
+                    child.object = value
+                    stack.push([child, value])
+
+                    current.add(child)
+                }
+            }
+        }
+
+        return root
     }
 }
