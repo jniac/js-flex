@@ -169,3 +169,20 @@ Object.assign(Style.prototype, defaultValues)
 
 Extension2D(Style)
 ExtensionShortHand(Style)
+
+
+
+const keys = []
+
+for (const key of Object.getOwnPropertyNames(Style.prototype)) {
+
+    if (typeof Style.prototype[key] === 'function')
+        continue
+
+    if (key === 'constructor' || key === 'is2D')
+        continue
+
+    keys.push(key)
+}
+
+Style.keys = Object.freeze(keys)
