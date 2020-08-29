@@ -14,6 +14,8 @@
         <script type="module" src="./test-stress.js"></script>
         <script type="module">
             import testBed from '../testBed.js'
+            import flex from '../../../src/index.js'
+            window.flex = flex
             setTimeout(testBed.dumpPerformanceBench, 500)
         </script>
     </body>

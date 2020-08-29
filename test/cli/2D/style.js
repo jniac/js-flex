@@ -7,10 +7,9 @@ const main = () => {
 
     describe('2D:Style', () => {
 
-        it (`'width', 'height' trigger 2D style`, () => {
+        it (`'width' triggers 2D style`, () => {
 
             assert.equal(new flex.Style({ height:300 }).is2D, true)
-            assert.equal(new flex.Style({ direction:'vertical', width:300 }).is2D, true)
         })
 
         it (`default 'direction' is "horizontal"`, () => {
@@ -18,10 +17,9 @@ const main = () => {
             assert.equal(new flex.Style({ width:1 }).direction, 'horizontal')
         })
 
-        it(`depending on 'direction', 'width' & 'height' are transfered to normalStyle.size`, () => {
+        it(`depending on 'direction', 'height' is transfered to normal.size`, () => {
 
-            assert.equal(new flex.Style({ height:Math.PI }).normalStyle.size, Math.PI)
-            assert.equal(new flex.Style({ direction:'vertical', width:Math.PI }).normalStyle.size, Math.PI)
+            assert.equal(new flex.Style({ height:Math.PI }).normal.size, Math.PI)
         })
 
         it(`getter|setter 'width|height' are correctly linked`, () => {
