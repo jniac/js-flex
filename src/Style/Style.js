@@ -187,7 +187,7 @@ for (const key of Object.getOwnPropertyNames(Style.prototype)) {
 
 Style.keys = Object.freeze(keys)
 
-Style.splitKeys = object => {
+Style.splitProps = object => {
 
     const style = {}
     const rest = {}
