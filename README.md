@@ -2,6 +2,8 @@
 
 resolving "kind-of-flex" model in javascript
 
+[online demo / test](https://jniac.github.io/js-flex/test/html/)
+
 features: 
 - 1D (default) or 2D space
 - include "gutter" style prop (actually missing in the current flexbox model)
