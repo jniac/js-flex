@@ -1,5 +1,5 @@
 const assert = require('assert')
-const { test, describe, it, almostEquals } = require('../testbed.js')
+const { describe, it } = require('../testbed.js')
 
 const flex = require('../../../build/flex.common.js')
 const { Style } = flex
@@ -10,17 +10,17 @@ const main = () => {
 
         it (`'width' triggers 2D style`, () => {
 
-            assert.equal(new Style({ height:300 }).is2D, true)
+            assert.strictEqual(new Style({ height:300 }).is2D, true)
         })
 
         it (`default 'direction' is "horizontal"`, () => {
 
-            assert.equal(new Style({ width:1 }).direction, 'horizontal')
+            assert.strictEqual(new Style({ width:1 }).direction, 'horizontal')
         })
 
         it(`depending on 'direction', 'height' is transfered to normal.size`, () => {
 
-            assert.equal(new Style({ height:Math.PI }).normal.size, Math.PI)
+            assert.strictEqual(new Style({ height:Math.PI }).normal.size, Math.PI)
         })
 
         it(`getter|setter 'width|height' are correctly linked`, () => {
@@ -29,33 +29,33 @@ const main = () => {
             const height = Math.E
             const H = new Style({ width, height })
             const V = new Style({ direction:'vertical', width, height })
-            assert.equal(H.width, width)
-            assert.equal(H.height, height)
-            assert.equal(V.width, width)
-            assert.equal(V.height, height)
+            assert.strictEqual(H.width, width)
+            assert.strictEqual(H.height, height)
+            assert.strictEqual(V.width, width)
+            assert.strictEqual(V.height, height)
 
             H.width = 4
             H.height = 3
             V.width = 4
             V.height = 3
-            assert.equal(H.width, 4)
-            assert.equal(H.height, 3)
-            assert.equal(V.width, 4)
-            assert.equal(V.height, 3)
+            assert.strictEqual(H.width, 4)
+            assert.strictEqual(H.height, 3)
+            assert.strictEqual(V.width, 4)
+            assert.strictEqual(V.height, 3)
         })
 
-        it(`Style.keys & Style.splitKeys`, () => {
+        it(`Style.keys & Style.splitProps`, () => {
 
             const props = { lol:43 }
 
             for (const key of Style.keys)
                 props[key] = Math.random()
 
-            const [style, rest] = Style.splitKeys(props)
+            const [style, rest] = Style.splitProps(props)
 
-            assert.equal(Object.keys(style).length, Style.keys.length)
-            assert.equal(Object.keys(rest).length, 1)
-            assert.equal(rest.lol, props.lol)
+            assert.strictEqual(Object.keys(style).length, Style.keys.length)
+            assert.strictEqual(Object.keys(rest).length, 1)
+            assert.strictEqual(rest.lol, props.lol)
         })
     })
 }
