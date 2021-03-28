@@ -130,7 +130,7 @@ export default class Node {
 
     removeFromParent() {
 
-        parent?.remove(this)
+        this.parent?.remove(this)
 
         return this
     }
@@ -140,7 +140,7 @@ export default class Node {
         let count = 0
 
         let scope = this
-        while(scope = scope.parent)
+        while((scope = scope.parent) !== null)
             count++
 
         return count

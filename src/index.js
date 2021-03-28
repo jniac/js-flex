@@ -16,8 +16,15 @@ const defaultParameters = {
 }
 
 
-
-const now = () => globalThis.performance?.now() ?? Date.now()
+const getNow = () => {
+    if (typeof performance === 'object') {
+        return () => performance.now()
+    } else {
+        const start = Date.now()
+        return () => Date.now() - start
+    }
+}
+const now = getNow()
 
 
 
@@ -220,6 +227,7 @@ const compute2D = (rootSourceNode, {
 
 
 export default {
+    now,    
     compute,
     compute2D,
     Node,

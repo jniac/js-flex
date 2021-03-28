@@ -48,9 +48,10 @@ const stringToNumber = string => {
         case 'end':
         case 'right':
             return 1
-    }
 
-    throw new Error(`oups, invalid value "${string}"`)
+        default:
+            throw new Error(`oops, invalid value "${string}"`)
+    }
 }
 
 export default class Style {

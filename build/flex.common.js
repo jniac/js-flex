@@ -1,7 +1,7 @@
 
 // js-flex 1.0.0
 // https://github.com/jniac/js-flex#readme
-// ES2020 - Build with rollup - 2021/03/28 11:32:37
+// ES2020 - Build with rollup - 2021/03/28 12:26:30
 
 'use strict';
 
@@ -137,7 +137,7 @@ class Node {
 
     removeFromParent() {
 
-        parent?.remove(this);
+        this.parent?.remove(this);
 
         return this
     }
@@ -147,7 +147,7 @@ class Node {
         let count = 0;
 
         let scope = this;
-        while(scope = scope.parent)
+        while((scope = scope.parent) !== null)
             count++;
 
         return count
@@ -643,9 +643,10 @@ const stringToNumber = string => {
         case 'end':
         case 'right':
             return 1
-    }
 
-    throw new Error(`oups, invalid value "${string}"`)
+        default:
+            throw new Error(`oops, invalid value "${string}"`)
+    }
 };
 
 class Style {
@@ -1472,8 +1473,15 @@ const defaultParameters = {
 };
 
 
-
-const now = () => globalThis.performance?.now() ?? Date.now();
+const getNow = () => {
+    if (typeof performance === 'object') {
+        return () => performance.now()
+    } else {
+        const start = Date.now();
+        return () => Date.now() - start
+    }
+};
+const now = getNow();
 
 
 
@@ -1676,6 +1684,7 @@ const compute2D = (rootSourceNode, {
 
 
 var index = {
+    now,    
     compute,
     compute2D,
     Node,
