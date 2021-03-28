@@ -4,11 +4,41 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>String view</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        body {
+            align-items: flex-start;
+            padding: 32px;
+            background-color: #ddd;
+        }
+        textarea {
+            padding: 0;
+            outline: none;
+            border: solid 0;
+            resize: none;
+            align-self: flex-start;
+            background-image: url(checkerboard.svg);
+            background-size: calc(100% / 60) calc(100% / 8);
+            background-repeat: repeat;
+        }
+        code {
+            background-color: white;
+            padding: 16px;
+        }
+        body > * + * {
+            margin-top: 16px;
+        }
+    </style>
 </head>
 <body>
     <h1>String view</h1>
-    <pre></pre>
+    <div>
+        <label for="">live</label>
+        <input type="checkbox" checked>
+    </div>
+    <code>textarea.value = flex.treeToString(root, { width, height })</code>
+    <textarea></textarea>
     <script src="main.js" type="module"></script>
 </body>
 </html>

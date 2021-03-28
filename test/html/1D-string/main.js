@@ -18,19 +18,29 @@ const root = MyNode.new({ size:500, gutter:10, padding:10 }).add(
     MyNode.new(),
 )
 
-const pre = document.querySelector('pre')
+const WIDTH = 120
+const HEIGHT = 16
+
+const textarea = document.querySelector('textarea')
+const check = document.querySelector('input[type=checkbox]')
+textarea.cols = WIDTH - 2 // why???? dunno...
+textarea.rows = HEIGHT
 
 let time = 0
 const loop = () => {
-
-    time += 1 / 60
-
-    const node = root.find(n => n.style?.name === 'bar')
-    node.style.size = `${(4 + 3 * Math.sin(time * 3)).toFixed(2)}w`
     
-    pre.innerHTML = flex.treeToString(root)
-
     requestAnimationFrame(loop)
+
+    if (check.checked) {
+
+        time += 1 / 60
+    
+        const node = root.find(n => n.style?.name === 'bar')
+        node.style.size = `${(4 + 3 * Math.sin(time * 3)).toFixed(2)}w`
+        
+        // textarea.value = new Array(HEIGHT).fill(''.padEnd(WIDTH, '0123456789')).join('\n')
+        textarea.value = flex.treeToString(root, { width:WIDTH, height:HEIGHT })
+    }
 }
 
 loop()

@@ -5,10 +5,12 @@ html {
 }
 body {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     font-family: 'Roboto Mono', monospace;
     padding: 8px;
-    justify-content: center;
+    /* justify-content: center; */
+    min-height: 100vh;
 }
 canvas {
     background-color: #fff;
