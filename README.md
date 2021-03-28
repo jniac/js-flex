@@ -2,6 +2,15 @@
 
 resolving "kind-of-flex" model in javascript
 
+features: 
+- 1D (default) or 2D space
+- include "gutter" style prop (actually missing in the current flexbox model)
+- "fill" / "fit" / and a lot of size options (%, op, ...)
+
+![2D-StressTest](https://user-images.githubusercontent.com/11039919/112748031-7a639380-8fb9-11eb-9fff-7a03714fdc33.png)
+![1D-StressTest](https://user-images.githubusercontent.com/11039919/112748034-7d5e8400-8fb9-11eb-9455-372579b23810.png)
+
+
 ## start developing
 Watch changes on ./src (chokidar), build on changes (rollup), test build (mocha giveup, using custom lib).
 ```
