@@ -10,6 +10,7 @@ const treeToSvgString = (root, { width = 500, height = 250, margin = 4 } = {}) =
     const innerWidth = width - 2 * margin
     const scaleX = innerWidth / root.bounds.size
     const tab = x => '    '.repeat(x)
+    const fmt = x => x.toFixed(1)
 
     const children = []
     const add = str => children.push(tab(1) + str)
@@ -20,7 +21,10 @@ const treeToSvgString = (root, { width = 500, height = 250, margin = 4 } = {}) =
         const x1 = margin + scaleX * (nodeX)
         const x2 = margin + scaleX * (nodeX + nodeWidth)
         const y = margin + handler.addNode(node)
-        const info = node.toString()
+        let info = node.toString()
+        if (node.style?.['svg-show-range']) {
+            info += ` [${fmt(nodeX)},${fmt(nodeX + nodeWidth)}]`
+        }
         add(`<text fill=${color} x=${(x1 + x2) / 2} y=${y - nodeHeight / 2} dominant-baseline="middle" text-anchor="middle">${info}</text>`)
         add(`<line stroke=${color} x1=${x1} y1=${y - nodeHeight / 2} x2=${x1} y2=${y + nodeHeight / 2}></line>`)
         add(`<line stroke=${color} x1=${x2} y1=${y - nodeHeight / 2} x2=${x2} y2=${y + nodeHeight / 2}></line>`)
@@ -38,7 +42,7 @@ const treeToSvgString = (root, { width = 500, height = 250, margin = 4 } = {}) =
     </style>
 ${children.join('\n')}
 </svg>
-    `
+`
 }
 
 export default treeToSvgString
