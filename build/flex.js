@@ -1,7 +1,7 @@
 
 // js-flex 1.0.0
 // https://github.com/jniac/js-flex#readme
-// ES2020 - Build with rollup - 2021/03/28 17:45:12
+// ES2020 - Build with rollup - 2021/03/28 20:11:19
 
 let count = 0;
 
@@ -1486,24 +1486,24 @@ const getRangeHandler = ({ depthStride = 4, overlapStride = 1 } = {}) => {
     return { addNode }
 };
 
-const treeToString = (root, { strWidth = 100, strHeight = 20, hMargin = 4 } = {}) => {
+const treeToString = (root, { width = 100, height = 20, hMargin = 4 } = {}) => {
 
     flex.compute(root);
 
-    const array = new Array(strHeight).fill().map(() => new Array(strWidth).fill(' '));
+    const array = new Array(height).fill().map(() => new Array(width).fill(' '));
 
     const handler = getRangeHandler();
 
-    const innerWidth = strWidth - 2 * hMargin;
+    const innerWidth = width - 2 * hMargin;
     const scaleX = innerWidth / root.bounds.size;
  
     for (const node of root.flat()) {
 
         const name = node.toString();
-        const { position:x, size:width } = node.bounds;
+        const { position:nodeX, size:nodeWidth } = node.bounds;
         const y = handler.addNode(node);
-        const start = hMargin + Math.round(x * scaleX);
-        const end = hMargin + Math.round((x + width) * scaleX);
+        const start = hMargin + Math.round(nodeX * scaleX);
+        const end = hMargin + Math.round((nodeX + nodeWidth) * scaleX);
         const chunkWidth = end - start;
         const getChunk = () => {
             if (chunkWidth - 2 >= name.length) {
@@ -1519,7 +1519,12 @@ const treeToString = (root, { strWidth = 100, strHeight = 20, hMargin = 4 } = {}
         };
         const chunk = getChunk();
         for (let i = 0; i < chunkWidth; i++) {
-            array[y][start + i] = chunk[i];
+            const x = start + i;
+            const out = x < 0 || x >= width || y < 0 || y >= height;
+            if (out) {
+                continue
+            }
+            array[y][x] = chunk[i];
         }
     }
 
