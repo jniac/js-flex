@@ -4,6 +4,7 @@ import ComputeNode from './compute/ComputeNode.js'
 import Style from './Style/Style.js'
 import Bounds from './Bounds.js'
 import treeToString from './misc/treeToString.js'
+import treeToSvgString from './misc/treeToSvgString.js'
 
 // size iteration is about waiting on nodes depending from other nodes to be computed first
 // 3 seems the max iteration real cases can require.
@@ -233,6 +234,7 @@ export default {
     compute,
     compute2D,
     treeToString,
+    treeToSvgString,
     Node,
     Style,
     Bounds,

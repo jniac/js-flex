@@ -1,7 +1,7 @@
 
 // js-flex 1.0.0
 // https://github.com/jniac/js-flex#readme
-// ES2020 - Build with rollup - 2021/03/28 20:11:19
+// ES2020 - Build with rollup - 2021/03/28 22:52:20
 
 'use strict';
 
@@ -1463,6 +1463,7 @@ class ComputeNode extends Node {
 
 const getRangeHandler = ({ depthStride = 4, overlapStride = 1 } = {}) => {
 
+    /** @type {Set<{ node:Node, y:number }>} */
     const ranges = new Set();
 
     const overlapsAnExistingRange = (node, y) => {
@@ -1474,6 +1475,11 @@ const getRangeHandler = ({ depthStride = 4, overlapStride = 1 } = {}) => {
         return false
     };
 
+    /**
+     * Add a node to the range handler (handling overlaps).
+     * @param {Node} node The node to handle.
+     * @returns {number} The vertical position of the node.
+     */
     const addNode = node => {
 
         let y = node.depth * depthStride;
@@ -1531,6 +1537,46 @@ const treeToString = (root, { width = 100, height = 20, hMargin = 4 } = {}) => {
     }
 
     return array.map(a => a.join('')).join('\n')
+};
+
+const treeToSvgString = (root, { width = 500, height = 250, margin = 4 } = {}) => {
+
+    flex.compute(root);
+
+    const nodeHeight = 10;
+    const handler = getRangeHandler({ depthStride:nodeHeight * 4, overlapStride:nodeHeight });
+    const innerWidth = width - 2 * margin;
+    const scaleX = innerWidth / root.bounds.size;
+    const tab = x => '    '.repeat(x);
+
+    const children = [];
+    const add = str => children.push(tab(1) + str);
+    for (const node of root.flat()) {
+
+        const { position:nodeX, size:nodeWidth } = node.bounds;
+        const color = node.findUp(n => n.style?.color)?.style.color ?? 'black';
+        const x1 = margin + scaleX * (nodeX);
+        const x2 = margin + scaleX * (nodeX + nodeWidth);
+        const y = margin + handler.addNode(node);
+        const info = node.toString();
+        add(`<text fill=${color} x=${(x1 + x2) / 2} y=${y - nodeHeight / 2} dominant-baseline="middle" text-anchor="middle">${info}</text>`);
+        add(`<line stroke=${color} x1=${x1} y1=${y - nodeHeight / 2} x2=${x1} y2=${y + nodeHeight / 2}></line>`);
+        add(`<line stroke=${color} x1=${x2} y1=${y - nodeHeight / 2} x2=${x2} y2=${y + nodeHeight / 2}></line>`);
+        add(`<line stroke=${color} x1=${x1} y1=${y} x2=${x2} y2=${y}></line>`);
+    }
+
+    return `
+<svg width="${width}" height="${height}" xmlns="http://www.w3.org/2000/svg">
+    <style>
+        text { 
+            font-family: 'Roboto Mono', monospace; 
+            font-size: 10px;
+            font-weight: 400;
+        }
+    </style>
+${children.join('\n')}
+</svg>
+    `
 };
 
 // size iteration is about waiting on nodes depending from other nodes to be computed first
@@ -1761,6 +1807,7 @@ var flex = {
     compute,
     compute2D,
     treeToString,
+    treeToSvgString,
     Node,
     Style,
     Bounds,
