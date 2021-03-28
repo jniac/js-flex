@@ -51,7 +51,7 @@ display.onStart(() => draw({ flex, root, display, showText:false, depthStride:36
 testBed.addToPerformanceBench(() => {
 
     const { averageTime, totalTime, max } = testBed.bench(() => flex.compute(root), 1000)
-    const message = `[${averageTime.toFixed(3)}ms] average time for ${max} loop (${root.totalNodeCount} nodes, ${totalTime.toFixed(1)}ms)`
+    const message = `[${averageTime.toFixed(3)}ms] average time for ${root.totalNodeCount} nodes (${max} loop, ${totalTime.toFixed(1)}ms)`
 
     display.log(message)
     display.addMessageToFooter(message)
