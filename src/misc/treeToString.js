@@ -1,4 +1,4 @@
-import { getRangeHandler } from './utils.js'
+import { checkRoot, getRangeHandler } from './utils.js'
 
 const treeToString = (root, { width = 100, height = 20, hMargin = 4 } = {}) => {
 

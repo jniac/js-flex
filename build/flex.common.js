@@ -1,7 +1,7 @@
 
 // js-flex 1.0.0
 // https://github.com/jniac/js-flex#readme
-// ES2020 - Build with rollup - 2021/03/29 11:31:21
+// ES2020 - Build with rollup - 2021/03/29 11:41:44
 
 'use strict';
 
@@ -1468,7 +1468,7 @@ class ComputeNode extends Node {
  * Checks if root is a Node instance, and has computed bounds.
  * @param {Node} root 
  */
-const checkRoot$1 = (root) => {
+const checkRoot = (root) => {
 
     if (root.flat === undefined) {
         throw new Error(`root is not an Node!`)
@@ -1565,7 +1565,7 @@ const treeToString = (root, { width = 100, height = 20, hMargin = 4 } = {}) => {
 
 const treeToSvgString = (root, { width = 500, height = 250, margin = 4 } = {}) => {
 
-    checkRoot$1(root);
+    checkRoot(root);
 
     const nodeHeight = 10;
     const handler = getRangeHandler({ depthStride:nodeHeight * 4, overlapStride:nodeHeight });
