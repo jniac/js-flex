@@ -33,13 +33,15 @@ const loop = () => {
 
     if (check.checked) {
 
-        time += 1 / 60
-    
+        flex.compute(root)
+        
         const node = root.find(n => n.style?.name === 'bar')
         node.style.size = `${(4 + 3 * Math.sin(time * 3)).toFixed(2)}w`
         
         // textarea.value = new Array(HEIGHT).fill(''.padEnd(WIDTH, '0123456789')).join('\n')
         textarea.value = flex.treeToString(root, { width:WIDTH, height:HEIGHT })
+        
+                time += 1 / 60
     }
 }
 

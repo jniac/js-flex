@@ -33,12 +33,14 @@ const loop = () => {
 
     if (check.checked || time === 0) {
 
-        time += 1 / 60
-    
+        flex.compute(root)
+        
         const node = root.find(n => n.style?.name === 'bar')
         node.style.size = `${(4 + 3 * Math.sin(time * 3)).toFixed(2)}w`
         
         wrapper.innerHTML = flex.treeToSvgString(root, { width:WIDTH, height:HEIGHT, margin:40 })
+
+        time += 1 / 60
     }
 }
 

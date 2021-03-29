@@ -21,8 +21,6 @@ const root = MyNode.new({ size:500, gutter:10, padding:10 }).add(
     MyNode.new(),
 )
 
-console.log(flex.treeToString(root))
-
 const display = getDisplay('basic', { color:undefined })
 display.addToScope({ root })
 display.onStart(() => draw({ flex, root, display }))
