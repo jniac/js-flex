@@ -1,7 +1,7 @@
 import flex from '../../../src/index.js'
 import MyNode from '../1D/MyNode.js'
 
-const root = MyNode.new({ size:500, gutter:10, padding:10, 'svg-show-range':true }).add(
+const root = MyNode.new({ size:500, gutter:10, padding:10, svgShowRange:true }).add(
     MyNode.new({ name:'foo', color:'red' }).add(
         MyNode.new(),
         MyNode.new().add(
@@ -11,7 +11,7 @@ const root = MyNode.new({ size:500, gutter:10, padding:10, 'svg-show-range':true
     ),
     MyNode.new(),
     MyNode.new(),
-    MyNode.new({ name:'bar', size:'2w', color:'blue', 'svg-show-range':true }).add(
+    MyNode.new({ name:'bar', size:'2w', color:'blue', svgShowRange:true }).add(
         MyNode.new(),
         MyNode.new(),
     ),

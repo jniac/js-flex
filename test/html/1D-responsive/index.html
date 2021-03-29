@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Responsive</title>
+    <link rel="stylesheet" href="../style.css">
+    <style>
+        @import url(range.css);
+        body {
+            align-items: flex-start;
+            padding: 32px;
+            background-color: #ddd;
+        }
+        code {
+            background-color: white;
+            padding: 16px;
+        }
+        body > * + * {
+            margin-top: 16px;
+        }
+        svg {
+            border: solid 1px #ccc;
+        }
+        .blue {
+            display: flex;
+            color: blue;
+        }
+        label {
+            white-space: nowrap;
+            margin-right: 8px;
+        }
+        .red {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>SVG view (string)</h1>
+    <div class="blue">
+        <label for="">blue size</label>
+        <input type="range" min="0" max="1000" value="500">
+    </div>
+    <div class="red">
+        red size (window.innerWidth)
+    </div>
+    <code>div.innerHTML = flex.treeToSvgString(root, { width, height, margin })</code>
+    <div id="svg-wrapper"></div>
+    <script src="main.js" type="module"></script>
+</body>
+</html>
