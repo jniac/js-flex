@@ -1,5 +1,7 @@
 const chokidar = require('chokidar')
 const chalk = require('chalk')
+const serveHandler = require('serve-handler')
+const http = require('http')
 
 const build = require('./build.js')
 const test = require('../test/cli/index.js')
@@ -19,3 +21,9 @@ chokidar.watch('./src').on('change', async () => {
 })
 
 buildAndTest()
+
+const PORT = 3300
+const server = http.createServer((request, response) => serveHandler(request, response))
+server.listen(PORT, () => {
+    console.log(chalk`dev server @ {blue http://localhost:${PORT}}`)
+})
