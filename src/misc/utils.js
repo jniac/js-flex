@@ -49,5 +49,14 @@ export const getRangeHandler = ({ depthStride = 4, overlapStride = 1 } = {}) => 
         return y
     }
 
-    return { addNode }
+    const getNodeY = node => {
+
+        for (const range of ranges)
+            if (range.node === node)
+                return range.y
+
+        return NaN
+    }
+
+    return { addNode, getNodeY }
 }
