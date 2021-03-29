@@ -1,3 +1,24 @@
+/**
+ * Checks if root is a Node instance, and has computed bounds.
+ * @param {Node} root 
+ */
+export const checkRoot = (root) => {
+
+    if (root.flat === undefined) {
+        throw new Error(`root is not an Node!`)
+    }
+    if (root.bounds === undefined) {
+        throw new Error(`root has no Bounds! (missing flex.compute(root)?)`)
+    }
+}
+
+
+
+/**
+ * Returns an handler to handle range overlaps (y offset if so).
+ * @param {{ depthStride:number, overlapStride:number }} strides Y offset (stride). 
+ * @returns 
+ */
 export const getRangeHandler = ({ depthStride = 4, overlapStride = 1 } = {}) => {
 
     /** @type {Set<{ node:Node, y:number }>} */

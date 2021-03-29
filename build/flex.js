@@ -1,7 +1,7 @@
 
 // js-flex 1.0.0
 // https://github.com/jniac/js-flex#readme
-// ES2020 - Build with rollup - 2021/03/28 23:04:56
+// ES2020 - Build with rollup - 2021/03/29 11:31:21
 
 let count = 0;
 
@@ -809,6 +809,9 @@ var getNodeStyleSize = node => {
 
     const { size } = node.style;
 
+    if (typeof size === 'function')
+        return size(node)
+
     if (size === 'fill')
         return '1w'
 
@@ -1459,6 +1462,27 @@ class ComputeNode extends Node {
     }
 }
 
+/**
+ * Checks if root is a Node instance, and has computed bounds.
+ * @param {Node} root 
+ */
+const checkRoot$1 = (root) => {
+
+    if (root.flat === undefined) {
+        throw new Error(`root is not an Node!`)
+    }
+    if (root.bounds === undefined) {
+        throw new Error(`root has no Bounds! (missing flex.compute(root)?)`)
+    }
+};
+
+
+
+/**
+ * Returns an handler to handle range overlaps (y offset if so).
+ * @param {{ depthStride:number, overlapStride:number }} strides Y offset (stride). 
+ * @returns 
+ */
 const getRangeHandler = ({ depthStride = 4, overlapStride = 1 } = {}) => {
 
     /** @type {Set<{ node:Node, y:number }>} */
@@ -1494,7 +1518,7 @@ const getRangeHandler = ({ depthStride = 4, overlapStride = 1 } = {}) => {
 
 const treeToString = (root, { width = 100, height = 20, hMargin = 4 } = {}) => {
 
-    flex.compute(root);
+    checkRoot(root);
 
     const array = new Array(height).fill().map(() => new Array(width).fill(' '));
 
@@ -1539,7 +1563,7 @@ const treeToString = (root, { width = 100, height = 20, hMargin = 4 } = {}) => {
 
 const treeToSvgString = (root, { width = 500, height = 250, margin = 4 } = {}) => {
 
-    flex.compute(root);
+    checkRoot$1(root);
 
     const nodeHeight = 10;
     const handler = getRangeHandler({ depthStride:nodeHeight * 4, overlapStride:nodeHeight });
@@ -1558,8 +1582,11 @@ const treeToSvgString = (root, { width = 500, height = 250, margin = 4 } = {}) =
         const x2 = margin + scaleX * (nodeX + nodeWidth);
         const y = margin + handler.addNode(node);
         let info = node.toString();
-        if (node.style?.['svg-show-range']) {
+        if (node.style?.svgShowRange) {
             info += ` [${fmt(nodeX)},${fmt(nodeX + nodeWidth)}]`;
+        }
+        if (node.style?.svgShowSize) {
+            info += ` (${fmt(nodeWidth)})`;
         }
         add(`<text fill=${color} x=${(x1 + x2) / 2} y=${y - nodeHeight / 2} dominant-baseline="middle" text-anchor="middle">${info}</text>`);
         add(`<line stroke=${color} x1=${x1} y1=${y - nodeHeight / 2} x2=${x1} y2=${y + nodeHeight / 2}></line>`);
@@ -1804,7 +1831,7 @@ const compute2D = (rootSourceNode, {
 
 
 
-var flex = {
+var index = {
     now,    
     compute,
     compute2D,
@@ -1815,4 +1842,4 @@ var flex = {
     Bounds,
 };
 
-export default flex;
+export default index;

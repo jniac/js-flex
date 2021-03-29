@@ -1,9 +1,8 @@
-import flex from '../index.js'
-import { getRangeHandler } from './getRangeHandler.js'
+import { checkRoot, getRangeHandler } from './utils.js'
 
 const treeToSvgString = (root, { width = 500, height = 250, margin = 4 } = {}) => {
 
-    flex.compute(root)
+    checkRoot(root)
 
     const nodeHeight = 10
     const handler = getRangeHandler({ depthStride:nodeHeight * 4, overlapStride:nodeHeight })
@@ -22,8 +21,11 @@ const treeToSvgString = (root, { width = 500, height = 250, margin = 4 } = {}) =
         const x2 = margin + scaleX * (nodeX + nodeWidth)
         const y = margin + handler.addNode(node)
         let info = node.toString()
-        if (node.style?.['svg-show-range']) {
+        if (node.style?.svgShowRange) {
             info += ` [${fmt(nodeX)},${fmt(nodeX + nodeWidth)}]`
+        }
+        if (node.style?.svgShowSize) {
+            info += ` (${fmt(nodeWidth)})`
         }
         add(`<text fill=${color} x=${(x1 + x2) / 2} y=${y - nodeHeight / 2} dominant-baseline="middle" text-anchor="middle">${info}</text>`)
         add(`<line stroke=${color} x1=${x1} y1=${y - nodeHeight / 2} x2=${x1} y2=${y + nodeHeight / 2}></line>`)

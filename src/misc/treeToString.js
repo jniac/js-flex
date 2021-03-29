@@ -1,9 +1,8 @@
-import flex from '../index.js'
-import { getRangeHandler } from './getRangeHandler.js'
+import { getRangeHandler } from './utils.js'
 
 const treeToString = (root, { width = 100, height = 20, hMargin = 4 } = {}) => {
 
-    flex.compute(root)
+    checkRoot(root)
 
     const array = new Array(height).fill().map(() => new Array(width).fill(' '))
 
